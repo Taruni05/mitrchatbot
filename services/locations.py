@@ -1,0 +1,16 @@
+HYDERABAD_AREA_COORDS = {
+    "hitech city": (17.4474, 78.3762),
+    "gachibowli": (17.4401, 78.3489),
+    "madhapur": (17.4483, 78.3915),
+    "jubilee hills": (17.4326, 78.4071),
+    "banjara hills": (17.4126, 78.4482),
+    "kondapur": (17.4610, 78.3616),
+    "kukatpally": (17.4948, 78.3996),
+    "uppal": (17.4019, 78.5582),
+    "secunderabad": (17.4399, 78.4983),
+    "lb nagar": (17.3447, 78.5522),
+    "charminar": (17.3616, 78.4747),
+    "ameerpet": (17.4375, 78.4483),
+    "begumpet": (17.4444, 78.4663),
+    "dilsukhnagar": (17.3686, 78.5247),
+}
