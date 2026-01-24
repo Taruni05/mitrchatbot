@@ -12,13 +12,10 @@ from services.weatherapi import (
     get_aqi_advice,
 )
 from services.ai_food import generate_food_recommendation
-
-
-
+from services.fuel_prices import get_fuel_prices_hyderabad, format_fuel_prices
 
 import base64
 from datetime import datetime
-
 
 
 # ========================================
@@ -28,7 +25,7 @@ st.set_page_config(
     page_title="Hyderabad City Guide",
     page_icon="🏙️",
     layout="wide",
-    initial_sidebar_state="expanded"
+    initial_sidebar_state="expanded",
 )
 # Header
 st.title("🏙️ Hyderabad City Guide")
@@ -43,12 +40,14 @@ if "selected_area" not in st.session_state:
     st.session_state.selected_coords = (17.3850, 78.4867)
 
 if st.session_state.get("trigger_dashboard_update"):
-    st.session_state.trigger_dashboard_update = True
+    st.session_state.trigger_dashboard_update = False
     st.rerun()
+
 
 def load_base64(path):
     with open(path, "rb") as f:
         return base64.b64encode(f.read()).decode()
+
 
 with st.spinner("Loading theme…"):
     hour = datetime.now().hour
@@ -66,7 +65,8 @@ if mode == "Day":
 elif mode == "Night":
     bg_image = load_base64("hyderabad_night.jpg")
 
-st.markdown(f"""
+st.markdown(
+    f"""
 <style>
 
 /* ================================
@@ -134,7 +134,10 @@ MOBILE OPTIMIZATION
 }}
 
 </style>
-""", unsafe_allow_html=True)
+""",
+    unsafe_allow_html=True,
+)
+
 
 # ========================================
 # LOAD KNOWLEDGE BASE
@@ -143,11 +146,12 @@ MOBILE OPTIMIZATION
 def load_knowledge_base():
     """Load knowledge base (cached for performance)"""
     try:
-        with open('knowledge_base.json', 'r', encoding='utf-8') as f:
+        with open("knowledge_base.json", "r", encoding="utf-8") as f:
             return json.load(f)
     except Exception as e:
         st.error(f"❌ Error loading knowledge base: {e}")
         return None
+
 
 with st.spinner("Loading city knowledge base…"):
     KB = load_knowledge_base()
@@ -159,6 +163,7 @@ if KB is None:
 PROFILE = KB.get("hyderabad_comprehensive_profile", {})
 EMERGENCY = KB.get("emergency contacts", {})
 
+
 # ========================================
 # BOT STATE
 # ========================================
@@ -167,53 +172,79 @@ class BotState(TypedDict):
     intent: str
     response: str
 
+
 # ========================================
 # BOT LOGIC (Same as your chatbot)
 # ========================================
+
 
 def get_biryani_restaurants():
     """Get biryani restaurants"""
     restaurants_data = KB.get("restaurants", {})
     heritage = restaurants_data.get("Heritage_Regional", [])
-    
+
     response = "🍛 **BEST BIRYANI PLACES IN HYDERABAD:**\n\n"
-    
+
     for i, rest in enumerate(heritage[:7]):
         name = rest.get("name", "Unknown")
         price = rest.get("price_range", {})
         location = rest.get("main_branch", {}).get("location", "Hyderabad")
         hours = rest.get("opening_hours", {}).get("Monday", "11:00 AM - 11:00 PM")
-        
-        response += f"**{i+1}. {name}**\n"
+
+        response += f"**{i + 1}. {name}**\n"
         response += f"📍 {location}\n"
         response += f"💰 ₹{price.get('min', 150)} - ₹{price.get('max', 600)}\n"
         response += f"⏰ {hours}\n\n"
-    
+
     response += "💡 **Pro Tip:** Try the mutton biryani for the authentic Hyderabadi experience!"
     return response
+
 
 def classify_intent(state: BotState):
     """Classify user intent"""
     message = state["user_input"].lower()
-    
-    if any(message.strip().startswith(word) for word in ["hello", "hi", "hey", "namaste"]):
+
+    if any(
+        message.strip().startswith(word) for word in ["hello", "hi", "hey", "namaste"]
+    ):
         state["intent"] = "greeting"
     elif any(word in message for word in ["emergency", "police", "ambulance", "fire"]):
         state["intent"] = "emergency"
-    elif any(word in message for word in [ "weather", "temperature", "rain", "climate", "forecast"]):
+    elif any(
+        word in message
+        for word in ["weather", "temperature", "rain", "climate", "forecast"]
+    ):
         state["intent"] = "weather"
     elif any(word in message for word in ["charminar", "golconda", "monument", "fort"]):
         state["intent"] = "monument"
     elif any(word in message for word in ["temple", "birla", "chilkur"]):
         state["intent"] = "temple"
-    elif any(word in message for word in ["biryani", "food", "restaurant","restaurants","cafe","coffee","cafes","pubs","dining","hotels", "eat"]):
+    elif any(
+        word in message
+        for word in [
+            "biryani",
+            "food",
+            "restaurant",
+            "restaurants",
+            "cafe",
+            "coffee",
+            "cafes",
+            "pubs",
+            "dining",
+            "hotels",
+            "eat",
+        ]
+    ):
         state["intent"] = "food"
     elif any(word in message for word in ["metro", "transport", "airport"]):
         state["intent"] = "transport"
+    elif any(word in message for word in ["fuel", "petrol", "diesel", "cng", "gas price"]):
+        state["intent"] = "fuel"
     else:
         state["intent"] = "general"
-    
+
     return state
+
 
 def handle_greeting(state: BotState):
     state["response"] = """👋 **Welcome to Hyderabad City Guide!**
@@ -223,22 +254,27 @@ I can help you with:
 🛕 **Temples** - Birla Mandir, Chilkur Balaji
 🍛 **Food** - Best Biryani places
 🚇 **Transport** - Metro, Airport info
+⛽ **Fuel Prices** - Daily petrol, diesel, CNG rates  ← ADD THIS
+🌦️ **Weather** - Live updates & air quality
 🚨 **Emergency** - Important contacts
 
 What would you like to know?"""
     return state
 
+
 def handle_emergency(state: BotState):
     state["response"] = f"""🚨 **EMERGENCY CONTACTS - HYDERABAD**
 
 **Immediate Help:**
-• 🚓 Police: {EMERGENCY.get('police', '100')}
-• 🚑 Ambulance: {EMERGENCY.get('ambulance', '108')}
-• 🔥 Fire: {EMERGENCY.get('fire', '101')}
-• 👩 Women Helpline: {EMERGENCY.get('women_helpline', '181')}
+• 🚓 Police: {EMERGENCY.get("police", "100")}
+• 🚑 Ambulance: {EMERGENCY.get("ambulance", "108")}
+• 🔥 Fire: {EMERGENCY.get("fire", "101")}
+• 👩 Women Helpline: {EMERGENCY.get("women_helpline", "181")}
 
 ⚠️ **For emergencies, call 108 immediately!**"""
     return state
+
+
 def resolve_hyderabad_area(query: str):
     """
     Resolve Hyderabad area from user query.
@@ -257,15 +293,15 @@ def resolve_hyderabad_area(query: str):
     if "hyderabad" in query_lower:
         return "Hyderabad (Central)", 17.3850, 78.4867
 
-# 👉 NEW RULE:
-# If user asks about weather but doesn't say a place,
-# assume Hyderabad by default
+    # 👉 NEW RULE:
+    # If user asks about weather but doesn't say a place,
+    # assume Hyderabad by default
     weather_keywords = ["weather", "temperature", "rain", "hot", "cold", "climate"]
 
     if any(word in query_lower for word in weather_keywords):
         return "Hyderabad (Central)", 17.3850, 78.4867
 
-# Otherwise, reject (non-Hyderabad city)
+    # Otherwise, reject (non-Hyderabad city)
     return None, None, None
 
 
@@ -279,14 +315,20 @@ def handle_monument(state: BotState):
     state["response"] = response
     return state
 
+
 def handle_temple(state: BotState):
-    temples = PROFILE.get("tourism_and_landmarks", {}).get("religious_sites", {}).get("hinduism", [])
+    temples = (
+        PROFILE.get("tourism_and_landmarks", {})
+        .get("religious_sites", {})
+        .get("hinduism", [])
+    )
     response = "🛕 **Major Temples:**\n\n"
     for i, temple in enumerate(temples[:10], 1):
         response += f"**{i}. {temple['name']}**\n"
         response += f"📍 {temple.get('location', 'Hyderabad')}\n\n"
     state["response"] = response
     return state
+
 
 def handle_food(state: BotState):
     user_query = state["user_input"]
@@ -297,7 +339,7 @@ def handle_food(state: BotState):
 def handle_transport(state: BotState):
     transport = PROFILE.get("infrastructure", {}).get("transport", [])
     metro = next((t for t in transport if t.get("mode") == "Metro Rail"), None)
-    
+
     if metro:
         response = "🚇 **Hyderabad Metro:**\n\n"
         for line in metro.get("lines", [])[:3]:
@@ -307,6 +349,8 @@ def handle_transport(state: BotState):
     else:
         state["response"] = "Metro information not available."
     return state
+
+
 def handle_weather(state: BotState):
     user_query = state["user_input"]
 
@@ -330,18 +374,27 @@ def handle_weather(state: BotState):
         aqi_text = format_aqi(aqi_data)
         aqi_advice = get_aqi_advice(aqi_data)
 
-
         state["response"] = (
-            f"🌦️ **Weather in {area}**\n\n"
-            f"{weather_text}\n"
-            f"{aqi_text}\n\n"
-            f"{aqi_advice}"
+            f"🌦️ **Weather in {area}**\n\n{weather_text}\n{aqi_text}\n\n{aqi_advice}"
         )
     else:
+        state["response"] = "Sorry, I'm unable to fetch weather data right now."
+    return state
+
+
+def handle_fuel(state: BotState):
+    """Handle fuel price queries"""
+    try:
+        prices = get_fuel_prices_hyderabad()
+        state["response"] = format_fuel_prices(prices)
+    except Exception as e:
         state["response"] = (
-            "Sorry, I'm unable to fetch weather data right now."
+            "⛽ Sorry, I couldn't fetch current fuel prices.\n\n"
+            "You can check:\n"
+            "• Indian Oil: https://iocl.com/\n"
+            "• MyPetrolPrice: https://www.mypetrolprice.com/"
         )
-    st.session_state.trigger_dashboard_update = True
+    
     return state
 
 
@@ -357,7 +410,6 @@ Please ask me about any of these!"""
     return state
 
 
-
 # ========================================
 # BUILD WORKFLOW
 # ========================================
@@ -365,7 +417,7 @@ Please ask me about any of these!"""
 def create_workflow():
     """Create the chatbot workflow (cached)"""
     workflow = StateGraph(BotState)
-    
+
     workflow.add_node("classifier", classify_intent)
     workflow.add_node("greeting", handle_greeting)
     workflow.add_node("emergency", handle_emergency)
@@ -374,13 +426,14 @@ def create_workflow():
     workflow.add_node("food", handle_food)
     workflow.add_node("transport", handle_transport)
     workflow.add_node("weather", handle_weather)
+    workflow.add_node("fuel", handle_fuel)
     workflow.add_node("general", handle_general)
-    
+
     workflow.set_entry_point("classifier")
-    
+
     def route(state: BotState):
         return state["intent"]
-    
+
     workflow.add_conditional_edges(
         "classifier",
         route,
@@ -392,13 +445,24 @@ def create_workflow():
             "food": "food",
             "transport": "transport",
             "weather": "weather",
-            "general": "general"
-        }
+            "fuel": "fuel",
+            "general": "general",
+        },
     )
-    
-    for node in ["greeting", "emergency", "monument", "temple", "food", "transport","weather", "general"]:
+
+    for node in [
+        "greeting",
+        "emergency",
+        "monument",
+        "temple",
+        "food",
+        "transport",
+        "weather",
+        "fuel",
+        "general",
+    ]:
         workflow.add_edge(node, END)
-    
+
     return workflow.compile()
 
 
@@ -410,43 +474,45 @@ with st.spinner("Starting assistant…"):
 with st.sidebar:
     st.header("🎯 Quick Links")
     st.info("**Popular Queries:**")
-    
+
     if st.button("🏛️ Famous Monuments"):
         st.session_state.last_query = "tell me about famous monuments"
-    
+
     if st.button("🍛 Best Biryani Places"):
         st.session_state.last_query = "best biryani places"
-    
+
     if st.button("🛕 Temples"):
         st.session_state.last_query = "famous temples"
-    
+
     if st.button("🚇 Metro Info"):
         st.session_state.last_query = "metro timings"
     
+    if st.button("⛽ Fuel Prices"):
+        st.session_state.last_query = "fuel prices today"
+
     if st.button("🚨 Emergency Contacts"):
         st.session_state.last_query = "emergency numbers"
-    
+
     st.markdown("---")
     st.markdown("**💡 Tip:** Type your question in the chat below!")
-
 
 
 # Initialize chat history
 if "messages" not in st.session_state:
     st.session_state.messages = []
     # Add welcome message
-    st.session_state.messages.append({
-        "role": "assistant",
-        "content": "👋 **Welcome to Hyderabad City Guide!** How can I help you today?"
-    })
+    st.session_state.messages.append(
+        {
+            "role": "assistant",
+            "content": "👋 **Welcome to Hyderabad City Guide!** How can I help you today?",
+        }
+    )
 
 
 # Display chat history
 for message in st.session_state.messages:
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
-
-
 
 
 # Chat input
@@ -461,36 +527,32 @@ if "last_query" in st.session_state:
 if user_input:
     # Add user message to chat
     st.session_state.messages.append({"role": "user", "content": user_input})
-    
+
     with st.chat_message("user"):
         st.markdown(user_input)
-    
+
     # Get bot response
     with st.chat_message("assistant"):
         with st.spinner("Thinking..."):
             try:
-                result = app.invoke({
-                    "user_input": user_input,
-                    "intent": "",
-                    "response": ""
-                })
+                result = app.invoke(
+                    {"user_input": user_input, "intent": "", "response": ""}
+                )
                 response = result["response"]
-                
+
                 st.markdown(response)
-                
+
                 # Add assistant response to chat history
-                st.session_state.messages.append({
-                    "role": "assistant",
-                    "content": response
-                })
-                
+                st.session_state.messages.append(
+                    {"role": "assistant", "content": response}
+                )
+
             except Exception as e:
                 error_msg = f"❌ Error: {str(e)}"
                 st.error(error_msg)
-                st.session_state.messages.append({
-                    "role": "assistant",
-                    "content": error_msg
-                })
+                st.session_state.messages.append(
+                    {"role": "assistant", "content": error_msg}
+                )
 
 st.subheader("🌍 Hyderabad Live Snapshot")
 
@@ -504,25 +566,23 @@ col1, col2, col3 = st.columns(3)
 
 with col1:
     st.metric(
-        "🌡️ Temperature",
-        f"{weather_data['main']['temp']} °C" if weather_data else "—"
+        "🌡️ Temperature", f"{weather_data['main']['temp']} °C" if weather_data else "—"
     )
 with col2:
     st.metric(
-        "💧 Humidity",
-        f"{weather_data['main']['humidity']} %" if weather_data else "—"
+        "💧 Humidity", f"{weather_data['main']['humidity']} %" if weather_data else "—"
     )
 with col3:
-    st.metric(
-        "🌫️ Air Quality",
-        format_aqi(aqi_data) if aqi_data else "—"
-    )
+    st.metric("🌫️ Air Quality", format_aqi(aqi_data) if aqi_data else "—")
     st.divider()
 
 # Footer
 st.markdown("---")
-st.markdown("""
+st.markdown(
+    """
     <div style='text-align: center'>
         <p>Made with ❤️ for Hyderabad | Data last updated: October 2025</p>
     </div>
-""", unsafe_allow_html=True)
+""",
+    unsafe_allow_html=True,
+)

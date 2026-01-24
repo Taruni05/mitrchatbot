@@ -52,13 +52,14 @@ def generate_food_recommendation(user_query: str):
     if not filtered_restaurants:
         filtered_restaurants = RESTAURANTS[:]
 
-    prompt = f"""
+    prompt =  f"""
 You are a Hyderabad food recommendation assistant.
 
 RULES:
 - Recommend ONLY from the provided restaurant data
 - Do NOT invent restaurant names
 - Do NOT claim distance or proximity
+- ALWAYS show ratings if available (format: ⭐ 4.3/5)
 
 User query:
 "{user_query}"
@@ -68,9 +69,17 @@ Available restaurants:
 
 Instructions:
 - Pick up to 3 suitable restaurants
-- Mention best-selling dishes when relevant
+- Show rating prominently (e.g., "⭐ 4.3/5")
+- Mention 2-3 best-selling dishes per restaurant
 - Include Google Maps links if available
-- Friendly, local tone
+- Friendly, local tone with Hyderabad flavor
+
+Example format:
+**1. Paradise Biryani** ⭐ 4.3/5
+📍 Multiple locations
+💰 ₹250-600
+🍽️ Must-try: Paradise Special Biryani, Chicken 65
+🗺️ [Google Maps](link)
 """
 
     try:
