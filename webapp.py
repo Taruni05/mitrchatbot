@@ -13,6 +13,24 @@ from services.weatherapi import (
 )
 from services.ai_food import generate_food_recommendation
 from services.fuel_prices import get_fuel_prices_hyderabad, format_fuel_prices
+# At top of webapp.py (around line 10), add:
+from services.rtc_bus import (
+    extract_locations_from_query,
+    get_bus_routes,
+    format_bus_routes,
+    get_general_bus_info,
+    get_connecting_routes,       
+    format_connecting_routes,  
+)
+
+from services.mmts_trains import (
+    extract_stations_from_query,
+    find_mmts_route,
+    format_mmts_route,
+    get_general_mmts_info,
+    find_routes_to_station,      
+    format_routes_to_station
+)
 
 import base64
 from datetime import datetime
@@ -210,6 +228,10 @@ def classify_intent(state: BotState):
         state["intent"] = "greeting"
     elif any(word in message for word in ["emergency", "police", "ambulance", "fire"]):
         state["intent"] = "emergency"
+    elif any(word in message for word in ["mmts", "train", "suburban rail"]) or ("from" in message and "to" in message and any(w in message for w in ["train", "rail"])):
+        state["intent"] = "mmts"
+    elif any(word in message for word in ["bus", "rtc", "tsrtc"]):
+        state["intent"] = "bus"
     elif any(
         word in message
         for word in ["weather", "temperature", "rain", "climate", "forecast"]
@@ -240,6 +262,7 @@ def classify_intent(state: BotState):
         state["intent"] = "transport"
     elif any(word in message for word in ["fuel", "petrol", "diesel", "cng", "gas price"]):
         state["intent"] = "fuel"
+
     else:
         state["intent"] = "general"
 
@@ -254,13 +277,14 @@ I can help you with:
 🛕 **Temples** - Birla Mandir, Chilkur Balaji
 🍛 **Food** - Best Biryani places
 🚇 **Transport** - Metro, Airport info
-⛽ **Fuel Prices** - Daily petrol, diesel, CNG rates  ← ADD THIS
+🚆 **MMTS Trains** - Suburban rail schedules
+🚌 **Bus Routes** - RTC bus timings & routes  
+⛽ **Fuel Prices** - Daily petrol, diesel, CNG rates
 🌦️ **Weather** - Live updates & air quality
 🚨 **Emergency** - Important contacts
 
 What would you like to know?"""
     return state
-
 
 def handle_emergency(state: BotState):
     state["response"] = f"""🚨 **EMERGENCY CONTACTS - HYDERABAD**
@@ -397,14 +421,101 @@ def handle_fuel(state: BotState):
     
     return state
 
+def handle_bus(state: BotState):
+    """Handle RTC bus route queries with connecting routes support"""
+    user_query = state["user_input"]
+    
+    # Try to extract from/to locations
+    from_area, to_area = extract_locations_from_query(user_query)
+    
+    if from_area and to_area:
+        # Search for direct routes
+        direct_routes = get_bus_routes(from_area, to_area)
+        
+        if not direct_routes.empty:
+            # Direct routes found
+            state["response"] = format_bus_routes(from_area, to_area, direct_routes)
+        else:
+            # No direct routes - search for connections
+            connections = get_connecting_routes(from_area, to_area)
+            
+            if connections:
+                # Format response with no direct routes + connections
+                response = f"🚌 **BUS ROUTES:** {from_area.title()} → {to_area.title()}\n\n"
+                response += "⚠️ **No direct routes available**\n"
+                response += format_connecting_routes(from_area, to_area, connections)
+                
+                # Add alternative suggestions
+                response += "\n💡 **Alternative Options:**  \n"
+                response += "• Take Metro if available (faster & no changes)  \n"
+                response += "• Use taxi/auto for direct journey  \n"
+                response += "• Download TSRTC App for real-time tracking\n"
+                
+                state["response"] = response
+            else:
+                # No direct OR connecting routes found
+                state["response"] = f"""🚌 **No bus routes found** from **{from_area.title()}** to **{to_area.title()}**.
+
+💡 **Suggestions:**
+- These areas may not have good bus connectivity
+- Take Metro if available (check metro routes)
+- Use Google Maps for detailed multi-hop routes
+- Consider auto/cab for this journey
+
+📱 Download **TSRTC App** for comprehensive route planning."""
+    else:
+        # General bus info
+        state["response"] = get_general_bus_info()
+    
+    return state
+
+def handle_mmts(state: BotState):
+    """Handle MMTS train route queries"""
+    user_query = state["user_input"]
+    
+    # Try to extract from/to stations
+    from_station, to_station = extract_stations_from_query(user_query)
+    
+    if from_station and to_station:
+        # Both stations specified - find specific route
+        route_info = find_mmts_route(from_station, to_station)
+        
+        if route_info:
+            state["response"] = format_mmts_route(route_info)
+        else:
+            state["response"] = f"""🚆 **No MMTS route found** from **{from_station}** to **{to_station}**.
+
+💡 **Suggestions:**
+- Check station names (e.g., use "Hi-Tech City" not "HITEC")
+- These stations may not be connected by MMTS
+- Try Metro or RTC buses for this route
+- Ask: "MMTS routes" to see all available lines
+
+🚇 **Alternative:** Use Metro for faster connectivity in this area."""
+    
+    elif to_station:
+        # Only destination specified - show all routes serving that station
+        routes = find_routes_to_station(to_station)
+        state["response"] = format_routes_to_station(to_station, routes)
+    
+    else:
+        # General MMTS info
+        state["response"] = get_general_mmts_info()
+    
+    return state
 
 def handle_general(state: BotState):
     state["response"] = """I can help you with:
 
-🏛️ Monuments & Places
-🍛 Food & Restaurants  
-🚇 Transportation
-🚨 Emergency Contacts
+🏛️ **Monuments** - Charminar, Golconda Fort
+🛕 **Temples** - Birla Mandir, Chilkur Balaji
+🍛 **Food** - Best Biryani places
+🚇 **Transport** - Metro, Airport info
+🚆 **MMTS Trains** - Suburban rail schedules
+🚌 **Bus Routes** - RTC bus timings & routes  
+⛽ **Fuel Prices** - Daily petrol, diesel, CNG rates
+🌦️ **Weather** - Live updates & air quality
+🚨 **Emergency** - Important contacts
 
 Please ask me about any of these!"""
     return state
@@ -427,6 +538,8 @@ def create_workflow():
     workflow.add_node("transport", handle_transport)
     workflow.add_node("weather", handle_weather)
     workflow.add_node("fuel", handle_fuel)
+    workflow.add_node("bus", handle_bus)
+    workflow.add_node("mmts", handle_mmts)
     workflow.add_node("general", handle_general)
 
     workflow.set_entry_point("classifier")
@@ -446,6 +559,8 @@ def create_workflow():
             "transport": "transport",
             "weather": "weather",
             "fuel": "fuel",
+            "bus": "bus",
+            "mmts": "mmts",
             "general": "general",
         },
     )
@@ -459,6 +574,8 @@ def create_workflow():
         "transport",
         "weather",
         "fuel",
+        "bus",
+        "mmts",
         "general",
     ]:
         workflow.add_edge(node, END)
@@ -486,7 +603,10 @@ with st.sidebar:
 
     if st.button("🚇 Metro Info"):
         st.session_state.last_query = "metro timings"
-    
+    if st.button("🚌 Bus Routes"):
+        st.session_state.last_query = "bus routes in hyderabad"
+    if st.button("🚆 MMTS Train Info"):
+        st.session_state.last_query = "mmts train info"
     if st.button("⛽ Fuel Prices"):
         st.session_state.last_query = "fuel prices today"
 

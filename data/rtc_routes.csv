@@ -1,0 +1,134 @@
+route_number,from_area,to_area,via_stops,frequency_mins,duration_mins,fare_min,fare_max,service_type,first_bus,last_bus
+2,Secunderabad,Charminar,"Koti,Nampally,Afzalgunj",10,40,15,20,City Ordinary,5:00 AM,11:30 PM
+2J,Secunderabad,Charminar,"Koti,Nampally,Afzalgunj",12,40,15,20,City Ordinary,5:15 AM,11:30 PM
+2K,Secunderabad,Charminar,"Koti,Nampally,Afzalgunj",15,40,15,20,City Ordinary,5:30 AM,11:00 PM
+2U,Secunderabad,Charminar,"Koti,Nampally,Afzalgunj",18,40,15,20,City Ordinary,5:45 AM,10:30 PM
+3,Secunderabad,LB Nagar,"Koti,Dilsukhnagar,Kothapet",15,50,20,25,City Ordinary,5:00 AM,11:30 PM
+3K,Secunderabad,LB Nagar,"Koti,Dilsukhnagar,Kothapet",18,50,20,25,City Ordinary,5:30 AM,11:00 PM
+3N,Secunderabad,LB Nagar,"Koti,Dilsukhnagar,Kothapet",20,50,20,25,City Ordinary,5:45 AM,10:30 PM
+5K,Charminar,Jubilee Hills,"Afzalgunj,Lakdikapul,Banjara Hills",20,55,25,30,City Ordinary,6:00 AM,10:30 PM
+5R,Charminar,Jubilee Hills,"Afzalgunj,Lakdikapul,Banjara Hills",30,55,25,30,City Ordinary,6:15 AM,10:00 PM
+7Z,Secunderabad,Charminar,"Paradise,Koti,Nampally",12,40,15,20,City Ordinary,5:15 AM,11:30 PM
+8A,Ameerpet,Secunderabad,"Begumpet,Paradise Circle",8,25,15,20,City Ordinary,5:00 AM,11:30 PM
+8C,Ameerpet,Secunderabad,"Begumpet,Paradise Circle",10,25,15,20,City Ordinary,5:15 AM,11:30 PM
+8X,Banjara Hills,HITEC City,"Jubilee Hills,Madhapur",18,35,20,25,Metro Express,6:00 AM,10:30 PM
+9K,Secunderabad,Nagole,"Tarnaka,Uppal,Ramanthapur",20,45,20,25,City Ordinary,5:30 AM,11:00 PM
+9X,Secunderabad,Uppal,"Tarnaka,Habsiguda,NGRI",15,35,18,22,Metro Express,5:45 AM,11:00 PM
+10H,Kukatpally,Charminar,"KPHB,Ameerpet,Nampally",30,70,28,35,City Ordinary,6:00 AM,10:00 PM
+10K,Ameerpet,HITEC City,"SR Nagar,Kukatpally,JNTU",20,40,20,25,Metro Express,6:00 AM,10:00 PM
+10KJ,Ameerpet,HITEC City,"SR Nagar,Kukatpally,JNTU",20,40,20,25,Metro Express,6:00 AM,10:00 PM
+10KM,Secunderabad,Gachibowli,"Ameerpet,Madhapur",25,60,30,40,Metro Express,6:00 AM,10:00 PM
+14P,Secunderabad,Patancheruvu,"Balanagar,Jeedimetla",40,90,35,45,City Ordinary,5:30 AM,9:30 PM
+15H,Secunderabad,Miyapur,"SR Nagar,Kukatpally",25,50,25,30,City Ordinary,5:30 AM,11:00 PM
+16A,Secunderabad,Miyapur,"Kukatpally,JNTU",30,55,25,30,City Ordinary,5:45 AM,10:30 PM
+18C,Jubilee Hills,Secunderabad,"Begumpet,Paradise",15,30,18,22,City Ordinary,5:30 AM,11:00 PM
+22,Kukatpally,Secunderabad,"SR Nagar,Ameerpet",10,45,20,25,City Ordinary,5:00 AM,11:30 PM
+22D,Kukatpally,Secunderabad,"SR Nagar,Ameerpet",15,45,20,25,City Ordinary,5:15 AM,11:30 PM
+23K,KPHB,Secunderabad,"Kukatpally,SR Nagar",12,50,20,28,City Ordinary,5:30 AM,11:00 PM
+24B,Miyapur,Secunderabad,"Kukatpally,Ameerpet,Begumpet",20,55,25,30,City Ordinary,5:45 AM,10:30 PM
+29B,Miyapur,ECIL,"Kukatpally,Secunderabad,Sainikpuri",45,100,40,50,City Ordinary,5:30 AM,9:30 PM
+37,Kukatpally,HITEC City,"JNTU,Madhapur",15,35,20,25,City Ordinary,6:00 AM,10:30 PM
+45G,Ameerpet,Gachibowli,"Jubilee Hills,Madhapur",20,40,22,28,City Ordinary,6:00 AM,10:30 PM
+47L,Jubilee Hills,Ameerpet,"Panjagutta",12,20,15,20,City Ordinary,5:30 AM,11:00 PM
+47Y,Jubilee Hills,Ameerpet,"Panjagutta",15,20,15,20,City Ordinary,5:45 AM,11:00 PM
+49M,Jubilee Hills,Ameerpet,"Panjagutta",18,20,15,20,City Ordinary,6:00 AM,10:30 PM
+65G,Secunderabad,Rajendra Nagar,"Koti,Lakdikapul,Mehdipatnam",25,50,22,28,City Ordinary,5:30 AM,10:30 PM
+66G,Ameerpet,Charminar,"Nampally,Chaderghat",15,45,20,25,City Ordinary,6:00 AM,10:30 PM
+66M,Ameerpet,Charminar,"Nampally,Chaderghat",20,45,20,25,City Ordinary,6:00 AM,10:30 PM
+72,Secunderabad,Shamshabad,"LB Nagar,Kothapet",50,120,45,60,City Ordinary,5:00 AM,9:00 PM
+83J,Miyapur,LB Nagar,"Kukatpally,Ameerpet,Dilsukhnagar",40,90,35,45,City Ordinary,5:30 AM,10:00 PM
+85P,Miyapur,ECIL,"Kukatpally,Secunderabad",50,100,40,50,City Ordinary,5:30 AM,9:30 PM
+90L,Gachibowli,Charminar,"Mehdipatnam,Lakdikapul,Nampally",35,75,30,40,City Ordinary,6:00 AM,10:00 PM
+92A,Gachibowli,Secunderabad,"Madhapur,Jubilee Hills,Ameerpet",25,55,28,35,City Ordinary,6:00 AM,10:30 PM
+95K,Tolichowki,Secunderabad,"Mehdipatnam,Ameerpet",20,50,22,28,City Ordinary,5:30 AM,10:30 PM
+100M,Mehdipatnam,Secunderabad,"Lakdikapul,Ameerpet,Begumpet",15,45,20,25,City Ordinary,5:30 AM,11:00 PM
+102,Mehdipatnam,Secunderabad,"Lakdikapul,Ameerpet",12,40,18,24,City Ordinary,5:00 AM,11:30 PM
+103A,Mehdipatnam,HITEC City,"Banjara Hills,Jubilee Hills,Madhapur",25,50,25,30,City Ordinary,6:00 AM,10:30 PM
+107J,Lingampally,Secunderabad,"Kukatpally,Ameerpet",30,70,30,40,City Ordinary,5:30 AM,10:00 PM
+107V,Lingampally,Secunderabad,"HITEC City,Madhapur,Ameerpet",35,75,32,42,City Ordinary,5:45 AM,10:00 PM
+113K,Uppal,Secunderabad,"Nagole,Tarnaka",25,40,20,25,City Ordinary,5:45 AM,10:30 PM
+113M,Uppal,Secunderabad,"Nagole,Tarnaka",20,40,20,25,City Ordinary,5:30 AM,11:00 PM
+116GA,Uppal,Ameerpet,"Nagole,Tarnaka,Begumpet",30,55,25,32,City Ordinary,5:45 AM,10:30 PM
+118W,Uppal,Miyapur,"Secunderabad,Ameerpet,Kukatpally",45,95,38,48,City Ordinary,5:30 AM,9:30 PM
+156,Dilsukhnagar,Charminar,"Malakpet,Chaderghat",12,30,12,18,City Ordinary,5:00 AM,11:30 PM
+156L,Dilsukhnagar,Charminar,"Malakpet,Chaderghat",15,30,12,18,City Ordinary,5:15 AM,11:30 PM
+183M,Kukatpally,Dilsukhnagar,"Ameerpet,Lakdikapul,Malakpet",35,70,30,38,City Ordinary,5:45 AM,10:00 PM
+185G,Kukatpally,Charminar,"KPHB,Ameerpet,Nampally",30,70,28,35,City Ordinary,6:00 AM,10:00 PM
+189M,Miyapur,Secunderabad,"Kukatpally,SR Nagar",25,55,25,30,City Ordinary,5:45 AM,10:30 PM
+195P,Kukatpally,ECIL,"Ameerpet,Secunderabad,Sainikpuri",50,100,40,50,City Ordinary,5:30 AM,9:30 PM
+203A,Shamshabad,Secunderabad,"LB Nagar,Dilsukhnagar,Koti",60,120,50,65,City Ordinary,5:00 AM,9:00 PM
+211,Patancheruvu,Secunderabad,"Balanagar,Kukatpally",50,95,40,50,City Ordinary,5:00 AM,9:30 PM
+216,Ameerpet,HITEC City,"Panjagutta,Jubilee Hills,Madhapur",10,35,25,30,City Ordinary,5:30 AM,11:00 PM
+216C,Ameerpet,HITEC City,"Panjagutta,Jubilee Hills,Madhapur",12,35,25,30,City Ordinary,5:45 AM,11:00 PM
+217,Ameerpet,HITEC City,"Panjagutta,Jubilee Hills,Madhapur",12,35,25,30,City Ordinary,5:45 AM,11:00 PM
+218,Ameerpet,HITEC City,"Panjagutta,Jubilee Hills,Madhapur",15,35,25,30,City Ordinary,6:00 AM,10:30 PM
+219,Ameerpet,Gachibowli,"Jubilee Hills,Madhapur",18,40,25,30,City Ordinary,6:00 AM,10:30 PM
+220,Miyapur,HITEC City,"Kukatpally,JNTU,Madhapur",25,50,25,32,City Ordinary,6:00 AM,10:00 PM
+224G,Miyapur,Gachibowli,"Kukatpally,Madhapur",30,55,28,35,City Ordinary,6:00 AM,10:00 PM
+230P,Patancheruvu,HITEC City,"Kukatpally,JNTU,Madhapur",45,85,35,45,City Ordinary,5:30 AM,9:30 PM
+250,Kukatpally,LB Nagar,"KPHB,Ameerpet,Dilsukhnagar",30,80,35,40,City Ordinary,6:00 AM,10:00 PM
+251M,Miyapur,LB Nagar,"Kukatpally,Ameerpet,Dilsukhnagar",35,85,35,45,City Ordinary,5:45 AM,10:00 PM
+277K,Ameerpet,Koti,"Lakdikapul,Nampally",15,30,15,20,City Ordinary,5:30 AM,11:00 PM
+279,Ameerpet,LB Nagar,"Malakpet,Dilsukhnagar",20,50,25,30,City Ordinary,5:45 AM,11:00 PM
+280,Ameerpet,LB Nagar,"Malakpet,Dilsukhnagar",25,50,25,30,City Ordinary,6:00 AM,10:30 PM
+288,Gachibowli,Dilsukhnagar,"Madhapur,Banjara Hills,Lakdikapul",25,70,30,35,City Ordinary,6:00 AM,10:30 PM
+288D,Gachibowli,Dilsukhnagar,"Madhapur,Banjara Hills,Lakdikapul",30,70,30,35,City Ordinary,6:15 AM,10:00 PM
+290,Gachibowli,LB Nagar,"Mehdipatnam,Malakpet,Kothapet",35,75,32,40,City Ordinary,6:00 AM,10:00 PM
+290U,Gachibowli,LB Nagar,"Mehdipatnam,Malakpet,Kothapet",40,75,32,40,City Ordinary,6:15 AM,9:45 PM
+300,Lingampally,Uppal,"HITEC City,Ameerpet,Secunderabad",50,100,40,50,City Ordinary,5:30 AM,9:30 PM
+498VL,Miyapur,Dilsukhnagar,"Kukatpally,Ameerpet",40,85,35,45,City Ordinary,5:45 AM,10:00 PM
+505,Ameerpet,Secunderabad,"Begumpet,Paradise Circle",12,25,15,20,City Ordinary,5:30 AM,11:00 PM
+532,KPHB,Ameerpet,"Kukatpally,SR Nagar",15,30,18,22,City Ordinary,5:30 AM,11:00 PM
+539,KPHB,Secunderabad,"Kukatpally,SR Nagar,Begumpet",20,45,22,28,City Ordinary,5:45 AM,10:30 PM
+568,Miyapur,Charminar,"Kukatpally,Ameerpet,Nampally",40,80,35,45,City Ordinary,5:45 AM,10:00 PM
+580,Lingampally,Dilsukhnagar,"Gachibowli,Mehdipatnam,Malakpet",45,90,38,48,City Ordinary,5:45 AM,9:45 PM
+589,Miyapur,LB Nagar,"Kukatpally,Ameerpet,Koti,Dilsukhnagar",45,95,38,48,City Ordinary,5:30 AM,9:30 PM
+5K/200,Charminar,Uppal,"Malakpet,Dilsukhnagar,Kothapet",30,65,28,35,City Ordinary,5:45 AM,10:30 PM
+10F,Ameerpet,Financial District,"Jubilee Hills,Gachibowli",25,45,25,32,Metro Express,6:15 AM,10:00 PM
+10J,Secunderabad,Financial District,"Ameerpet,Jubilee Hills,Gachibowli",30,65,30,40,Metro Express,6:00 AM,10:00 PM
+47D,Dilsukhnagar,Ameerpet,"Malakpet,Nampally",20,40,20,25,City Ordinary,5:45 AM,11:00 PM
+49,Jubilee Hills,Secunderabad,"Begumpet,Paradise",18,35,18,24,City Ordinary,5:30 AM,11:00 PM
+72V,Shamshabad,Secunderabad,"LB Nagar,Koti",55,115,48,60,City Ordinary,5:15 AM,9:15 PM
+83A,Miyapur,Dilsukhnagar,"Kukatpally,Ameerpet,Malakpet",42,88,36,46,City Ordinary,5:45 AM,10:00 PM
+86A,Miyapur,Uppal,"Kukatpally,Secunderabad,Tarnaka",50,95,40,50,City Ordinary,5:30 AM,9:45 PM
+92K,Gachibowli,Kukatpally,"Madhapur,JNTU",25,45,22,28,City Ordinary,6:00 AM,10:30 PM
+104A,Mehdipatnam,Kukatpally,"Ameerpet,SR Nagar",25,50,22,28,City Ordinary,5:45 AM,10:30 PM
+107VS,Lingampally,Ameerpet,"HITEC City,Madhapur",25,45,25,30,City Ordinary,6:00 AM,10:30 PM
+127K,Miyapur,ECIL,"Kukatpally,Ameerpet,Secunderabad",55,105,42,52,City Ordinary,5:30 AM,9:30 PM
+142K,Kukatpally,Uppal,"Ameerpet,Secunderabad,Tarnaka",45,90,35,45,City Ordinary,5:45 AM,10:00 PM
+158,Dilsukhnagar,Nampally,"Malakpet,Chaderghat",15,35,15,20,City Ordinary,5:30 AM,11:00 PM
+171K,Dilsukhnagar,Kukatpally,"Ameerpet,SR Nagar",35,75,30,38,City Ordinary,5:45 AM,10:00 PM
+188,Miyapur,Ameerpet,"Kukatpally,SR Nagar",20,45,20,28,City Ordinary,5:30 AM,11:00 PM
+201M,Shamshabad,Miyapur,"LB Nagar,Ameerpet,Kukatpally",70,135,55,70,City Ordinary,5:00 AM,8:30 PM
+213,Patancheruvu,Miyapur,"Balanagar,Kukatpally",35,70,30,38,City Ordinary,5:30 AM,10:00 PM
+227,Miyapur,Madhapur,"Kukatpally,JNTU",20,40,20,26,City Ordinary,6:00 AM,10:30 PM
+242,Miyapur,Jubilee Hills,"Kukatpally,Ameerpet",30,55,25,32,City Ordinary,6:00 AM,10:30 PM
+245M,Miyapur,Banjara Hills,"Kukatpally,Ameerpet,Panjagutta",35,60,28,35,City Ordinary,6:00 AM,10:00 PM
+272G,Ameerpet,Koti,"Nampally",12,25,12,18,City Ordinary,5:30 AM,11:30 PM
+277D,Dilsukhnagar,Koti,"Malakpet,Chaderghat",15,30,12,18,City Ordinary,5:30 AM,11:30 PM
+281,Ameerpet,Uppal,"Secunderabad,Tarnaka,Nagole",35,60,28,35,City Ordinary,5:45 AM,10:30 PM
+283K,Kukatpally,Uppal,"Ameerpet,Secunderabad,Tarnaka",40,85,32,42,City Ordinary,5:45 AM,10:00 PM
+290UA,Gachibowli,Uppal,"Mehdipatnam,Dilsukhnagar,Nagole",45,90,38,48,City Ordinary,5:45 AM,9:45 PM
+299,Gachibowli,Shamshabad,"Mehdipatnam,LB Nagar",65,125,50,65,City Ordinary,5:30 AM,9:00 PM
+401,Airport,Secunderabad,"Shamshabad,LB Nagar,Dilsukhnagar,Koti",60,120,60,80,Metro Express,4:30 AM,11:30 PM
+466M,Miyapur,Uppal,"Kukatpally,Ameerpet,Secunderabad,Tarnaka",50,100,40,50,City Ordinary,5:30 AM,9:30 PM
+498K,Miyapur,Koti,"Kukatpally,Ameerpet,Lakdikapul",35,70,30,38,City Ordinary,5:45 AM,10:30 PM
+555,Lingampally,Secunderabad,"HITEC City,Gachibowli,Ameerpet",45,85,35,45,City Ordinary,5:30 AM,10:00 PM
+580K,Lingampally,Kukatpally,"Gachibowli,Madhapur,JNTU",30,55,28,35,City Ordinary,6:00 AM,10:00 PM
+593,Miyapur,ECIL,"Kukatpally,Secunderabad,Sainikpuri,Kapra",60,110,45,55,City Ordinary,5:30 AM,9:30 PM
+625,KPHB,HITEC City,"Kukatpally,JNTU,Madhapur",20,40,22,28,City Ordinary,6:00 AM,10:30 PM
+10H/250,Kukatpally,Charminar,"Ameerpet,Lakdikapul,Nampally",35,75,30,38,City Ordinary,5:45 AM,10:00 PM
+10KL,Lingampally,Secunderabad,"HITEC City,Madhapur,Ameerpet",40,80,35,45,Metro Express,5:45 AM,10:00 PM
+20P,Patancheruvu,Secunderabad,"Jeedimetla,Balanagar,Kukatpally",45,90,35,45,City Ordinary,5:15 AM,9:30 PM
+37K,KPHB,Gachibowli,"Kukatpally,JNTU,Madhapur",25,50,25,32,City Ordinary,6:00 AM,10:00 PM
+45N,Nizampet,Ameerpet,"Kukatpally,SR Nagar",25,50,22,28,City Ordinary,5:45 AM,10:30 PM
+72H,Shamshabad,HITEC City,"LB Nagar,Dilsukhnagar,Mehdipatnam,Gachibowli",75,140,60,75,City Ordinary,5:00 AM,8:30 PM
+86J,Miyapur,Nagole,"Kukatpally,Secunderabad,Tarnaka,Uppal",55,105,42,52,City Ordinary,5:30 AM,9:30 PM
+113S,Uppal,Ameerpet,"Tarnaka,Secunderabad,Begumpet",30,55,25,32,City Ordinary,5:45 AM,10:30 PM
+126M,Miyapur,Uppal,"Kukatpally,Ameerpet,Secunderabad",48,95,38,48,City Ordinary,5:30 AM,9:45 PM
+185M,Miyapur,Charminar,"Kukatpally,Ameerpet,Nampally",42,85,35,45,City Ordinary,5:45 AM,10:00 PM
+216M,Miyapur,HITEC City,"Kukatpally,JNTU,Madhapur",28,55,28,35,City Ordinary,6:00 AM,10:00 PM
+219L,Lingampally,Ameerpet,"Gachibowli,Jubilee Hills",30,50,28,35,City Ordinary,6:00 AM,10:00 PM
+233K,KPHB,LB Nagar,"Kukatpally,Ameerpet,Dilsukhnagar",40,85,35,45,City Ordinary,5:45 AM,10:00 PM
+277L,Ameerpet,LB Nagar,"Dilsukhnagar,Kothapet",25,55,25,32,City Ordinary,5:45 AM,10:30 PM
+299D,Gachibowli,Airport,"Mehdipatnam,LB Nagar,Shamshabad",70,130,55,70,Metro Express,5:00 AM,9:00 PM
