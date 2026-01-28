@@ -74,6 +74,12 @@ Instructions:
 - Mention 2-3 best-selling dishes per restaurant
 - Include Google Maps links if available
 - Friendly, local tone with Hyderabad flavor
+-if "🔴 Heavy" in traffic_text:
+    response = (
+        "🚦 Heavy traffic reported in this area.\n\n"
+        + response
+    )
+
 
 Example format:
 **1. Paradise Biryani** ⭐ 4.3/5

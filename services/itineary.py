@@ -1,21 +1,26 @@
-import json,streamlit as st
+import json
 from pathlib import Path
 
-@st.cache_data
 def load_itinerary_data():
-    """Load itinerary data from knowledge base"""
-    kb_path = Path(__file__).resolve().parent.parent / "knowledge_base.json"
-    with open(kb_path, "r", encoding="utf-8") as f:
-        data = json.load(f)
-    return data.get("itineraries", {})
+    try:
+        with open("knowledge_base.json", "r", encoding="utf-8") as f:
+            kb = json.load(f)
+
+        profile = kb.get("hyderabad_comprehensive_profile", {})
+        tourism = profile.get("tourism_and_landmarks", {})
+        itineraries = tourism.get("Itinearies", {})
+
+        return itineraries
+
+    except Exception:
+        return {}
 
 # Replace ITINERARIES = {...} with:
-ITINERARIES = None
+
 
 def generate_itinerary(query: str):
     global ITINERARIES
-    if ITINERARIES is None:
-        ITINERARIES = load_itinerary_data()
+    ITINERARIES = load_itinerary_data()
 
     
     query_lower = query.lower()

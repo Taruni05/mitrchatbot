@@ -38,6 +38,8 @@ from services.ai_news import summarize_news
 from services.shopping import get_mall_info
 from services.movies import get_movie_info
 from services.itineary import generate_itinerary
+from services.traffic import get_traffic_flow, format_traffic
+
 
 
 import base64
@@ -248,9 +250,18 @@ def classify_intent(state: BotState):
         for word in ["weather", "temperature", "rain", "climate", "forecast"]
     ):
         state["intent"] = "weather"
+    elif any(word in message for word in ["mall", "shopping", "shop", "market", "ikea", "inorbit", "gvk", "sale", "discount"]):
+        state["intent"] = "shopping"
+    
+    elif any(word in message for word in ["plan", "itinerary", "tour", "trip", "day out", "visit", "sightseeing","trail"]):
+        state["intent"] = "itinerary"
     elif any(word in message for word in ["news", "headlines", "updates", "breaking"]):
         state["intent"] = "news"
+    elif any(word in message for word in ["traffic", "congestion", "road", "jam", "slow", "block"]):
+        state["intent"] = "traffic"
 
+    elif any(word in message for word in ["movie", "cinema", "theater", "pvr", "inox", "imax", "film", "show"]):
+        state["intent"] = "movies"
     elif any(word in message for word in ["charminar", "golconda", "monument", "fort"]):
         state["intent"] = "monument"
     elif any(word in message for word in ["temple", "birla", "chilkur"]):
@@ -276,15 +287,7 @@ def classify_intent(state: BotState):
         state["intent"] = "transport"
     elif any(word in message for word in ["fuel", "petrol", "diesel", "cng", "gas price"]):
         state["intent"] = "fuel"
-    elif any(word in message for word in ["mall", "shopping", "shop", "market", "ikea", "inorbit", "gvk", "sale", "discount"]):
-        state["intent"] = "shopping"
-    
-    elif any(word in message for word in ["plan", "itinerary", "tour", "trip", "day out", "visit", "sightseeing"]):
-        state["intent"] = "itinerary"
-    
-    elif any(word in message for word in ["movie", "cinema", "theater", "pvr", "inox", "imax", "film", "show"]):
-        state["intent"] = "movies"
-
+       
     else:
         state["intent"] = "general"
 
@@ -562,6 +565,25 @@ def handle_movies(state: BotState):
     state["response"] = get_movie_info(user_query)
     return state
 
+def handle_traffic(state: BotState):
+    user_query = state["user_input"]
+
+    area, lat, lon = resolve_hyderabad_area(user_query)
+
+    if area is None:
+        state["response"] = (
+            "🚦 I provide traffic updates only for Hyderabad areas.\n\n"
+            "Try: Gachibowli, Begumpet, Hitech City, Madhapur."
+        )
+        return state
+
+    traffic_data = get_traffic_flow(lat, lon)
+    traffic_text = format_traffic(traffic_data)
+
+    state["response"] = f"🚦 **Traffic in {area}**\n\n{traffic_text}"
+    return state
+
+
 
 def handle_general(state: BotState):
     state["response"] = """I can help you with:
@@ -607,6 +629,7 @@ def create_workflow():
     workflow.add_node("shopping", handle_shopping)
     workflow.add_node("itinerary", handle_itinerary)
     workflow.add_node("movies", handle_movies)
+    workflow.add_node("traffic", handle_traffic)
     workflow.add_node("general", handle_general)
 
     workflow.set_entry_point("classifier")
@@ -632,6 +655,7 @@ def create_workflow():
             "shopping": "shopping", 
             "itinerary": "itinerary",
             "movies": "movies",
+            "traffic": "traffic",
             "general": "general",
         },
     )
@@ -651,6 +675,7 @@ def create_workflow():
         "shopping",
         "itinerary",
         "movies",
+        "traffic",
         "general",
     ]:
         workflow.add_edge(node, END)
@@ -694,7 +719,10 @@ with st.sidebar:
     
     if st.button("🎬 Movie Theaters"):
         st.session_state.last_query = "movie theaters in hyderabad"
-
+    if st.button("🌦️ Weather Update"):
+        st.session_state.last_query = "weather in hyderabad"
+    if st.button("🚦 Traffic Update"):
+        st.session_state.last_query = "traffic in hyderabad"
     if st.button("🚨 Emergency Contacts"):
         st.session_state.last_query = "emergency numbers"
 
@@ -767,7 +795,7 @@ lat, lon = st.session_state.selected_coords
 weather_data = get_weather_by_coords(lat, lon)
 aqi_data = get_aqi_by_coords(lat, lon)
 
-col1, col2, col3 = st.columns(3)
+col1, col2, col3, col4 = st.columns(4)
 
 with col1:
     st.metric(
@@ -780,6 +808,19 @@ with col2:
 with col3:
     st.metric("🌫️ Air Quality", format_aqi(aqi_data) if aqi_data else "—")
     st.divider()
+    
+traffic_data = get_traffic_flow(lat, lon)
+traffic_text = format_traffic(traffic_data)
+
+with col4:
+    st.metric(
+        "🚦 Traffic",
+        "Heavy" if "Heavy" in traffic_text else
+        "Moderate" if "Moderate" in traffic_text else
+        "Smooth"
+    )
+
+
 
 # Footer
 st.markdown("---")

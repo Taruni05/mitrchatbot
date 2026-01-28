@@ -1,14 +1,18 @@
-import json,streamlit as st 
+import json
 from pathlib import Path
 
-@st.cache_data
 def load_theater_data():
-    """Load theater data from knowledge base"""
-    kb_path = Path(__file__).resolve().parent.parent / "knowledge_base.json"
-    with open(kb_path, "r", encoding="utf-8") as f:
-        data = json.load(f)
-    return data.get("movie_theaters", {})
+    try:
+        with open("knowledge_base.json", "r", encoding="utf-8") as f:
+            kb = json.load(f)
 
+        profile = kb.get("hyderabad_comprehensive_profile", {})
+        movies = profile.get("tourism_and_landmarks", {})
+
+        return movies.get("movie_theaters", {})
+
+    except Exception:
+        return {}
 # Replace THEATERS = {...} with:
 THEATERS = None
 BOOKING_TIPS = None

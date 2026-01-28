@@ -1,26 +1,29 @@
-import json,streamlit as st
-from pathlib import Path
+import json
 
-@st.cache_data
+
 def load_shopping_data():
-    """Load shopping data from knowledge base"""
-    kb_path = Path(__file__).resolve().parent.parent / "knowledge_base.json"
-    with open(kb_path, "r", encoding="utf-8") as f:
-        data = json.load(f)
-    return data.get("shopping_malls", {})
+    with open("knowledge_base.json", "r", encoding="utf-8") as f:
+        kb = json.load(f)
 
-# Replace MALLS_DATA = {...} with:
-MALLS_DATA = None  # Will be loaded dynamically
+    profile = kb.get("hyderabad_comprehensive_profile", {})
+    tourism = profile.get("tourism_and_landmarks", {})
+    shopping = tourism.get("shopping_hubs", {})
+
+    return shopping
+
+
+ # Will be loaded dynamically
 
 def get_mall_info(query: str = None):
     global MALLS_DATA
-    if MALLS_DATA is None:
-        MALLS_DATA = load_shopping_data()
-    
+    MALLS_DATA = load_shopping_data() or {}
     query_lower = query.lower() if query else ""
     
     # Check for specific mall
-    if "inorbit" in query_lower:
+    if "premium_malls" not in MALLS_DATA:
+        return "🛍️ Shopping mall data is currently unavailable."
+
+    elif "inorbit" in query_lower:
         return format_single_mall(MALLS_DATA["premium_malls"][0])
     elif "gvk" in query_lower:
         return format_single_mall(MALLS_DATA["premium_malls"][1])
