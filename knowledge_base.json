@@ -434,53 +434,599 @@
         }
       ],
       "shopping_hubs": {
+        "premium_malls": [
+          {
+            "name": "Inorbit Mall",
+            "location": "Madhapur, HITEC City",
+            "timings": "10:30 AM - 10:00 PM",
+            "attractions": [
+              "International brands",
+              "Food court",
+              "PVR Cinemas",
+              "Lake view"
+            ],
+            "parking": "Multi-level parking available",
+            "popular_stores": [
+              "Zara",
+              "H&M",
+              "Lifestyle",
+              "Shoppers Stop"
+            ],
+            "food_options": [
+              "Food court (20+ outlets)",
+              "Restaurants",
+              "Cafes"
+            ],
+            "google_maps": "https://goo.gl/maps/inorbit-madhapur",
+            "avg_spending": "₹2000-5000",
+            "best_for": "Premium shopping, family outings",
+            "crowd_level": {
+              "weekday": "Low-Medium",
+              "weekend": "High",
+              "best_time": "11 AM - 2 PM on weekdays"
+            }
+          },
+          {
+            "name": "GVK One Mall",
+            "location": "Banjara Hills, Road No. 1",
+            "timings": "10:00 AM - 10:00 PM",
+            "attractions": [
+              "Luxury brands",
+              "IMAX theatre",
+              "Fine dining"
+            ],
+            "parking": "Valet + self parking",
+            "popular_stores": [
+              "Louis Vuitton",
+              "Burberry",
+              "Armani",
+              "Sephora"
+            ],
+            "food_options": [
+              "Gourmet restaurants",
+              "Luxury cafes"
+            ],
+            "google_maps": "https://goo.gl/maps/gvk-one",
+            "avg_spending": "₹5000-15000",
+            "best_for": "Luxury shopping, premium experiences",
+            "crowd_level": {
+              "weekday": "Low",
+              "weekend": "Medium",
+              "best_time": "1 PM - 4 PM"
+            }
+          },
+          {
+            "name": "Forum Sujana Mall (Nexus)",
+            "location": "Kukatpally",
+            "timings": "10:00 AM - 10:00 PM",
+            "attractions": [
+              "Multiplex",
+              "Bowling alley",
+              "Gaming zone"
+            ],
+            "parking": "Spacious parking",
+            "popular_stores": [
+              "Pantaloons",
+              "Reliance Trends",
+              "Max",
+              "Woodland"
+            ],
+            "food_options": [
+              "Food court",
+              "KFC",
+              "Pizza Hut",
+              "Cafe Coffee Day"
+            ],
+            "google_maps": "https://goo.gl/maps/forum-kukatpally",
+            "avg_spending": "₹1500-4000",
+            "best_for": "Family shopping, entertainment",
+            "crowd_level": {
+              "weekday": "Medium",
+              "weekend": "Very High",
+              "best_time": "2 PM - 5 PM on weekdays"
+            }
+          },
+          {
+            "name": "IKEA Hyderabad",
+            "location": "HITEC City",
+            "timings": "10:00 AM - 11:00 PM",
+            "attractions": [
+              "Swedish furniture",
+              "Home decor",
+              "Swedish restaurant"
+            ],
+            "parking": "Massive parking lot",
+            "popular_stores": [
+              "IKEA (only store)"
+            ],
+            "food_options": [
+              "IKEA Restaurant",
+              "Swedish Food Market",
+              "Bistro"
+            ],
+            "google_maps": "https://goo.gl/maps/ikea-hitec",
+            "avg_spending": "₹3000-20000",
+            "best_for": "Home furnishing, family dining",
+            "crowd_level": {
+              "weekday": "Medium",
+              "weekend": "Extremely High",
+              "best_time": "10 AM - 12 PM on weekdays"
+            }
+          },
+          {
+            "name": "AMB Cinemas Mall",
+            "location": "Gachibowli",
+            "timings": "10:00 AM - 11:00 PM",
+            "attractions": [
+              "Premium multiplex",
+              "Gaming zone",
+              "Rooftop dining"
+            ],
+            "parking": "Multi-level parking",
+            "popular_stores": [
+              "Lifestyle",
+              "Max",
+              "Brand Factory"
+            ],
+            "food_options": [
+              "Rooftop restaurants",
+              "Food court"
+            ],
+            "google_maps": "https://goo.gl/maps/amb-gachibowli",
+            "avg_spending": "₹2000-6000",
+            "best_for": "Movies, shopping, dining",
+            "crowd_level": {
+              "weekday": "Low-Medium",
+              "weekend": "High",
+              "best_time": "11 AM - 3 PM"
+            }
+          }
+        ],
         "traditional_markets": [
           {
             "name": "Laad Bazaar",
-            "location": "Near Charminar",
-            "specialty": "Lacquer Bangles, Traditional Jewelry, Pearls",
-            "best_time_to_visit": "Evening"
+            "location": "Near Charminar, Old City",
+            "timings": "10:00 AM - 9:00 PM",
+            "specialty": "Bangles, traditional jewelry, pearls",
+            "attractions": [
+              "Historic market",
+              "Lac bangles",
+              "Bridal shopping"
+            ],
+            "avg_spending": "₹500-5000",
+            "best_for": "Traditional shopping, souvenirs",
+            "tips": "Visit in evening for best experience. Bargaining is expected!",
+            "crowd_level": {
+              "weekday": "Medium",
+              "weekend": "Very High",
+              "festivals": "Extremely crowded (Ramzan, Diwali)"
+            }
           },
           {
-            "name": "Abids & Koti",
+            "name": "Begum Bazaar",
+            "location": "Sultan Bazaar area",
+            "timings": "9:00 AM - 9:00 PM",
+            "specialty": "Wholesale market - groceries, dry fruits, spices",
+            "attractions": [
+              "Wholesale rates",
+              "Authentic spices"
+            ],
+            "avg_spending": "₹1000-10000",
+            "best_for": "Bulk shopping, spices",
+            "tips": "Go early morning for fresh stock. Cash preferred."
+          },
+          {
+            "name": "Abids",
             "location": "Central Hyderabad",
-            "specialty": "Books, Clothing, Electronics, Street Shopping",
-            "note": "Famous for Sunday Book Market in Abids"
+            "timings": "10:00 AM - 9:00 PM",
+            "specialty": "Books, electronics, street shopping",
+            "attractions": [
+              "Sunday book market",
+              "Affordable clothing"
+            ],
+            "avg_spending": "₹500-3000",
+            "best_for": "Budget shopping, books",
+            "tips": "Sunday mornings for book market"
+          },
+          {
+            "name": "Koti",
+            "location": "Near Abids",
+            "timings": "10:00 AM - 9:00 PM",
+            "specialty": "Women's shopping - sarees, fabrics",
+            "attractions": [
+              "Affordable fashion",
+              "Traditional wear"
+            ],
+            "avg_spending": "₹1000-8000",
+            "best_for": "Ethnic wear, fabrics"
           }
         ],
-        "modern_malls": [
+        "ongoing_sales": [
           {
-            "name": "Inorbit Mall",
-            "location": "Madhapur",
-            "features": [
-              "International Brands",
-              "Food Court",
-              "View of Durgam Cheruvu"
-            ],
-            "type": "Premium Retail"
+            "event": "End of Season Sale",
+            "period": "January & July",
+            "discount": "Up to 70% off",
+            "where": "All major malls",
+            "best_deals": "Clothing, footwear"
           },
           {
-            "name": "IKEA",
-            "location": "HITEC City",
-            "features": [
-              "Home Furnishing",
-              "Swedish Restaurant"
-            ],
-            "type": "Large Format Retail"
+            "event": "Diwali Sale",
+            "period": "October-November",
+            "discount": "30-60% off + exchange offers",
+            "where": "Electronics stores, fashion outlets",
+            "best_deals": "Electronics, home appliances"
           },
           {
-            "name": "Nexus Hyderabad (formerly Forum Sujana)",
-            "location": "Kukatpally",
-            "features": [
-              "Cinema",
-              "Global Brands",
-              "Entertainment Zone"
-            ],
-            "type": "Lifestyle Mall"
+            "event": "Weekend Flash Sales",
+            "period": "Every weekend",
+            "discount": "Varies",
+            "where": "Online + offline combo deals",
+            "best_deals": "Check mall apps"
           }
         ]
+      },
+    "Itinearies": {
+        "one_day_tourist": {
+          "name": "One-Day Hyderabad Heritage Tour",
+          "best_for": "First-time visitors, history lovers",
+          "duration": "8-10 hours",
+          "budget": "₹1500-3000 per person",
+          "schedule": [
+            {
+              "time": "8:00 AM",
+              "activity": "Breakfast at Cafe Niloufer",
+              "location": "Red Hills (multiple locations)",
+              "duration": "45 mins",
+              "cost": "₹200-300",
+              "tip": "Try Irani chai + Osmania biscuits",
+              "why": "Start with authentic Hyderabadi breakfast"
+            },
+            {
+              "time": "9:00 AM",
+              "activity": "Visit Charminar",
+              "location": "Old City",
+              "duration": "1.5 hours",
+              "cost": "₹50 (entry)",
+              "tip": "Climb to top for city view. Visit early to avoid crowds",
+              "why": "Iconic monument, must-see"
+            },
+            {
+              "time": "10:30 AM",
+              "activity": "Explore Laad Bazaar",
+              "location": "Next to Charminar",
+              "duration": "1 hour",
+              "cost": "₹500-2000 (shopping)",
+              "tip": "Bargain! Start at 50% of asking price",
+              "why": "Traditional bangles, pearls, souvenirs"
+            },
+            {
+              "time": "12:00 PM",
+              "activity": "Lunch at Paradise/Shadab",
+              "location": "Old City/Banjara Hills",
+              "duration": "1 hour",
+              "cost": "₹400-600",
+              "tip": "Must try: Hyderabadi Biryani",
+              "why": "Authentic biryani experience"
+            },
+            {
+              "time": "2:00 PM",
+              "activity": "Golconda Fort",
+              "location": "Golconda",
+              "duration": "2.5 hours",
+              "cost": "₹200 (entry + guide)",
+              "tip": "Test the acoustic system. Wear comfortable shoes",
+              "why": "Historic fort, great architecture"
+            },
+            {
+              "time": "5:00 PM",
+              "activity": "Evening at Hussain Sagar",
+              "location": "Necklace Road",
+              "duration": "1.5 hours",
+              "cost": "₹100-300 (boating optional)",
+              "tip": "Watch sunset. Boating available",
+              "why": "Relax by the lake, Buddha statue"
+            },
+            {
+              "time": "7:00 PM",
+              "activity": "Dinner at Ohri's/Absolute Barbecue",
+              "location": "Banjara Hills/multiple locations",
+              "duration": "1.5 hours",
+              "cost": "₹800-1200",
+              "tip": "Book in advance on weekends",
+              "why": "Buffet dinner with variety"
+            }
+          ],
+          "transportation": "Uber/Ola (₹500-800 total)",
+          "total_time": "9-10 hours",
+          "total_cost_estimate": "₹2800-5500"
+        },
+        "food_trail": {
+          "name": "Hyderabad Food Trail",
+          "best_for": "Foodies, culinary explorers",
+          "duration": "5-6 hours",
+          "budget": "₹800-1500",
+          "schedule": [
+            {
+              "time": "9:00 AM",
+              "activity": "Breakfast Idli/Dosa",
+              "location": "Ram Ki Bandi (Gokul Chat)",
+              "duration": "30 mins",
+              "cost": "₹100-150",
+              "tip": "Try different chutneys",
+              "must_try": "Idli, Sambar, Chutney"
+            },
+            {
+              "time": "11:00 AM",
+              "activity": "Irani Chai Break",
+              "location": "Nimrah Cafe (Charminar)",
+              "duration": "30 mins",
+              "cost": "₹50-100",
+              "tip": "Sit upstairs for Charminar view",
+              "must_try": "Irani chai, Osmania biscuit"
+            },
+            {
+              "time": "1:00 PM",
+              "activity": "Legendary Biryani Lunch",
+              "location": "Paradise/Bawarchi/Shah Ghouse",
+              "duration": "1 hour",
+              "cost": "₹350-500",
+              "tip": "Order half if you're not very hungry",
+              "must_try": "Hyderabadi Biryani (mutton)"
+            },
+            {
+              "time": "4:00 PM",
+              "activity": "Street Food Hopping",
+              "location": "Tank Bund/Gokul Chat",
+              "duration": "1 hour",
+              "cost": "₹150-250",
+              "tip": "Try multiple items in small portions",
+              "must_try": "Pani puri, Dahi puri, Bhel"
+            },
+            {
+              "time": "6:00 PM",
+              "activity": "Evening Snacks",
+              "location": "Karachi Bakery",
+              "duration": "30 mins",
+              "cost": "₹200-300",
+              "tip": "Buy fruit biscuits to take home",
+              "must_try": "Fruit biscuits, Dilkhush"
+            },
+            {
+              "time": "8:00 PM",
+              "activity": "Dessert Finale",
+              "location": "Hameedi Confectioners (Old City)",
+              "duration": "30 mins",
+              "cost": "₹150-200",
+              "tip": "Try Double ka Meetha",
+              "must_try": "Qubani ka Meetha, Double ka Meetha"
+            }
+          ],
+          "transportation": "Mix of walking + auto (₹200-300)",
+          "total_cost_estimate": "₹1200-1800",
+          "calories_warning": "5000+ calories - wear stretchy pants! 😄"
+        },
+        "it_hub_weekend": {
+          "name": "IT Hub Weekend Fun",
+          "best_for": "Working professionals, young crowd",
+          "duration": "Full day",
+          "budget": "₹2000-4000",
+          "schedule": [
+            {
+              "time": "10:00 AM",
+              "activity": "Brunch at Roastery/Autumn Leaf",
+              "location": "Jubilee Hills/Banjara Hills",
+              "duration": "1.5 hours",
+              "cost": "₹500-800",
+              "tip": "Instagram-worthy ambience",
+              "why": "Chill start to the day"
+            },
+            {
+              "time": "12:00 PM",
+              "activity": "Shopping at IKEA/Inorbit",
+              "location": "HITEC City",
+              "duration": "2-3 hours",
+              "cost": "₹1000-3000 (optional)",
+              "tip": "IKEA has ₹99 unlimited coffee",
+              "why": "Window shopping + Swedish meatballs"
+            },
+            {
+              "time": "3:00 PM",
+              "activity": "Movie at AMB/Inorbit",
+              "location": "Gachibowli",
+              "duration": "3 hours",
+              "cost": "₹300-600",
+              "tip": "Book recliner seats",
+              "why": "Catch latest release"
+            },
+            {
+              "time": "7:00 PM",
+              "activity": "Dinner + Drinks",
+              "location": "Olive Bistro/Hard Rock Cafe",
+              "duration": "2 hours",
+              "cost": "₹1500-2500",
+              "tip": "Make reservations",
+              "why": "Good food, great vibes"
+            }
+          ],
+          "transportation": "Own vehicle recommended (₹300 Uber)",
+          "total_cost_estimate": "₹3600-6900"
+        },
+        "family_fun": {
+          "name": "Family Fun Day",
+          "best_for": "Families with kids",
+          "duration": "Full day",
+          "budget": "₹3000-5000 (family of 4)",
+          "schedule": [
+            {
+              "time": "9:00 AM",
+              "activity": "Nehru Zoological Park",
+              "location": "Bahadurpura",
+              "duration": "3-4 hours",
+              "cost": "₹200 (entry for 4) + ₹100 (camera)",
+              "tip": "Carry water, snacks. Go early to avoid heat",
+              "why": "Kids love animals, safari available"
+            },
+            {
+              "time": "1:00 PM",
+              "activity": "Lunch at Chutneys/Simple South",
+              "location": "Multiple locations",
+              "duration": "1 hour",
+              "cost": "₹800-1200",
+              "tip": "South Indian buffet - unlimited",
+              "why": "Variety, kid-friendly"
+            },
+            {
+              "time": "3:00 PM",
+              "activity": "Ramoji Film City",
+              "location": "40 km from city",
+              "duration": "4-5 hours",
+              "cost": "₹1500-2000 (entry for 4)",
+              "tip": "Full day needed - or skip zoo, do Ramoji only",
+              "why": "Theme park, film sets, fun rides"
+            },
+            {
+              "time": "8:00 PM",
+              "activity": "Dinner at home/Food court",
+              "location": "Nearby mall",
+              "duration": "1 hour",
+              "cost": "₹600-1000",
+              "tip": "Kids will be tired - keep it simple",
+              "why": "End peacefully"
+            }
+          ],
+          "transportation": "Car rental recommended (₹1500-2000)",
+          "total_cost_estimate": "₹4600-7400"
+        }
       }
     },
+    "Theaters_and_Cinemas": {
+    "pvr": [
+        {
+            "name": "PVR Inorbit",
+            "location": "Madhapur, HITEC City",
+            "screens": 7,
+            "formats": ["4DX", "IMAX", "Standard"],
+            "booking_link": "https://www.pvrcinemas.com",
+            "amenities": ["Food court", "Parking", "Online booking"],
+            "avg_ticket": "₹200-500",
+            "phone": "040-6666-7777"
+        },
+        {
+            "name": "PVR Irrum Manzil",
+            "location": "Somajiguda",
+            "screens": 6,
+            "formats": ["Gold Class", "Standard"],
+            "booking_link": "https://www.pvrcinemas.com",
+            "avg_ticket": "₹180-450",
+            "phone": "040-6666-8888"
+        },
+        {
+            "name": "PVR Next Galleria",
+            "location": "Punjagutta",
+            "screens": 7,
+            "formats": ["Premium", "Standard"],
+            "booking_link": "https://www.pvrcinemas.com",
+            "avg_ticket": "₹200-400",
+            "phone": "040-6666-9999"
+        }
+    ],
+    "inox": [
+        {
+            "name": "INOX GVK One",
+            "location": "Banjara Hills",
+            "screens": 6,
+            "formats": ["IMAX", "Insignia (luxury)", "Standard"],
+            "booking_link": "https://www.inoxmovies.com",
+            "amenities": ["Premium lounge", "Valet parking", "Fine dining"],
+            "avg_ticket": "₹250-800",
+            "phone": "040-6677-8899"
+        },
+        {
+            "name": "INOX Maheshwari Parmeshwari",
+            "location": "Kachiguda",
+            "screens": 5,
+            "formats": ["Standard"],
+            "booking_link": "https://www.inoxmovies.com",
+            "avg_ticket": "₹150-300",
+            "phone": "040-6677-9900"
+        }
+    ],
+    "special": [
+        {
+            "name": "AMB Cinemas",
+            "location": "Gachibowli",
+            "screens": 7,
+            "formats": ["Dolby Atmos", "4K laser projection"],
+            "booking_link": "https://www.ambcinemas.com",
+            "special_feature": "Largest multiplex in Telangana",
+            "amenities": ["Rooftop restaurant", "Gaming zone", "Ample parking"],
+            "avg_ticket": "₹200-450",
+            "phone": "040-4855-5555"
+        },
+        {
+            "name": "Prasads IMAX",
+            "location": "Necklace Road",
+            "screens": 5,
+            "formats": ["IMAX (one of world's largest screens)"],
+            "booking_link": "https://www.prasadsimax.com",
+            "special_feature": "Iconic IMAX experience",
+            "amenities": ["Food court", "Shopping", "Lake view"],
+            "avg_ticket": "₹300-600",
+            "phone": "040-2340-0000"
+        },
+        {
+            "name": "Miraj Cinemas",
+            "location": "Multiple locations (Kukatpally, Chikkadpally)",
+            "screens": "4-6 per location",
+            "formats": ["Standard", "Premium"],
+            "booking_link": "https://www.mirajcinemas.com",
+            "avg_ticket": "₹150-350",
+            "phone": "Call respective location"
+        }
+    ],
+    "budget": [
+        {
+            "name": "Sudarshan 35mm",
+            "location": "RTC Cross Roads",
+            "screens": 2,
+            "formats": ["Classic single screens"],
+            "special_feature": "Classic cinema experience, budget-friendly",
+            "avg_ticket": "₹80-150",
+            "phone": "040-2761-0032"
+        },
+        {
+            "name": "Sandhya 70mm",
+            "location": "RTC Cross Roads",
+            "screens": 1,
+            "formats": ["Large single screen"],
+            "special_feature": "Legendary single screen, massive crowd energy",
+            "avg_ticket": "₹70-120",
+            "phone": "040-2761-1122"
+        }
+    ]
+},
+"BOOKING_TIPS": {
+    "online": [
+        "BookMyShow - Most popular, wide coverage",
+        "PayTM - Cashback offers",
+        "Theater websites - Direct booking, no fees",
+        "Google Pay/PhonePe - Occasional cashback"
+    ],
+    "best_deals": [
+        "Weekday matinees (before 6 PM) - Cheapest tickets",
+        "Credit card offers - Check HDFC, ICICI, SBI offers",
+        "Tuesday/Wednesday - Special discounts at some theaters",
+        "Membership programs - PVR Privilege, INOX Rewards"
+    ],
+    "pro_tips": [
+        "Book IMAX/4DX 1-2 days in advance",
+        "Weekend shows sell out fast - book early",
+        "Avoid first day first show unless you're a die-hard fan",
+        "Mid-row center seats (E, F, G) are best",
+        "Carry your own water/snacks to save money"
+    ]
+},
+
     "culture_and_lifestyle": {
       "cuisine": {
         "staples": [

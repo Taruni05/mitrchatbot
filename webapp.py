@@ -35,6 +35,10 @@ from services.mmts_trains import (
 from services.news import get_hyderabad_news
 from services.ai_news import summarize_news
 
+from services.shopping import get_mall_info
+from services.movies import get_movie_info
+from services.itineary import generate_itinerary
+
 
 import base64
 from datetime import datetime
@@ -272,6 +276,14 @@ def classify_intent(state: BotState):
         state["intent"] = "transport"
     elif any(word in message for word in ["fuel", "petrol", "diesel", "cng", "gas price"]):
         state["intent"] = "fuel"
+    elif any(word in message for word in ["mall", "shopping", "shop", "market", "ikea", "inorbit", "gvk", "sale", "discount"]):
+        state["intent"] = "shopping"
+    
+    elif any(word in message for word in ["plan", "itinerary", "tour", "trip", "day out", "visit", "sightseeing"]):
+        state["intent"] = "itinerary"
+    
+    elif any(word in message for word in ["movie", "cinema", "theater", "pvr", "inox", "imax", "film", "show"]):
+        state["intent"] = "movies"
 
     else:
         state["intent"] = "general"
@@ -291,6 +303,9 @@ I can help you with:
 🚌 **Bus Routes** - RTC bus timings & routes  
 ⛽ **Fuel Prices** - Daily petrol, diesel, CNG rates
 📰 **City News** - Hyderabad headlines & alerts
+🛍️ **Shopping** - Malls, markets, sales          
+🗓️ **Itineraries** - Personalized day plans       
+🎬 **Movies** - Theaters, showtimes, bookings
 🌦️ **Weather** - Live updates & air quality
 
 🚨 **Emergency** - Important contacts
@@ -527,6 +542,26 @@ def handle_news(state: BotState):
     state["response"] = "📰 **Hyderabad Today**\n\n" + summary
     return state
 
+def handle_shopping(state: BotState):
+    """Handle shopping and mall queries"""
+    user_query = state["user_input"]
+    state["response"] = get_mall_info(user_query)
+    return state
+
+
+def handle_itinerary(state: BotState):
+    """Handle itinerary planning queries"""
+    user_query = state["user_input"]
+    state["response"] = generate_itinerary(user_query)
+    return state
+
+
+def handle_movies(state: BotState):
+    """Handle movie and theater queries"""
+    user_query = state["user_input"]
+    state["response"] = get_movie_info(user_query)
+    return state
+
 
 def handle_general(state: BotState):
     state["response"] = """I can help you with:
@@ -540,6 +575,9 @@ def handle_general(state: BotState):
 ⛽ **Fuel Prices** - Daily petrol, diesel, CNG rates
 🌦️ **Weather** - Live updates & air quality
 📰 **City News** - Hyderabad headlines & alerts
+🛍️ **Shopping** - Malls, markets, sales          
+🗓️ **Itineraries** - Personalized day plans       
+🎬 **Movies** - Theaters, showtimes, bookings
 🚨 **Emergency** - Important contacts
 
 Please ask me about any of these!"""
@@ -566,6 +604,9 @@ def create_workflow():
     workflow.add_node("bus", handle_bus)
     workflow.add_node("mmts", handle_mmts)
     workflow.add_node("news", handle_news)
+    workflow.add_node("shopping", handle_shopping)
+    workflow.add_node("itinerary", handle_itinerary)
+    workflow.add_node("movies", handle_movies)
     workflow.add_node("general", handle_general)
 
     workflow.set_entry_point("classifier")
@@ -588,6 +629,9 @@ def create_workflow():
             "bus": "bus",
             "mmts": "mmts",
             "news": "news",
+            "shopping": "shopping", 
+            "itinerary": "itinerary",
+            "movies": "movies",
             "general": "general",
         },
     )
@@ -604,6 +648,9 @@ def create_workflow():
         "bus",
         "mmts",
         "news",
+        "shopping",
+        "itinerary",
+        "movies",
         "general",
     ]:
         workflow.add_edge(node, END)
@@ -639,6 +686,14 @@ with st.sidebar:
         st.session_state.last_query = "fuel prices today"
     if st.button("📰 City News"):
         st.session_state.last_query = "hyderabad news"
+    if st.button("🛍️ Shopping Malls"):
+        st.session_state.last_query = "shopping malls in hyderabad"
+    
+    if st.button("🗓️ Plan My Day"):
+        st.session_state.last_query = "plan my one day hyderabad tour"
+    
+    if st.button("🎬 Movie Theaters"):
+        st.session_state.last_query = "movie theaters in hyderabad"
 
     if st.button("🚨 Emergency Contacts"):
         st.session_state.last_query = "emergency numbers"
