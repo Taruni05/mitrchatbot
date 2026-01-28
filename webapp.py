@@ -32,8 +32,15 @@ from services.mmts_trains import (
     format_routes_to_station
 )
 
+from services.news import get_hyderabad_news
+from services.ai_news import summarize_news
+
+
 import base64
 from datetime import datetime
+
+import os
+os.environ["GEMINI_API_KEY"] = st.secrets["GEMINI_API_KEY"]
 
 
 # ========================================
@@ -237,6 +244,9 @@ def classify_intent(state: BotState):
         for word in ["weather", "temperature", "rain", "climate", "forecast"]
     ):
         state["intent"] = "weather"
+    elif any(word in message for word in ["news", "headlines", "updates", "breaking"]):
+        state["intent"] = "news"
+
     elif any(word in message for word in ["charminar", "golconda", "monument", "fort"]):
         state["intent"] = "monument"
     elif any(word in message for word in ["temple", "birla", "chilkur"]):
@@ -280,7 +290,9 @@ I can help you with:
 🚆 **MMTS Trains** - Suburban rail schedules
 🚌 **Bus Routes** - RTC bus timings & routes  
 ⛽ **Fuel Prices** - Daily petrol, diesel, CNG rates
+📰 **City News** - Hyderabad headlines & alerts
 🌦️ **Weather** - Live updates & air quality
+
 🚨 **Emergency** - Important contacts
 
 What would you like to know?"""
@@ -504,6 +516,18 @@ def handle_mmts(state: BotState):
     
     return state
 
+def handle_news(state: BotState):
+    articles = get_hyderabad_news()
+
+    if not articles:
+        state["response"] = "📰 Sorry, I couldn't fetch Hyderabad news right now."
+        return state
+
+    summary = summarize_news(articles)
+    state["response"] = "📰 **Hyderabad Today**\n\n" + summary
+    return state
+
+
 def handle_general(state: BotState):
     state["response"] = """I can help you with:
 
@@ -515,6 +539,7 @@ def handle_general(state: BotState):
 🚌 **Bus Routes** - RTC bus timings & routes  
 ⛽ **Fuel Prices** - Daily petrol, diesel, CNG rates
 🌦️ **Weather** - Live updates & air quality
+📰 **City News** - Hyderabad headlines & alerts
 🚨 **Emergency** - Important contacts
 
 Please ask me about any of these!"""
@@ -540,6 +565,7 @@ def create_workflow():
     workflow.add_node("fuel", handle_fuel)
     workflow.add_node("bus", handle_bus)
     workflow.add_node("mmts", handle_mmts)
+    workflow.add_node("news", handle_news)
     workflow.add_node("general", handle_general)
 
     workflow.set_entry_point("classifier")
@@ -561,6 +587,7 @@ def create_workflow():
             "fuel": "fuel",
             "bus": "bus",
             "mmts": "mmts",
+            "news": "news",
             "general": "general",
         },
     )
@@ -576,6 +603,7 @@ def create_workflow():
         "fuel",
         "bus",
         "mmts",
+        "news",
         "general",
     ]:
         workflow.add_edge(node, END)
@@ -609,6 +637,8 @@ with st.sidebar:
         st.session_state.last_query = "mmts train info"
     if st.button("⛽ Fuel Prices"):
         st.session_state.last_query = "fuel prices today"
+    if st.button("📰 City News"):
+        st.session_state.last_query = "hyderabad news"
 
     if st.button("🚨 Emergency Contacts"):
         st.session_state.last_query = "emergency numbers"

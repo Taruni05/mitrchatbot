@@ -67,7 +67,7 @@ def normalize_station(station: str) -> str:
 def extract_stations_from_query(query: str) -> Tuple[Optional[str], Optional[str]]:
     """
     Extract from/to stations from user query.
-
+    
     Examples:
         "Train from Falaknuma to Lingampally" → ("Falaknuma", "Lingampally")
         "MMTS from Secunderabad to HITEC City" → ("Secunderabad", "Hi-Tech City")
@@ -75,7 +75,7 @@ def extract_stations_from_query(query: str) -> Tuple[Optional[str], Optional[str
         "Train to Lingampally" → (None, "Lingampally")
     """
     query_lower = query.lower()
-
+    
     # Pattern 1: "from X to Y"
     if "from" in query_lower and "to" in query_lower:
         parts = query_lower.split("from")[1].split("to")
@@ -83,7 +83,7 @@ def extract_stations_from_query(query: str) -> Tuple[Optional[str], Optional[str
             from_station = normalize_station(parts[0].strip())
             to_station = normalize_station(parts[1].strip())
             return from_station, to_station
-
+    
     # Pattern 2: "reach X" or "get to X" or "go to X"
     if any(phrase in query_lower for phrase in ["reach", "get to", "go to"]):
         # Extract station name after "reach"/"get to"/"go to"
@@ -93,29 +93,21 @@ def extract_stations_from_query(query: str) -> Tuple[Optional[str], Optional[str
                 parts = query_lower.split(phrase)
                 if len(parts) >= 2:
                     station_part = parts[1].strip()
-
+                    
                     # Remove common words that might follow
-                    for word in [
-                        "by train",
-                        "by mmts",
-                        "using train",
-                        "using mmts",
-                        "?",
-                        ".",
-                        "from",
-                    ]:
+                    for word in ["by train", "by mmts", "using train", "using mmts", "?", ".", "from"]:
                         station_part = station_part.replace(word, "").strip()
-
+                    
                     # Take first significant word/phrase as station
                     # Split by common separators
                     for separator in [" by ", " using ", " via ", "?"]:
                         if separator in station_part:
                             station_part = station_part.split(separator)[0].strip()
-
+                    
                     if station_part:
                         to_station = normalize_station(station_part)
                         return None, to_station
-
+    
     # Pattern 3: "X to Y" (without "from")
     if "to" in query_lower and "from" not in query_lower:
         parts = query_lower.split("to")
@@ -123,15 +115,15 @@ def extract_stations_from_query(query: str) -> Tuple[Optional[str], Optional[str
             # Try to extract station names
             potential_from = parts[0].strip()
             potential_to = parts[1].strip()
-
+            
             # Remove common words from potential_from
             for word in ["train", "mmts", "reach", "go", "get", "how", "can", "i"]:
                 potential_from = potential_from.replace(word, "").strip()
-
+            
             # Remove common words from potential_to
             for word in ["by train", "by mmts", "using train", "?", "."]:
                 potential_to = potential_to.replace(word, "").strip()
-
+            
             # If we have content in potential_from, it might be a from station
             if potential_from and len(potential_from) > 2:
                 from_station = normalize_station(potential_from)
@@ -141,7 +133,7 @@ def extract_stations_from_query(query: str) -> Tuple[Optional[str], Optional[str
                 # Only destination specified
                 to_station = normalize_station(potential_to)
                 return None, to_station
-
+    
     # Pattern 4: "train to X" or "mmts to X"
     if any(phrase in query_lower for phrase in ["train to", "mmts to"]):
         for phrase in ["train to", "mmts to"]:
@@ -149,17 +141,16 @@ def extract_stations_from_query(query: str) -> Tuple[Optional[str], Optional[str
                 parts = query_lower.split(phrase)
                 if len(parts) >= 2:
                     station_part = parts[1].strip()
-
+                    
                     # Clean up
                     for word in ["?", ".", "from", "by"]:
                         station_part = station_part.replace(word, "").strip()
-
+                    
                     if station_part:
                         to_station = normalize_station(station_part)
                         return None, to_station
-
+    
     return None, None
-
 
 def find_mmts_route(from_station: str, to_station: str) -> Optional[Dict]:
     """
@@ -466,104 +457,78 @@ def get_general_mmts_info() -> str:
 
     return response
 
-
 def find_routes_to_station(station: str) -> List[Dict]:
     """
     Find all MMTS routes that serve a particular station.
-
+    
     Returns:
         List of route info with station details
     """
     mmts_data = load_mmts_data()
-
+    
     if not mmts_data:
         return []
-
+    
     routes = mmts_data.get("routes", [])
     serving_routes = []
-
+    
     for route in routes:
         stations = route.get("stations", [])
-
+        
         if station in stations:
             station_idx = stations.index(station)
-
-            serving_routes.append(
-                {
-                    "line": route.get("route_name"),
-                    "route_from": route.get("route", {}).get("from"),
-                    "route_to": route.get("route", {}).get("to"),
-                    "station": station,
-                    "station_position": f"{station_idx + 1}/{len(stations)}",
-                    "stations": stations,
-                    "previous_stations": stations[:station_idx]
-                    if station_idx > 0
-                    else [],
-                    "next_stations": stations[station_idx + 1 :]
-                    if station_idx < len(stations) - 1
-                    else [],
-                }
-            )
-
+            
+            serving_routes.append({
+                'line': route.get('route_name'),
+                'route_from': route.get('route', {}).get('from'),
+                'route_to': route.get('route', {}).get('to'),
+                'station': station,
+                'station_position': f"{station_idx + 1}/{len(stations)}",
+                'stations': stations,
+                'previous_stations': stations[:station_idx] if station_idx > 0 else [],
+                'next_stations': stations[station_idx+1:] if station_idx < len(stations)-1 else []
+            })
+    
     return serving_routes
 
 
 def format_routes_to_station(station: str, routes: List[Dict]) -> str:
-    """
-    Format multiple routes serving a station.
-    """
     if not routes:
         return f"""🚆 **Station not found:** {station}
 
-💡 **Available MMTS Stations:**
-Try stations like: Falaknuma, Secunderabad, Begumpet, Hi-Tech City, Lingampally
+Try stations like:
+Falaknuma, Secunderabad, Begumpet, Hi-Tech City, Lingampally
+"""
 
-Ask: "MMTS routes" to see all available lines."""
-
-    response = f"🚆 **MMTS ROUTES TO: {station}**\n\n"
-    response += f"📍 **{station}** is served by {len(routes)} MMTS line(s):\n\n"
+    response = f"## 🚆 MMTS Routes for {station}\n\n"
+    response += f"📍 **{station} is served by {len(routes)} line(s)**\n\n"
 
     for idx, route in enumerate(routes, 1):
-        response += f"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        response += "---\n\n"
+        response += f"### 🟦 {route['line']}\n\n"
+        response += f"**Full Route:** {route['route_from']} → {route['route_to']}\n\n"
+        response += f"**Stop Position:** {station} ({route['station_position']})\n\n"
 
-        response += f"**Route {idx}: {route['line']}**"
-        
-        response += f"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-        response += f"🚉 Full Route: {route['route_from']} ↔ {route['route_to']}\n"
-        response += f"📍 {station} is station {route['station_position']}\n\n"
-
-        # Show nearby stations
         if route["previous_stations"]:
-            prev = (
-                route["previous_stations"][-2:]
-                if len(route["previous_stations"]) > 2
-                else route["previous_stations"]
-            )
-            response += f"⬅️ **Coming from:** {' → '.join(prev)} → **{station}**\n"
+            prev = route["previous_stations"][-2:]
+            response += "⬅️ **Arriving via**\n"
+            response += " → ".join(prev) + f" → **{station}**\n\n"
 
         if route["next_stations"]:
-            next_st = (
-                route["next_stations"][:2]
-                if len(route["next_stations"]) > 2
-                else route["next_stations"]
-            )
-            response += f"➡️ **Going to:** **{station}** → {' → '.join(next_st)}\n"
-
-        response += "\n"
+            nxt = route["next_stations"][:2]
+            response += "➡️ **Continuing to**\n"
+            response += f"**{station}** → " + " → ".join(nxt) + "\n\n"
 
     mmts_data = load_mmts_data()
-    operating_hours = mmts_data.get("operating_hours", {})
+    operating = mmts_data.get("operating_hours", {})
 
-    response += f"⏰ **Timings:**\n"
-    response += f"🌅 First Train: {operating_hours.get('first_train', '05:30 AM')}\n"
-    response += f"🌙 Last Train: {operating_hours.get('last_train', '10:30 PM')}\n"
-    response += (
-        f"⚡ Frequency: {operating_hours.get('frequency_minutes', '20-30 mins')}\n\n"
-    )
+    response += "---\n\n"
+    response += "### ⏰ Operating Hours\n\n"
+    response += f"🌅 First Train: {operating.get('first_train', '05:30 AM')}\n\n"
+    response += f"🌙 Last Train: {operating.get('last_train', '10:30 PM')}\n\n"
+    response += f"⚡ Frequency: {operating.get('frequency_minutes', '20–30 mins')}\n\n"
 
-    response += f"💡 **Tips:**\n"
-    response += f"• Specify your starting station for exact route details\n"
-    response += f'• Example: "Train from Secunderabad to {station}"\n'
-    response += f"• Trains run every 20-30 minutes during peak hours\n"
+    response += f"💡 **Tip:** Ask like\n"
+    response += f"“Train from Secunderabad to {station}”\n"
 
     return response

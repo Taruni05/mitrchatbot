@@ -1,10 +1,11 @@
 from google import genai
 import streamlit as st
 import time
+import os
 from services.food_loader import load_restaurants
 
 # Initialize Gemini client
-client = genai.Client(api_key=st.secrets["GEMINI_API_KEY"])
+client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
 # Load restaurant knowledge base
 RESTAURANTS = load_restaurants()
