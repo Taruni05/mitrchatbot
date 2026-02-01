@@ -794,7 +794,23 @@ placeholders = {
     "ur": "حیدرآباد کے بارے میں کچھ بھی پوچھیں...",
     "hi": "हैदराबाद के बारे में कुछ भी पूछें..."
 }
-user_input = st.chat_input(placeholders.get(language, placeholders["en"]))
+
+# Voice input
+voice_text = ""
+if voice_enabled:
+    voice_text = create_voice_input_button(
+        language=language,
+        duration=duration
+    )
+
+# Text input
+
+# Prefer voice if available
+if voice_text:
+    user_input = voice_text
+else:
+    user_input = st.chat_input(placeholders.get(language, placeholders["en"]))
+
 
 # Handle sidebar button clicks
 if "last_query" in st.session_state:
@@ -813,16 +829,38 @@ if user_input:
     with st.chat_message("assistant"):
         with st.spinner("Thinking..."):
             try:
+                original_language = language  # from voice settings
+
+                if language != "en":
+                    normalized_input = translate_response(user_input, "en")
+                else:
+                    normalized_input = user_input
+
                 result = app.invoke(
-                    {"user_input": user_input, "intent": "", "response": ""}
+                    {"user_input": normalized_input, "intent": "", "response": ""}
                 )
                 response = result["response"]
-                language = st.session_state.get('language', 'en')
-                if language != 'en':
-                    lang_name = get_language_name(language)
-                    with st.spinner(f"🌐 Translating to {lang_name}..."):
-                        response = translate_response(response, language)
+
+                # OUTPUT TRANSLATION
+                if language != "en":
+                    response = translate_response(response, language)
+
+                # DISPLAY TRANSLATED RESPONSE
                 st.markdown(response)
+
+# 🔊 AUTO VOICE OUTPUT
+                if auto_speak:
+                    create_voice_output_player(
+                        text=response,
+                        language=language
+                    )
+
+                # 🔊 MANUAL VOICE OUTPUT BUTTON
+                if voice_enabled and not auto_speak:
+                    create_voice_output_player(
+                        text=response,
+                        language=language
+                    )
 
                 # Add assistant response to chat history
                 st.session_state.messages.append(
