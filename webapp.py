@@ -39,6 +39,13 @@ from services.shopping import get_mall_info
 from services.movies import get_movie_info
 from services.itineary import generate_itinerary
 from services.traffic import get_traffic_flow, format_traffic
+from services.translator import translate_response, get_language_name
+
+from services.voice_service import (
+    create_voice_input_button,
+    create_voice_output_player,
+    create_voice_settings_ui
+)
 
 
 
@@ -689,6 +696,37 @@ with st.spinner("Starting assistant…"):
 
 # Sidebar
 with st.sidebar:
+    st.subheader("🌐 Language / భాష / زبان / भाषा")
+    
+    languages = {
+        "English 🇬🇧": "en",
+        "తెలుగు 🇮🇳": "te",
+        "اردو 🇵🇰": "ur",
+        "हिंदी 🇮🇳": "hi"
+    }
+    
+    selected_language = st.selectbox(
+        "Select Language:",
+        options=list(languages.keys()),
+        index=0
+    )
+    
+    language_code = languages[selected_language]
+    
+    if 'language' not in st.session_state:
+        st.session_state.language = "en"
+    
+    if st.session_state.language != language_code:
+        st.session_state.language = language_code
+        st.rerun()
+    
+    if language_code != "en":
+        lang_name = selected_language.split()[0]
+        st.success(f"✓ Responses in {lang_name}")
+    
+    st.sidebar.markdown("---")
+    voice_enabled, duration, auto_speak = create_voice_settings_ui()
+
     st.header("🎯 Quick Links")
     st.info("**Popular Queries:**")
 
@@ -749,7 +787,14 @@ for message in st.session_state.messages:
 
 
 # Chat input
-user_input = st.chat_input("Ask me anything about Hyderabad...")
+language = st.session_state.get('language', 'en')
+placeholders = {
+    "en": "Ask me anything about Hyderabad...",
+    "te": "హైదరాబాద్ గురించి ఏదైనా అడగండి...",
+    "ur": "حیدرآباد کے بارے میں کچھ بھی پوچھیں...",
+    "hi": "हैदराबाद के बारे में कुछ भी पूछें..."
+}
+user_input = st.chat_input(placeholders.get(language, placeholders["en"]))
 
 # Handle sidebar button clicks
 if "last_query" in st.session_state:
@@ -772,7 +817,11 @@ if user_input:
                     {"user_input": user_input, "intent": "", "response": ""}
                 )
                 response = result["response"]
-
+                language = st.session_state.get('language', 'en')
+                if language != 'en':
+                    lang_name = get_language_name(language)
+                    with st.spinner(f"🌐 Translating to {lang_name}..."):
+                        response = translate_response(response, language)
                 st.markdown(response)
 
                 # Add assistant response to chat history
@@ -808,7 +857,7 @@ with col2:
 with col3:
     st.metric("🌫️ Air Quality", format_aqi(aqi_data) if aqi_data else "—")
     st.divider()
-    
+
 traffic_data = get_traffic_flow(lat, lon)
 traffic_text = format_traffic(traffic_data)
 
