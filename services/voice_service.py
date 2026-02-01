@@ -1,19 +1,18 @@
 """
-Voice Interaction Service - Alternative Version (No PyAudio!)
-Uses sounddevice + scipy for recording (easier Windows installation)
-Uses gTTS for text-to-speech
+Voice Interaction Service - Multilingual Support
+Uses sounddevice + SpeechRecognition (FREE, no API key needed)
+Properly handles language matching between input and output
 """
 
 import streamlit as st
 import sounddevice as sd
 import soundfile as sf
 from gtts import gTTS
+import speech_recognition as sr
 import tempfile
 import os
 import numpy as np
 from scipy.io import wavfile
-import requests
-import json
 
 
 class VoiceService:
@@ -64,7 +63,7 @@ class VoiceService:
     
     def transcribe_audio(self, audio_path: str, language: str = "en-IN") -> dict:
         """
-        Transcribe audio using Google Speech-to-Text API
+        Transcribe audio using SpeechRecognition library (Free Google API)
         
         Args:
             audio_path: Path to audio file
@@ -74,67 +73,39 @@ class VoiceService:
             dict: {"success": bool, "text": str, "error": str}
         """
         try:
-            # Read audio file
-            with open(audio_path, 'rb') as audio_file:
-                audio_content = audio_file.read()
+            import speech_recognition as sr
             
-            # Google Speech-to-Text API endpoint
-            url = "https://speech.googleapis.com/v1/speech:recognize"
+            # Initialize recognizer
+            recognizer = sr.Recognizer()
             
-            # API key (using free tier - limited requests)
-            # For production, get your own API key from Google Cloud Console
-            api_key = "AIzaSyBOti4mM-6x9WDnZIjIeyEU21OpBXqWBgw"  # Demo key
+            # Load audio file
+            with sr.AudioFile(audio_path) as source:
+                audio_data = recognizer.record(source)
             
-            # Prepare request
-            headers = {'Content-Type': 'application/json'}
-            
-            # Encode audio to base64
-            import base64
-            audio_base64 = base64.b64encode(audio_content).decode('utf-8')
-            
-            data = {
-                "config": {
-                    "encoding": "LINEAR16",
-                    "sampleRateHertz": self.sample_rate,
-                    "languageCode": language,
-                    "enableAutomaticPunctuation": True
-                },
-                "audio": {
-                    "content": audio_base64
-                }
-            }
-            
-            # Make request
-            response = requests.post(
-                f"{url}?key={api_key}",
-                headers=headers,
-                data=json.dumps(data),
-                timeout=10
+            # Use Google Speech Recognition (FREE - no API key needed)
+            transcript = recognizer.recognize_google(
+                audio_data,
+                language=language
             )
             
-            if response.status_code == 200:
-                result = response.json()
+            return {
+                "success": True,
+                "text": transcript,
+                "error": None
+            }
                 
-                if 'results' in result and len(result['results']) > 0:
-                    transcript = result['results'][0]['alternatives'][0]['transcript']
-                    return {
-                        "success": True,
-                        "text": transcript,
-                        "error": None
-                    }
-                else:
-                    return {
-                        "success": False,
-                        "text": "",
-                        "error": "No speech detected in audio"
-                    }
-            else:
-                return {
-                    "success": False,
-                    "text": "",
-                    "error": f"API error: {response.status_code}"
-                }
-                
+        except sr.UnknownValueError:
+            return {
+                "success": False,
+                "text": "",
+                "error": "Could not understand audio. Please speak clearly."
+            }
+        except sr.RequestError as e:
+            return {
+                "success": False,
+                "text": "",
+                "error": f"Google Speech API error: {str(e)}"
+            }
         except Exception as e:
             return {
                 "success": False,
@@ -282,6 +253,10 @@ def create_voice_input_button(language: str = "en", duration: int = 5) -> str:
 def create_voice_output_player(text: str, language: str = "en"):
     """
     Create audio player for bot response
+    
+    Args:
+        text: Response text to speak
+        language: Language code (en, te, ur, hi) - MATCHES translation language
     """
     if not text:
         return
@@ -301,6 +276,8 @@ def create_voice_output_player(text: str, language: str = "en"):
     if st.button("🔊 Listen to Response", key="voice_output_btn"):
         with st.spinner("🎵 Generating audio..."):
             voice_service = VoiceService()
+            
+            # ✅ USE THE SAME LANGUAGE AS THE TRANSLATED RESPONSE
             result = voice_service.speak(clean_text, language=language)
             
             if result["success"]:
@@ -349,69 +326,3 @@ def create_voice_settings_ui():
         )
         
         return voice_enabled, duration, auto_speak
-
-
-# ========================================
-# USAGE INSTRUCTIONS
-# ========================================
-
-def show_voice_usage_instructions():
-    """Show usage instructions for voice features"""
-    st.info("""
-    **🎙️ Voice Commands:**
-    
-    1. **Voice Input:**
-       - Click 🎤 Speak button
-       - Wait for countdown (5 seconds)
-       - Speak your question clearly
-       - Wait for transcription
-    
-    2. **Voice Output:**
-       - Click 🔊 Listen to Response
-       - Response will be spoken aloud
-    
-    **📝 Tips:**
-    - Speak clearly and at normal pace
-    - Keep questions under 5 seconds
-    - Reduce background noise
-    - Voice works in all 4 languages!
-    """)
-
-
-# ========================================
-# TESTING FUNCTION
-# ========================================
-
-def test_voice_service():
-    """Test voice service functionality"""
-    st.subheader("🧪 Voice Service Test")
-    
-    # Test TTS
-    if st.button("Test Text-to-Speech"):
-        voice = VoiceService()
-        result = voice.speak("Welcome to Hyderabad City Guide!", "en")
-        
-        if result["success"]:
-            with open(result["audio_path"], "rb") as f:
-                st.audio(f.read(), format="audio/mp3")
-            st.success("✅ TTS working!")
-            voice.cleanup_audio(result["audio_path"])
-        else:
-            st.error(f"❌ {result['error']}")
-    
-    # Test Recording
-    if st.button("Test Recording (5 seconds)"):
-        voice = VoiceService()
-        with st.spinner("Recording..."):
-            result = voice.record_audio(duration=5)
-        
-        if result["success"]:
-            st.success(f"✅ Recorded to: {result['audio_path']}")
-            
-            # Play back recording
-            with open(result["audio_path"], "rb") as f:
-                st.audio(f.read(), format="audio/wav")
-            
-            voice.cleanup_audio(result["audio_path"])
-        else:
-            st.error(f"❌ {result['error']}")
