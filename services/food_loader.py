@@ -1,14 +1,12 @@
 import json
 from pathlib import Path
+from services.kb_loader import get_restaurants
+
+def load_restaurant_data():
+    return get_restaurants()
 
 def load_restaurants():
-    base_path = Path(__file__).resolve().parent.parent
-    kb_path = base_path / "knowledge_base.json"
-
-    with open(kb_path, "r", encoding="utf-8") as f:
-        data = json.load(f)
-
-    restaurants = data.get("restaurants", {})
+    restaurants=load_restaurant_data()
 
     # Flatten all restaurant categories into one list
     all_restaurants = []
@@ -25,3 +23,4 @@ def load_restaurants():
             })
 
     return all_restaurants
+

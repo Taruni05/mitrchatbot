@@ -10,9 +10,6 @@ from services.weatherapi import (
     format_weather,
     format_aqi,
     get_aqi_advice,
-    get_forecast_by_coords,
-    format_forecast_3day,
-    get_rain_alert,
 )
 from services.ai_food import generate_food_recommendation
 from services.fuel_prices import get_fuel_prices_hyderabad, format_fuel_prices
@@ -43,9 +40,9 @@ from services.movies import get_movie_info
 from services.itineary import generate_itinerary
 from services.traffic import get_traffic_flow, format_traffic
 from services.translator import translate_response, get_language_name
-from services.metro_rail import(extract_stations_from_query,find_metro_route,format_metro_route,get_general_metro_info,format_metro_station_list)
+
 from services.voice_service import render_audio_input, render_audio_output
-from services.crowd import get_crowd_info
+
 
 import base64
 from datetime import datetime
@@ -373,11 +370,6 @@ def classify_intent(state: BotState):
         "from" in message and "to" in message and any(w in message for w in ["train", "rail"])
     ):
         state["intent"] = "mmts"
-    elif any(word in message for word in ["crowd","crowded", "busy", "best time", "avoid crowd",
-        "peaceful", "quiet", "less people", "when to visit",]):
-        state["intent"] = "crowd"
-    elif any(word in message for word in ["metro", "transport", "airport"]):
-        state["intent"] = "transport"
 
     elif any(word in message for word in ["bus", "rtc", "tsrtc"]):
         state["intent"] = "bus"
@@ -443,6 +435,8 @@ def classify_intent(state: BotState):
     ]):
         state["intent"] = "temple"
 
+    elif any(word in message for word in ["metro", "transport", "airport"]):
+        state["intent"] = "transport"
 
     elif any(word in message for word in ["fuel", "petrol", "diesel", "cng", "gas price"]):
         state["intent"] = "fuel"
@@ -455,6 +449,8 @@ def classify_intent(state: BotState):
         "pharmacy", "medicine", "treatment", "surgery",
     ]):
         state["intent"] = "healthcare"
+
+# Copy-paste location: After line 340 (after movies intent)
     elif any(word in message for word in [
         "sport", "sports", "stadium", "cricket", "gym", "fitness",
         "uppal stadium", "sports complex", "badminton", "tennis",
@@ -462,12 +458,15 @@ def classify_intent(state: BotState):
     ]):
         state["intent"] = "sports"
 
+# Copy-paste location: After line 346 (after palace intent)
     elif any(word in message for word in [
         "school", "college", "university", "education", "institute",
         "iit", "nit", "bits", "iiit", "osmania", "jntu",
         "study", "courses", "admission", "campus",
     ]):
         state["intent"] = "education"
+
+# Copy-paste location: After line 374 (after monument intent, BEFORE temples)
     elif any(word in message for word in [
         "history", "trivia", "fact", "facts", "did you know",
         "tell me about hyderabad", "about hyderabad", "founded",
@@ -476,13 +475,14 @@ def classify_intent(state: BotState):
     ]):
         state["intent"] = "trivia"
 
+# Copy-paste location: After line 382 (after temple intent)
     elif any(word in message for word in [
         "festival", "festivals", "bonalu", "bathukamma", "dussehra", "ganesh",
         "ramadan", "eid", "diwali", "holi", "sankranti", "ugadi",
         "culture", "cultural", "tradition", "celebration", "event",
     ]):
         state["intent"] = "festival"
-    
+
 
     else:
         state["intent"] = "general"
@@ -509,7 +509,6 @@ I can help you with:
 ⛽ **Fuel Prices** - Daily petrol, diesel, CNG rates
 📰 **City News** - Hyderabad headlines & alerts
 🛍️ **Shopping** - Malls, markets, sales
-👥 **Crowd Info** - Best time to visit any place   
 🗓️ **Itineraries** - Personalized day plans
 🎬 **Movies** - Theaters, showtimes, bookings
 🌦️ **Weather** - Live updates & air quality
@@ -660,30 +659,11 @@ def handle_food(state: BotState):
 # ── transport ───────────────────────────────────────────────────────────────
 
 def handle_transport(state: BotState):
-    """Handle metro, airport, and general transport queries."""
-    query = state["user_input"].lower()
-    
-    # ── Check for metro station list request ──
-    if any(word in query for word in ["station list", "all stations", "metro stations", "list of stations"]):
-        state["response"] = format_metro_station_list()
-        return state
-    
-    # ── Check for metro routing request (from X to Y) ──
-    if "metro" in query and any(word in query for word in ["from", "to"]):
-        from_station, to_station = extract_stations_from_query(query)
-        if from_station and to_station:
-            route = find_metro_route(from_station, to_station)
-            state["response"] = format_metro_route(route)
-            return state
-    
-    # ── Check for general metro info ──
-    if "metro" in query:
-        state["response"] = get_general_metro_info()
-        return state
-    
-    # ── Check for airport info ──
-    if "airport" in query:
-        transport = PROFILE.get("infrastructure", {}).get("transport", [])
+    transport = PROFILE.get("infrastructure", {}).get("transport", [])
+    query_lower = state["user_input"].lower()
+
+    # ── Airport ──
+    if "airport" in query_lower:
         airport = next((t for t in transport if t.get("mode") == "Airport"), None)
         if airport:
             response = "✈️ **Rajiv Gandhi International Airport (RGIA)**\n\n"
@@ -699,10 +679,20 @@ def handle_transport(state: BotState):
         else:
             state["response"] = "✈️ Airport information is currently unavailable."
         return state
-    
-    # ── Default: general transport info ──
-    state["response"] = get_general_metro_info()
+
+    # ── Metro (default for 'metro' / 'transport') ──
+    metro = next((t for t in transport if t.get("mode") == "Metro Rail"), None)
+    if metro:
+        response = "🚇 **Hyderabad Metro:**\n\n"
+        for line in metro.get("lines", [])[:3]:
+            response += f"**{line['line_name']}:** {line['route']['from']} → {line['route']['to']}\n"
+        response += "\n⏰ Timings: 6:00 AM - 11:00 PM\n"
+        response += "\n💡 Ask about **MMTS trains** or **RTC buses** for more transport options!"
+        state["response"] = response
+    else:
+        state["response"] = "Metro information not available."
     return state
+
 
 # ── weather ─────────────────────────────────────────────────────────────────
 
@@ -740,28 +730,12 @@ def handle_weather(state: BotState):
         st.session_state.selected_area  = area
         st.session_state.selected_coords = (lat, lon)
 
-        # Current weather
         weather_text = format_weather(weather_data)
         aqi_data     = get_aqi_by_coords(lat, lon)
         aqi_text     = format_aqi(aqi_data)
         aqi_advice   = get_aqi_advice(aqi_data)
 
-        response = f"🌦️ **Weather in {area}**\n\n"
-        
-        # Check for rain alerts
-        forecast_data = get_forecast_by_coords(lat, lon)
-        rain_alert = get_rain_alert(forecast_data)
-        if rain_alert:
-            response += rain_alert + "\n"
-        
-        response += f"{weather_text}\n{aqi_text}\n\n{aqi_advice}"
-        
-        # Add 3-day forecast
-        forecast_text = format_forecast_3day(forecast_data)
-        if forecast_text:
-            response += forecast_text
-        
-        state["response"] = response
+        state["response"] = f"🌦️ **Weather in {area}**\n\n{weather_text}\n{aqi_text}\n\n{aqi_advice}"
     else:
         state["response"] = "Sorry, I'm unable to fetch weather data right now."
     return state
@@ -880,12 +854,6 @@ def handle_news(state: BotState):
 def handle_shopping(state: BotState):
     state["response"] = get_mall_info(state["user_input"])
     return state
-# ── crowd prediction ─────────────────────────────────────────────────────────
-
-def handle_crowd(state: BotState):
-    """Handle queries about crowd levels and best times to visit."""
-    state["response"] = get_crowd_info(state["user_input"])
-    return state
 
 
 # ── itinerary ───────────────────────────────────────────────────────────────
@@ -915,8 +883,7 @@ def handle_traffic(state: BotState):
         return state
 
     traffic_data = get_traffic_flow(lat, lon)
-    # Pass area name to format_traffic for alternate route suggestions
-    state["response"] = f"🚦 **Traffic in {area}**\n\n{format_traffic(traffic_data, area_name=area)}"
+    state["response"] = f"🚦 **Traffic in {area}**\n\n{format_traffic(traffic_data)}"
     return state
 
 # ── HEALTHCARE HANDLER ──────────────────────────────────────────────────────
@@ -1024,152 +991,138 @@ def handle_sports(state: BotState):
 
 def handle_education(state: BotState):
     """Handle queries about educational institutions."""
-    infrastructure = PROFILE.get("infrastructure", {})
-    education_list = infrastructure.get("premier_education_institutes", [])
+    infrastructure = PROFILE.get("education", {})
+    education_data = infrastructure.get("premier_education_institutes", {})
     
-    state["response"] = """🎓 **Education in Hyderabad**
+    if not education_data:
+        state["response"] = """🎓 **Education in Hyderabad**
 
 **Major Universities:**
-- IIT Hyderabad - Premier technology institute
-- IIIT Hyderabad - Information technology specialization  
-- Osmania University - Historic public university (founded 1918)
-- JNTU Hyderabad - Technical university
-- University of Hyderabad - Central university
+• IIT Hyderabad
+• IIIT Hyderabad
+• Osmania University
+• JNTU Hyderabad
+• University of Hyderabad
 
 **Engineering Colleges:**
-- BITS Pilani Hyderabad Campus
-- CBIT (Chaitanya Bharathi Institute of Technology)
-- Vasavi College of Engineering
-- CVR College of Engineering
-- MVSR Engineering College
+• BITS Pilani Hyderabad
+• CBIT
+• Vasavi College of Engineering
+• CVR College of Engineering
 
-**Management Institutes:**
-- ISB (Indian School of Business) - Top MBA program
-- ICFAI Business School
-
-💡 Ask me about specific institutions for more details!"""
-    
-    return state
-    query = state["user_input"].lower()
-    matched = _match_item(query, education_list)
-
-    if matched:
-        # Show detailed info about matched institution
-        name = matched.get("name", "Unknown")
-        location = matched.get("location", "Hyderabad")
-        established = matched.get("established", "N/A")
-        fact = matched.get("notable_fact", "")
-        
-        response = f"🎓 **{name}**\n\n"
-        response += f"📍 **Location:** {location}\n"
-        response += f"📅 **Established:** {established}\n\n"
-        
-        if fact:
-            response += f"ℹ️ **About:**\n{fact}\n\n"
-        
-        response += "💡 Ask me about other institutions in Hyderabad!"
-        
-        state["response"] = response
+💡 Ask me about specific institutions!"""
         return state
     
-    # Show list of all institutions
-    response = "🎓 **Premier Educational Institutions in Hyderabad**\n\n"
+    query = state["user_input"].lower()
     
-    for i, inst in enumerate(education_list, 1):
-        name = inst.get("name", "Unknown")
-        location = inst.get("location", "")
-        established = inst.get("established", "")
+    universities = education_data.get("universities", [])
+    colleges = education_data.get("engineering_colleges", [])
+    
+    all_education = universities + colleges
+    
+    matched = _match_item(query, all_education)
+    
+    if matched:
+        state["response"] = _format_detail(matched, emoji="🎓")
+    else:
+        response = "🎓 **Educational Institutions in Hyderabad**\n\n"
         
-        response += f"**{i}. {name}**\n"
-        response += f"   📍 {location}"
-        if established:
-            response += f" • Est. {established}"
-        response += "\n\n"
-    
-    response += "💡 Ask me about any specific institution for more details!"
-    state["response"] = response
+        if universities:
+            response += "**Major Universities:**\n"
+            for univ in universities[:5]:
+                name = univ.get("name", "Unknown")
+                response += f"• {name}\n"
+            response += "\n"
+        
+        if colleges:
+            response += "**Engineering Colleges:**\n"
+            for college in colleges[:5]:
+                name = college.get("name", "Unknown")
+                response += f"• {college}\n"
+            response += "\n"
+        
+        response += "💡 Ask about any specific institution!"
+        state["response"] = response
     
     return state
-
 
 
 # ── TRIVIA / HISTORY HANDLER ────────────────────────────────────────────────
 
 def handle_trivia(state: BotState):
     """Handle queries about Hyderabad's history and trivia."""
+    trivia_data = PROFILE
     
-    # Rich fallback content (always available)
+    # Always provide basic historical info as fallback
     basic_history = """📜 **Hyderabad - History & Trivia**
 
-🏛️ **Foundation (1591):**
-Hyderabad was founded by Muhammad Quli Qutb Shah, the fifth ruler of the Qutb Shahi dynasty. Legend says the city was named after Bhagmati, a local nautch girl who later became his wife Hyder Mahal.
+🏛️ **Foundation:**
+Hyderabad was founded in 1591 by Muhammad Quli Qutb Shah, the fifth ruler of the Qutb Shahi dynasty. The city was established on the banks of the Musi River.
 
-👑 **The Nizams Era (1724-1948):**
-The Asaf Jahi dynasty ruled Hyderabad for over 200 years. The last Nizam, Mir Osman Ali Khan, was once the richest man in the world, appearing on Time magazine's cover in 1937.
+👑 **The Nizams Era:**
+The city was ruled by the Nizams from 1724 to 1948. The last Nizam, Mir Osman Ali Khan, was once considered the richest man in the world.
 
 💎 **City of Pearls:**
-Hyderabad earned this nickname due to its historic pearl and diamond trading center. The city was a major hub on the pearl trade route from the Persian Gulf.
-
-🏗️ **Iconic Charminar (1591):**
-Built by Muhammad Quli Qutb Shah to commemorate the end of a deadly plague. Its four minarets represent the first four caliphs of Islam.
+Hyderabad earned the nickname "City of Pearls" due to its historic pearl and diamond trading center near Charminar.
 
 🍛 **Culinary Heritage:**
-Hyderabadi Biryani was born in the royal kitchens of the Nizams, blending Mughlai and Telugu cuisines. The unique "Dum" cooking method was perfected here.
+Hyderabadi Biryani originated in the royal kitchens of the Nizams, blending Mughal and Telugu cuisines.
 
-🎬 **Modern Cyberabad:**
-Today, Hyderabad is India's second-largest IT hub after Bengaluru, hosting Microsoft, Google, Amazon, and over 1,500 IT companies.
-
-💡 **Fun Facts:**
-• The word "Hyderabad" means "Lion City"
-• Golconda Fort was famous for its acoustics and diamond mines
-• The state of Hyderabad was larger than many European countries
+🏗️ **Modern Cyberabad:**
+Today, Hyderabad is India's major IT hub, known as "Cyberabad," hosting global tech giants.
 
 💡 Ask me about Charminar, Golconda Fort, or specific monuments for more details!"""
     
-    # CORRECT PATH: Get history section from PROFILE
-    history_section = PROFILE.get("history", {})
-    
-    # If history section is empty or not a dict, show basic history
-    if not history_section or not isinstance(history_section, dict):
+    if not trivia_data:
         state["response"] = basic_history
         return state
     
     query = state["user_input"].lower()
     
-    # The KB structure has nested periods under history
-    # We'll extract facts from these periods
-    historical_facts = []
+    historical = trivia_data.get("history", [])
+    trivia = trivia_data.get("interesting_trivia", [])
+    personalities = trivia_data.get("famous_personalities", [])
     
-    # Check for historical periods and extract info
-    for period_name, period_data in history_section.items():
-        if isinstance(period_data, dict):
-            period_label = period_data.get("period", period_name)
-            
-            # Extract key points from this period
-            for key, value in period_data.items():
-                if key != "period" and isinstance(value, str):
-                    historical_facts.append({
-                        "title": f"{period_label} - {key.replace('_', ' ').title()}",
-                        "description": value
-                    })
+    # Check for specific personality
+    if personalities:
+        matched = _match_item(query, personalities)
+        if matched:
+            state["response"] = _format_detail(matched, emoji="👤")
+            return state
     
     # Build response
-    if historical_facts:
-        response = "📜 **Hyderabad - History & Trivia**\n\n"
+    response = "📜 **Hyderabad - History & Trivia**\n\n"
+    
+    if historical and len(historical) > 0:
         response += "**Historical Facts:**\n"
-        
-        for i, fact in enumerate(historical_facts[:5], 1):
-            title = fact.get("title", "")
-            desc = fact.get("description", "")
-            response += f"{i}. **{title}**\n   {desc}\n\n"
-        
-        response += "💡 Ask about Charminar, Golconda, or the Nizams for more!"
-        state["response"] = response
-    else:
-        # No historical facts found, use basic history
+        for i, fact in enumerate(historical[:5], 1):
+            if isinstance(fact, dict):
+                title = fact.get("title", "")
+                desc = fact.get("description", "")
+                response += f"{i}. **{title}**\n   {desc}\n\n"
+            else:
+                response += f"{i}. {fact}\n\n"
+    
+    if trivia and len(trivia) > 0:
+        response += "**Interesting Trivia:**\n"
+        for fact in trivia[:5]:
+            if isinstance(fact, dict):
+                text = fact.get("fact", fact.get("description", ""))
+                response += f"• {text}\n"
+            else:
+                response += f"• {fact}\n"
+        response += "\n"
+    
+    if not historical and not trivia:
+        # Use basic history if KB doesn't have detailed trivia
         state["response"] = basic_history
+        return state
+    
+    response += "💡 Ask about Charminar, Golconda, or the Nizams for more!"
+    state["response"] = response
     
     return state
+
 
 # ── FESTIVAL / CULTURE HANDLER ──────────────────────────────────────────────
 
@@ -1255,7 +1208,6 @@ def handle_general(state: BotState):
 🌦️ **Weather** - Live updates & air quality
 📰 **City News** - Hyderabad headlines & alerts
 🛍️ **Shopping** - Malls, markets, sales
-👥 **Crowd Info** - Best time to visit any place    
 🗓️ **Itineraries** - Personalized day plans
 🎬 **Movies** - Theaters, showtimes, bookings
 🎉 **Festivals** - Bonalu, Bathukamma, cultural events
@@ -1303,7 +1255,6 @@ def create_workflow():
     workflow.add_node("education",   handle_education)
     workflow.add_node("trivia",      handle_trivia)
     workflow.add_node("festival",    handle_festival)
-    workflow.add_node("crowd",       handle_crowd) 
     workflow.add_node("general",     handle_general)
 
     workflow.set_entry_point("classifier")
@@ -1334,7 +1285,6 @@ def create_workflow():
         "education":  "education",
         "trivia":     "trivia",
         "festival":   "festival",
-        "crowd":      "crowd",
         "general":    "general",
     }
 
@@ -1418,8 +1368,6 @@ with st.sidebar:
         st.session_state.last_query = "hyderabad news"
     if st.button("🛍️ Shopping Malls"):
         st.session_state.last_query = "shopping malls in hyderabad"
-    if st.button("👥 Crowd Guide"):
-        st.session_state.last_query = "best time to visit places"
     if st.button("🗓️ Plan My Day"):
         st.session_state.last_query = "plan my one day hyderabad tour"
     if st.button("🎬 Movie Theaters"):
@@ -1435,9 +1383,9 @@ with st.sidebar:
     if st.button("🏥 Hospitals & Healthcare"):
         st.session_state.last_query = "major hospitals"
     if st.button("🎓 Education & Universities"):
-        st.session_state.last_query = "university in hyderabad"
+        st.session_state.last_query = "universities in hyderabad"
     if st.button("📜 Hyderabad History"):
-        st.session_state.last_query = "tell me about hyderabad history"
+        st.session_state.last_query = "history of hyderabad"
     if st.button("🚨 Emergency Contacts"):
         st.session_state.last_query = "emergency numbers"
 

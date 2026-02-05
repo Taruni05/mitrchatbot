@@ -1,3 +1,7 @@
+"""
+Enhanced AI Food Recommendation Service
+Handles ANY food-related query comprehensively using Gemini
+"""
 from google import genai
 import streamlit as st
 import time
@@ -5,89 +9,102 @@ import os
 from services.food_loader import load_restaurants
 
 # Initialize Gemini client
-client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
+client = genai.Client(api_key=st.secrets.get("GEMINI_API_KEY", ""))
 
 # Load restaurant knowledge base
 RESTAURANTS = load_restaurants()
 
 
-def extract_preferences(query: str):
-    q = query.lower()
-
-    return {
-        "price_range": (
-            "budget" if "cheap" in q or "budget" in q else
-            "premium" if "premium" in q or "fine dining" in q else None
-        ),
-        "timings": "late night" if "late" in q or "midnight" in q else None,
-        "type": (
-            "biryani" if "biryani" in q else
-            "cafe" if "cafe" in q or "coffee" in q else None
-        )
-    }
-
-
-def fallback_food_response(query: str):
-    names = [r["name"] for r in RESTAURANTS[:3]]
-
-    return (
-        "🍽️ **Popular Hyderabad restaurants:**\n\n"
-        + "\n".join(f"- {name}" for name in names)
-        + "\n\n⚠️ Showing cached recommendations due to high traffic."
-    )
+def create_restaurant_context():
+    """Create a comprehensive context of all restaurants for Gemini"""
+    context = "# HYDERABAD RESTAURANTS DATABASE\n\n"
+    
+    for r in RESTAURANTS:
+        context += f"## {r['name']}\n"
+        context += f"- Category: {r.get('category', 'General')}\n"
+        context += f"- Price Range: {r.get('price_range', 'Not specified')}\n"
+        context += f"- Opening Hours: {r.get('opening_hours', 'Check with restaurant')}\n"
+        
+        if r.get('best_selling_dishes'):
+            context += f"- Best Dishes: {', '.join(r['best_selling_dishes'])}\n"
+        
+        if r.get('maps_link'):
+            context += f"- Location: {r['maps_link']}\n"
+        
+        context += "\n"
+    
+    return context
 
 
 def generate_food_recommendation(user_query: str):
-    prefs = extract_preferences(user_query)
+    """
+    Generate comprehensive food recommendations for ANY food-related query.
+    
+    Handles queries like:
+    - "Best biryani places"
+    - "Where to eat vegetarian food?"
+    - "Cheap restaurants near HITEC City"
+    - "Late night cafes"
+    - "Romantic dinner spots"
+    - "Best Irani chai"
+    - "What should I eat today?"
+    - "Street food recommendations"
+    - etc.
+    """
+    
+    # Create restaurant knowledge base context
+    restaurant_context = create_restaurant_context()
+    
+    # Comprehensive prompt that handles ANY food query
+    prompt = f"""You are a Hyderabad food expert assistant with deep local knowledge.
 
-    # Deterministic filtering
-    filtered_restaurants = []
-    for r in RESTAURANTS:
-        match = True
-        for key, value in prefs.items():
-            if value and r.get(key) != value:
-                match = False
-        if match:
-            filtered_restaurants.append(r)
+USER QUERY: "{user_query}"
 
-    if not filtered_restaurants:
-        filtered_restaurants = RESTAURANTS[:]
+AVAILABLE RESTAURANT DATA:
+{restaurant_context}
 
-    prompt =  f"""
-You are a Hyderabad food recommendation assistant.
+INSTRUCTIONS:
+1. Analyze the user's query to understand what they're looking for
+2. Recommend ONLY from the provided restaurant database
+3. If no perfect match exists, recommend the closest alternatives from the database
+4. Be specific and practical with recommendations
+5. Always include:
+   - Restaurant name
+   - Price range (if available)
+   - Best dishes to try
+   - Any relevant timings
+   - Google Maps link (if available)
 
-RULES:
-- Recommend ONLY from the provided restaurant data
-- Do NOT invent restaurant names
-- Do NOT claim distance or proximity
-- ALWAYS show ratings if available (format: ⭐ 4.3/5)
+6. For general queries like "what should I eat" or "recommend something", suggest 3-4 diverse options
 
-User query:
-"{user_query}"
+7. For specific cuisines/dishes not in database, acknowledge that and suggest closest alternatives
 
-Available restaurants:
-{filtered_restaurants}
+8. Use emojis to make responses engaging (🍛 🍕 ☕ 🌶️ etc.)
 
-Instructions:
-- Pick up to 3 suitable restaurants
-- Show rating prominently (e.g., "⭐ 4.3/5")
-- Mention 2-3 best-selling dishes per restaurant
-- Include Google Maps links if available
-- Friendly, local tone with Hyderabad flavor
--if "🔴 Heavy" in traffic_text:
-    response = (
-        "🚦 Heavy traffic reported in this area.\n\n"
-        + response
-    )
+9. Include practical tips like:
+   - Best time to visit
+   - Average cost per person
+   - Whether booking is needed
+   - Popular crowd times
 
+10. Format your response clearly with proper headings and bullet points
 
-Example format:
-**1. Paradise Biryani** ⭐ 4.3/5
-📍 Multiple locations
-💰 ₹250-600
-🍽️ Must-try: Paradise Special Biryani, Chicken 65
-🗺️ [Google Maps](link)
-"""
+11. If asking about specific dishes (biryani, haleem, chai, etc.), focus on restaurants known for those items
+
+12. For location-based queries, mention restaurants in or near that area
+
+13. NEVER invent restaurant names - only use restaurants from the database
+
+14. If the database doesn't have enough info for the query, be honest and suggest checking food delivery apps
+
+RESPONSE STYLE:
+- Friendly and conversational
+- Use Hyderabadi flair (you can mention local terms like "baigan ka bharta", "irani chai", etc.)
+- Be practical - mention costs, locations, timings
+- Prioritize restaurants with ratings/reviews if available
+- Use proper formatting with headers, bullets, and emojis
+
+Generate your recommendation now:"""
 
     try:
         response = client.models.generate_content(
@@ -96,13 +113,81 @@ Example format:
         )
         return response.text
 
-    except Exception:
+    except Exception as e:
+        # Retry once on failure
+        print(f"[ai_food] First attempt failed: {e}")
         time.sleep(1)
+        
         try:
             response = client.models.generate_content(
                 model="gemini-2.5-flash-lite",
                 contents=prompt,
             )
             return response.text
-        except Exception:
+        except Exception as e2:
+            print(f"[ai_food] Second attempt failed: {e2}")
             return fallback_food_response(user_query)
+
+
+def fallback_food_response(query: str):
+    """Fallback response when Gemini API fails"""
+    
+    # Try to give a basic response based on keywords
+    query_lower = query.lower()
+    
+    if "biryani" in query_lower:
+        restaurants = [r for r in RESTAURANTS if "biryani" in r.get("name", "").lower()]
+    elif "cafe" in query_lower or "coffee" in query_lower:
+        restaurants = [r for r in RESTAURANTS if r.get("category") == "cafes"]
+    elif "cheap" in query_lower or "budget" in query_lower:
+        restaurants = [r for r in RESTAURANTS if "budget" in r.get("price_range", "").lower()]
+    else:
+        # Just show top popular places
+        restaurants = RESTAURANTS[:5]
+    
+    if not restaurants:
+        restaurants = RESTAURANTS[:3]
+    
+    response = "🍽️ **Hyderabad Food Recommendations**\n\n"
+    response += "⚠️ *Showing cached recommendations due to high traffic*\n\n"
+    
+    for i, r in enumerate(restaurants[:3], 1):
+        response += f"**{i}. {r['name']}**\n"
+        if r.get('price_range'):
+            response += f"💰 {r['price_range']}\n"
+        if r.get('best_selling_dishes'):
+            response += f"🍽️ Must Try: {', '.join(r['best_selling_dishes'][:3])}\n"
+        if r.get('maps_link'):
+            response += f"📍 [Google Maps]({r['maps_link']})\n"
+        response += "\n"
+    
+    response += "\n💡 **Tip**: Try food delivery apps like Zomato or Swiggy for more options and live reviews!"
+    
+    return response
+
+
+# Additional helper function for specific food types
+def get_food_by_category(category: str):
+    """Get restaurants by category for quick lookups"""
+    category_lower = category.lower()
+    
+    filtered = [r for r in RESTAURANTS if r.get('category', '').lower() == category_lower]
+    
+    if not filtered:
+        return None
+    
+    response = f"🍽️ **{category.title()} in Hyderabad**\n\n"
+    
+    for i, r in enumerate(filtered, 1):
+        response += f"**{i}. {r['name']}**\n"
+        if r.get('price_range'):
+            response += f"💰 {r['price_range']}\n"
+        if r.get('opening_hours'):
+            response += f"🕐 {r['opening_hours']}\n"
+        if r.get('best_selling_dishes'):
+            response += f"🍽️ Specialties: {', '.join(r['best_selling_dishes'][:3])}\n"
+        if r.get('maps_link'):
+            response += f"📍 [Google Maps]({r['maps_link']})\n"
+        response += "\n"
+    
+    return response

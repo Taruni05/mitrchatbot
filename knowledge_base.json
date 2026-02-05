@@ -182,25 +182,53 @@
           "name": "Charminar",
           "type": "Monument & Mosque",
           "location": "Old City",
-          "description": "The city's signature monument with four grand arches and minarets. The upper floor contains a mosque."
+          "description": "The city's signature monument with four grand arches and minarets. The upper floor contains a mosque.",
+          "crowd_level": {
+            "weekday": "Medium",
+            "weekend": "Very High",
+            "best_time": "Early morning (6-8 AM) on weekdays",
+            "avoid": "Weekend afternoons, Fridays (prayer time), national holidays",
+            "notes": "Expect large crowds during festivals. Photography best in early morning light."
+          }
         },
         {
           "name": "Golconda Fort",
           "type": "Fortified Citadel",
           "location": "Western Hyderabad",
-          "description": "Known for its military architecture and brilliant acoustic system. The historic home of the Koh-i-Noor and Hope diamonds."
+          "description": "Known for its military architecture and brilliant acoustic system. The historic home of the Koh-i-Noor and Hope diamonds.",
+          "crowd_level": {
+            "weekday": "Low-Medium",
+            "weekend": "High",
+            "best_time": "7-9 AM or 4-5 PM (before sound & light show)",
+            "avoid": "Weekend mornings, national holidays",
+            "notes": "Climb early to avoid heat. Sound & light show draws evening crowds."
+          }
         },
         {
           "name": "Qutb Shahi Tombs",
           "type": "Mausoleums",
           "location": "Near Golconda Fort",
-          "description": "The tombs of the 7 rulers of the Qutb Shahi dynasty, showcasing a unique blend of Persian and Indian architectural styles."
+          "description": "The tombs of the 7 rulers of the Qutb Shahi dynasty, showcasing a unique blend of Persian and Indian architectural styles.",
+          "crowd_level": {
+            "weekday": "Low",
+            "weekend": "Medium",
+            "best_time": "8-10 AM any day",
+            "avoid": "Rarely crowded",
+            "notes": "One of the least crowded monuments. Peaceful for photography."
+          }
         },
         {
           "name": "Makkah Masjid",
           "type": "Mosque",
           "location": "Near Charminar",
-          "description": "One of the oldest and largest mosques in India. The central arch was built with bricks made from soil brought from Mecca."
+          "description": "One of the oldest and largest mosques in India. The central arch was built with bricks made from soil brought from Mecca.",
+          "crowd_level": {
+            "weekday": "Medium",
+            "weekend": "High",
+            "best_time": "Mid-morning (9-11 AM) on weekdays",
+            "avoid": "Friday afternoons (Jummah prayer), Ramadan, Eid",
+            "notes": "Remove shoes before entering. Non-Muslims can visit outside prayer times."
+          }
         }
       ],
       "palaces": [
@@ -374,24 +402,52 @@
         {
           "name": "Hussain Sagar Lake",
           "type": "Lake & Recreation",
-          "description": "A heart-shaped lake connecting Hyderabad and Secunderabad, featuring a giant Buddha statue in its center and activities like boating."
+          "description": "A heart-shaped lake connecting Hyderabad and Secunderabad, featuring a giant Buddha statue in its center and activities like boating.",
+          "crowd_level": {
+            "weekday": "Medium",
+            "weekend": "Very High",
+            "best_time": "Early morning (5-7 AM) for walking",
+            "avoid": "Weekend evenings (5-9 PM), Ganesh immersion days",
+            "notes": "Tank Bund fills up on weekends. Boating opens at 2 PM."
+          }
         },
         {
           "name": "Nehru Zoological Park",
           "type": "Zoo",
-          "description": "One of the largest zoos in India, home to hundreds of species and offering safari rides."
+          "description": "One of the largest zoos in India, home to hundreds of species and offering safari rides.",
+          "crowd_level": {
+            "weekday": "Low-Medium",
+            "weekend": "Very High",
+            "best_time": "10 AM on weekdays (animals most active)",
+            "avoid": "Sundays, national holidays, school vacation periods",
+            "notes": "Avoid summer afternoons (too hot). Weekday mornings are ideal."
+          }
         },
         {
           "name": "KBR National Park",
           "type": "National Park",
           "location": "Jubilee Hills",
-          "description": "A lush green space in the heart of the city, popular for jogging and walking."
+          "description": "A lush green space in the heart of the city, popular for jogging and walking.",
+          "crowd_level": {
+            "weekday": "Medium (morning peak)",
+            "weekend": "High (morning peak)",
+            "best_time": "6-8 AM for morning walks",
+            "avoid": "Rarely crowded outside morning hours",
+            "notes": "Popular with joggers 6-9 AM. Peacocks visible early morning."
+          }
         },
         {
           "name": "Sanjeevaiah Park",
           "type": "Park",
           "location": "Necklace Road",
-          "description": "A large public park along the Hussain Sagar lake."
+          "description": "A large public park along the Hussain Sagar lake.",
+          "crowd_level": {
+            "weekday": "Low",
+            "weekend": "Medium-High",
+            "best_time": "5-6 PM on weekdays",
+            "avoid": "Weekend afternoons",
+            "notes": "Lakefront park. Best for evening strolls."
+          }
         },
         {
           "name": "Lake Front Park",
@@ -409,13 +465,27 @@
         {
           "name": "Ramoji Film City",
           "type": "Film Studio & Theme Park",
-          "description": "The largest integrated film city in the world (Guinness World Record), offering studio tours and amusement park rides."
+          "description": "The largest integrated film city in the world (Guinness World Record), offering studio tours and amusement park rides.",
+          "crowd_level": {
+            "weekday": "Medium",
+            "weekend": "Very High",
+            "best_time": "Weekday mornings (arrive by 10 AM)",
+            "avoid": "Sundays, long weekends, school holidays",
+            "notes": "Book tickets online. Weekends can have 2-3 hour wait for rides."
+          }
         },
         {
           "name": "Shilparamam",
           "type": "Arts & Crafts Village",
           "location": "Madhapur",
-          "description": "A cultural village showcasing traditional arts, crafts, and performances from all over India."
+          "description": "A cultural village showcasing traditional arts, crafts, and performances from all over India.",
+          "crowd_level": {
+            "weekday": "Low",
+            "weekend": "Medium-High",
+            "best_time": "Weekday evenings (5-7 PM)",
+            "avoid": "Festival periods (December-January)",
+            "notes": "Arts & crafts village. Weekend cultural shows draw crowds."
+          }
         },
         {
           "name": "Durgam Cheruvu Cable Bridge",
@@ -665,7 +735,7 @@
           }
         ]
       },
-    "Itinearies": {
+      "Itinearies": {
         "one_day_tourist": {
           "name": "One-Day Hyderabad Heritage Tour",
           "best_for": "First-time visitors, history lovers",
@@ -900,133 +970,176 @@
       }
     },
     "Theaters_and_Cinemas": {
-    "pvr": [
+      "pvr": [
         {
-            "name": "PVR Inorbit",
-            "location": "Madhapur, HITEC City",
-            "screens": 7,
-            "formats": ["4DX", "IMAX", "Standard"],
-            "booking_link": "https://www.pvrcinemas.com",
-            "amenities": ["Food court", "Parking", "Online booking"],
-            "avg_ticket": "₹200-500",
-            "phone": "040-6666-7777"
+          "name": "PVR Inorbit",
+          "location": "Madhapur, HITEC City",
+          "screens": 7,
+          "formats": [
+            "4DX",
+            "IMAX",
+            "Standard"
+          ],
+          "booking_link": "https://www.pvrcinemas.com",
+          "amenities": [
+            "Food court",
+            "Parking",
+            "Online booking"
+          ],
+          "avg_ticket": "₹200-500",
+          "phone": "040-6666-7777"
         },
         {
-            "name": "PVR Irrum Manzil",
-            "location": "Somajiguda",
-            "screens": 6,
-            "formats": ["Gold Class", "Standard"],
-            "booking_link": "https://www.pvrcinemas.com",
-            "avg_ticket": "₹180-450",
-            "phone": "040-6666-8888"
+          "name": "PVR Irrum Manzil",
+          "location": "Somajiguda",
+          "screens": 6,
+          "formats": [
+            "Gold Class",
+            "Standard"
+          ],
+          "booking_link": "https://www.pvrcinemas.com",
+          "avg_ticket": "₹180-450",
+          "phone": "040-6666-8888"
         },
         {
-            "name": "PVR Next Galleria",
-            "location": "Punjagutta",
-            "screens": 7,
-            "formats": ["Premium", "Standard"],
-            "booking_link": "https://www.pvrcinemas.com",
-            "avg_ticket": "₹200-400",
-            "phone": "040-6666-9999"
+          "name": "PVR Next Galleria",
+          "location": "Punjagutta",
+          "screens": 7,
+          "formats": [
+            "Premium",
+            "Standard"
+          ],
+          "booking_link": "https://www.pvrcinemas.com",
+          "avg_ticket": "₹200-400",
+          "phone": "040-6666-9999"
         }
-    ],
-    "inox": [
+      ],
+      "inox": [
         {
-            "name": "INOX GVK One",
-            "location": "Banjara Hills",
-            "screens": 6,
-            "formats": ["IMAX", "Insignia (luxury)", "Standard"],
-            "booking_link": "https://www.inoxmovies.com",
-            "amenities": ["Premium lounge", "Valet parking", "Fine dining"],
-            "avg_ticket": "₹250-800",
-            "phone": "040-6677-8899"
+          "name": "INOX GVK One",
+          "location": "Banjara Hills",
+          "screens": 6,
+          "formats": [
+            "IMAX",
+            "Insignia (luxury)",
+            "Standard"
+          ],
+          "booking_link": "https://www.inoxmovies.com",
+          "amenities": [
+            "Premium lounge",
+            "Valet parking",
+            "Fine dining"
+          ],
+          "avg_ticket": "₹250-800",
+          "phone": "040-6677-8899"
         },
         {
-            "name": "INOX Maheshwari Parmeshwari",
-            "location": "Kachiguda",
-            "screens": 5,
-            "formats": ["Standard"],
-            "booking_link": "https://www.inoxmovies.com",
-            "avg_ticket": "₹150-300",
-            "phone": "040-6677-9900"
+          "name": "INOX Maheshwari Parmeshwari",
+          "location": "Kachiguda",
+          "screens": 5,
+          "formats": [
+            "Standard"
+          ],
+          "booking_link": "https://www.inoxmovies.com",
+          "avg_ticket": "₹150-300",
+          "phone": "040-6677-9900"
         }
-    ],
-    "special": [
+      ],
+      "special": [
         {
-            "name": "AMB Cinemas",
-            "location": "Gachibowli",
-            "screens": 7,
-            "formats": ["Dolby Atmos", "4K laser projection"],
-            "booking_link": "https://www.ambcinemas.com",
-            "special_feature": "Largest multiplex in Telangana",
-            "amenities": ["Rooftop restaurant", "Gaming zone", "Ample parking"],
-            "avg_ticket": "₹200-450",
-            "phone": "040-4855-5555"
+          "name": "AMB Cinemas",
+          "location": "Gachibowli",
+          "screens": 7,
+          "formats": [
+            "Dolby Atmos",
+            "4K laser projection"
+          ],
+          "booking_link": "https://www.ambcinemas.com",
+          "special_feature": "Largest multiplex in Telangana",
+          "amenities": [
+            "Rooftop restaurant",
+            "Gaming zone",
+            "Ample parking"
+          ],
+          "avg_ticket": "₹200-450",
+          "phone": "040-4855-5555"
         },
         {
-            "name": "Prasads IMAX",
-            "location": "Necklace Road",
-            "screens": 5,
-            "formats": ["IMAX (one of world's largest screens)"],
-            "booking_link": "https://www.prasadsimax.com",
-            "special_feature": "Iconic IMAX experience",
-            "amenities": ["Food court", "Shopping", "Lake view"],
-            "avg_ticket": "₹300-600",
-            "phone": "040-2340-0000"
+          "name": "Prasads IMAX",
+          "location": "Necklace Road",
+          "screens": 5,
+          "formats": [
+            "IMAX (one of world's largest screens)"
+          ],
+          "booking_link": "https://www.prasadsimax.com",
+          "special_feature": "Iconic IMAX experience",
+          "amenities": [
+            "Food court",
+            "Shopping",
+            "Lake view"
+          ],
+          "avg_ticket": "₹300-600",
+          "phone": "040-2340-0000"
         },
         {
-            "name": "Miraj Cinemas",
-            "location": "Multiple locations (Kukatpally, Chikkadpally)",
-            "screens": "4-6 per location",
-            "formats": ["Standard", "Premium"],
-            "booking_link": "https://www.mirajcinemas.com",
-            "avg_ticket": "₹150-350",
-            "phone": "Call respective location"
+          "name": "Miraj Cinemas",
+          "location": "Multiple locations (Kukatpally, Chikkadpally)",
+          "screens": "4-6 per location",
+          "formats": [
+            "Standard",
+            "Premium"
+          ],
+          "booking_link": "https://www.mirajcinemas.com",
+          "avg_ticket": "₹150-350",
+          "phone": "Call respective location"
         }
-    ],
-    "budget": [
+      ],
+      "budget": [
         {
-            "name": "Sudarshan 35mm",
-            "location": "RTC Cross Roads",
-            "screens": 2,
-            "formats": ["Classic single screens"],
-            "special_feature": "Classic cinema experience, budget-friendly",
-            "avg_ticket": "₹80-150",
-            "phone": "040-2761-0032"
+          "name": "Sudarshan 35mm",
+          "location": "RTC Cross Roads",
+          "screens": 2,
+          "formats": [
+            "Classic single screens"
+          ],
+          "special_feature": "Classic cinema experience, budget-friendly",
+          "avg_ticket": "₹80-150",
+          "phone": "040-2761-0032"
         },
         {
-            "name": "Sandhya 70mm",
-            "location": "RTC Cross Roads",
-            "screens": 1,
-            "formats": ["Large single screen"],
-            "special_feature": "Legendary single screen, massive crowd energy",
-            "avg_ticket": "₹70-120",
-            "phone": "040-2761-1122"
+          "name": "Sandhya 70mm",
+          "location": "RTC Cross Roads",
+          "screens": 1,
+          "formats": [
+            "Large single screen"
+          ],
+          "special_feature": "Legendary single screen, massive crowd energy",
+          "avg_ticket": "₹70-120",
+          "phone": "040-2761-1122"
         }
-    ]
-},
-"BOOKING_TIPS": {
-    "online": [
+      ]
+    },
+    "BOOKING_TIPS": {
+      "online": [
         "BookMyShow - Most popular, wide coverage",
         "PayTM - Cashback offers",
         "Theater websites - Direct booking, no fees",
         "Google Pay/PhonePe - Occasional cashback"
-    ],
-    "best_deals": [
+      ],
+      "best_deals": [
         "Weekday matinees (before 6 PM) - Cheapest tickets",
         "Credit card offers - Check HDFC, ICICI, SBI offers",
         "Tuesday/Wednesday - Special discounts at some theaters",
         "Membership programs - PVR Privilege, INOX Rewards"
-    ],
-    "pro_tips": [
+      ],
+      "pro_tips": [
         "Book IMAX/4DX 1-2 days in advance",
         "Weekend shows sell out fast - book early",
         "Avoid first day first show unless you're a die-hard fan",
         "Mid-row center seats (E, F, G) are best",
         "Carry your own water/snacks to save money"
-    ]
-},
-
+      ]
+    },
     "culture_and_lifestyle": {
       "cuisine": {
         "staples": [
@@ -7206,5 +7319,14 @@
       "fire": "101",
       "women_helpline": "181"
     }
+  },
+  "emergency contacts": {
+    "police": "100",
+    "ambulance": "108",
+    "fire": "101",
+    "women_helpline": "181",
+    "child_helpline": "1098",
+    "ghmc_helpline": "040-23326789",
+    "traffic_police": "040-23351818"
   }
 }

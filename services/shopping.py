@@ -1,15 +1,9 @@
 import json
+from services.kb_loader import get_shopping
 
 
 def load_shopping_data():
-    with open("knowledge_base.json", "r", encoding="utf-8") as f:
-        kb = json.load(f)
-
-    profile = kb.get("hyderabad_comprehensive_profile", {})
-    tourism = profile.get("tourism_and_landmarks", {})
-    shopping = tourism.get("shopping_hubs", {})
-
-    return shopping
+    return get_shopping()
 
 
  # Will be loaded dynamically

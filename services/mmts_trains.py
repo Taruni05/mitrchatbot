@@ -3,32 +3,13 @@ import streamlit as st
 from typing import List, Dict, Tuple, Optional
 from pathlib import Path
 from datetime import datetime, time
+from services.kb_loader import get_mmts_data
 
 
 # Load knowledge base
 @st.cache_data
 def load_mmts_data():
-    """Load MMTS data from knowledge base"""
-    try:
-        kb_path = Path(__file__).resolve().parent.parent / "knowledge_base.json"
-        with open(kb_path, "r", encoding="utf-8") as f:
-            data = json.load(f)
-
-        # Extract MMTS data from infrastructure
-        transport = (
-            data.get("hyderabad_comprehensive_profile", {})
-            .get("infrastructure", {})
-            .get("transport", [])
-        )
-
-        for item in transport:
-            if item.get("mode") == "Suburban Rail":
-                return item
-
-        return None
-    except Exception as e:
-        print(f"Error loading MMTS data: {e}")
-        return None
+    return get_mmts_data()
 
 
 # Station name normalization

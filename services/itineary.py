@@ -1,19 +1,9 @@
 import json
 from pathlib import Path
+from services.kb_loader import get_itineraries
 
 def load_itinerary_data():
-    try:
-        with open("knowledge_base.json", "r", encoding="utf-8") as f:
-            kb = json.load(f)
-
-        profile = kb.get("hyderabad_comprehensive_profile", {})
-        tourism = profile.get("tourism_and_landmarks", {})
-        itineraries = tourism.get("Itinearies", {})
-
-        return itineraries
-
-    except Exception:
-        return {}
+    return get_itineraries()
 
 # Replace ITINERARIES = {...} with:
 
