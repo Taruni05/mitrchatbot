@@ -58,14 +58,13 @@ os.environ["GEMINI_API_KEY"] = st.secrets["GEMINI_API_KEY"]
 # PAGE CONFIG - Must be first Streamlit command
 # ========================================
 st.set_page_config(
-    page_title="Hyderabad City Guide",
+    page_title="Mitr - Hyderabad City Guide",
     page_icon="🏙️",
     layout="wide",
     initial_sidebar_state="expanded",
 )
 # Header
-st.title("🏙️ Hyderabad City Guide")
-st.markdown("### Your Personal Assistant for Exploring Hyderabad")
+st.title("🏙️ Mitr - Your Personal Assistant for Exploring Hyderabad")
 st.markdown("---")
 
 st.empty()
@@ -198,6 +197,29 @@ if KB is None:
 
 PROFILE = KB.get("hyderabad_comprehensive_profile", {})
 EMERGENCY = KB.get("emergency contacts", {})
+
+# ═══════════════════════════════════════════════════════════════════════════
+# EVENTS & GOVT SERVICES DATA (manually curated — refresh periodically)
+# ═══════════════════════════════════════════════════════════════════════════
+EVENTS_DATA = [
+    {"name":"HITEX Technology Expo 2026","dates":"March 10–14, 2026","location":"HITEX Exhibition Centre, Madhapur","cost":"Free (business days) / ₹200 (public weekend)","description":"India's largest technology exhibition. Covers AI, IoT, robotics, cloud computing, and startup innovations. Over 300 exhibitors expected.","type":"Technology Expo"},
+    {"name":"Hyderabad Comic Con 2026","dates":"April 5–7, 2026","location":"HITEX Exhibition Centre","cost":"₹500 (1-day) / ₹800 (weekend pass)","description":"South India's biggest pop culture convention. Cosplay competitions, artist alleys, celebrity panels, exclusive merch, and gaming zones.","type":"Pop Culture Convention"},
+    {"name":"All India Industrial Exhibition (Numaish)","dates":"January 1 – February 15, 2026","location":"Nampally Exhibition Grounds","cost":"₹20 entry","description":"One of India's oldest and largest trade fairs. Over 2,500 stalls selling crafts, textiles, electronics, food, and more. A Hyderabad tradition since 1938.","type":"Trade Fair"},
+    {"name":"Deccan Heritage & Arts Festival","dates":"March 22–24, 2026","location":"Qutb Shahi Tombs, Golconda","cost":"₹300 (day pass) / ₹500 (3-day pass)","description":"Celebrating Deccan art, architecture, and culture. Live performances, heritage walks, craft bazaar, poetry readings, and classical music.","type":"Cultural Festival"},
+    {"name":"Hyderabad Book Fair 2026","dates":"February 20–28, 2026","location":"NTR Stadium, Indira Park","cost":"₹50 entry","description":"Annual book fair with over 400 publishers. Meet authors, attend workshops, and explore books in Telugu, English, Urdu, and Hindi.","type":"Book Fair"},
+    {"name":"Bonalu Festival","dates":"July 2026 (dates vary by temple)","location":"Temples across Hyderabad (Ujjaini Mahankali, Akkanna Madanna, etc.)","cost":"Free","description":"Telangana's state festival dedicated to Goddess Mahakali. Grand processions (ghatams), traditional dances, and offerings. Major celebrations at Secunderabad and Old City temples.","type":"Religious Festival"},
+]
+
+GOVT_SERVICES = [
+    {"name":"MeeSeva (e-Seva)","description":"Telangana government's integrated citizen service portal. Apply for certificates (birth, caste, income), ration cards, land records, and more.","type":"Citizen Services Portal","location":"Online + MeeSeva centers across Hyderabad","url":"https://meeseva.telangana.gov.in","services":["Birth Certificate","Caste Certificate","Income Certificate","Ration Card","Land Records","Pensions"],"hours":"Online: 24/7 | Centers: 9 AM – 5 PM (Mon–Sat)","contact":"155214"},
+    {"name":"RTA Hyderabad (Transport Office)","description":"Regional Transport Authority for vehicle registration, driving licenses, permits, and road tax payments.","type":"Transport Services","location":"Khairatabad (main office) + 17 other RTOs across Hyderabad","url":"https://transport.telangana.gov.in","services":["Driving License","Vehicle Registration","Road Tax","Learner's License","RC Transfer","Fitness Certificate"],"hours":"9:30 AM – 5 PM (Mon–Sat, closed Sundays & public holidays)","contact":"040-23401000"},
+    {"name":"Passport Seva Kendra (PSK)","description":"Passport application and renewal services. Book appointments online via the Passport Seva portal.","type":"Passport Services","location":"3 PSKs: Secunderabad, Gachibowli, LB Nagar | 8 Post Office Passport Seva Kendras","url":"https://portal2.passportindia.gov.in","services":["New Passport","Passport Renewal","Lost Passport","Police Clearance Certificate (PCC)","Minor Passport"],"hours":"9 AM – 5 PM (all days except national holidays)","contact":"1800-258-1800 (toll-free)"},
+    {"name":"Aadhaar Enrollment & Update Centers","description":"UIDAI authorized centers for Aadhaar card enrollment, demographic updates, and biometric updates.","type":"Identity Services","location":"300+ centers across Hyderabad (MeeSeva, post offices, banks)","url":"https://uidai.gov.in","services":["Aadhaar Enrollment","Update Name/Address/Mobile","Biometric Update","Aadhaar PVC Card","e-Aadhaar Download"],"hours":"Varies by center (most: 9 AM – 5 PM)","contact":"1947 (Aadhaar helpline)"},
+    {"name":"GHMC (Greater Hyderabad Municipal Corporation)","description":"Birth/death certificates, property tax, building permits, trade licenses, and civic complaint resolution.","type":"Municipal Services","location":"GHMC Head Office (Nampally) + 30 Circle Offices","url":"https://ghmc.gov.in","services":["Birth/Death Certificate","Property Tax","Building Permit","Trade License","Water Connection","Garbage Complaints"],"hours":"9 AM – 5 PM (Mon–Sat)","contact":"040-21111111 / 155304"},
+    {"name":"T-Seva (Telangana State Portal)","description":"Unified portal for 850+ government services. Pay bills, apply for subsidies, check application status, and more.","type":"Integrated Services Portal","location":"Online","url":"https://www.tganywhere.telangana.gov.in","services":["Electricity Bills","Water Bills","Subsidies","Pensions","Scholarships","Grievance Redressal"],"hours":"24/7","contact":"155321"},
+    {"name":"Employment Exchange (Labour Department)","description":"Job seeker registration, unemployment benefits, and skill development programs.","type":"Employment Services","location":"Abids (main office) + 16 district exchanges","url":"https://telangana.ncs.gov.in","services":["Job Seeker Registration","Unemployment Allowance","Skill Training","Employment Fair Updates"],"hours":"10 AM – 5 PM (Mon–Sat)","contact":"040-24600370"},
+    {"name":"Consumer Court / Online Consumer Disputes","description":"File consumer complaints online for defective goods, deficient services, unfair trade practices.","type":"Consumer Protection","location":"Online + District Consumer Forums in Hyderabad","url":"https://edaakhil.nic.in","services":["File Complaints","Track Case Status","Consumer Awareness"],"hours":"Online: 24/7 | Physical courts: 10:30 AM – 5 PM","contact":"1800-11-4000 (National Consumer Helpline)"},
+]
 
 
 # ========================================
@@ -368,6 +390,21 @@ def classify_intent(state: BotState):
 
     elif any(word in message for word in ["emergency", "police", "ambulance", "fire"]):
         state["intent"] = "emergency"
+    
+    elif any(word in message for word in [
+        "event", "events", "exhibition", "expo", "hitex", "comic con",
+        "numaish", "book fair", "happening", "what's on",
+    ]):
+        state["intent"] = "events"
+
+    # ── government services ─────────────────────────────────────────────
+    elif any(word in message for word in [
+        "meeseva", "rta", "passport", "aadhaar", "aadhar", "ghmc",
+        "driving license", "birth certificate", "government service",
+        "govt service", "tseva", "consumer court",
+    ]):
+        state["intent"] = "govt"
+    
 
     elif any(word in message for word in ["mmts", "train", "suburban rail"]) or (
         "from" in message and "to" in message and any(w in message for w in ["train", "rail"])
@@ -479,9 +516,10 @@ def classify_intent(state: BotState):
     elif any(word in message for word in [
         "festival", "festivals", "bonalu", "bathukamma", "dussehra", "ganesh",
         "ramadan", "eid", "diwali", "holi", "sankranti", "ugadi",
-        "culture", "cultural", "tradition", "celebration", "event",
+        "culture", "cultural", "tradition", "celebration",
     ]):
         state["intent"] = "festival"
+    # ── events & exhibitions ───────────────────────────────────────────
     
 
     else:
@@ -493,8 +531,8 @@ def classify_intent(state: BotState):
 # ── greeting & emergency ────────────────────────────────────────────────────
 
 def handle_greeting(state: BotState):
-    state["response"] = """👋 **Welcome to Hyderabad City Guide!**
-
+    state["response"] = """👋 **Hello! I am Mitr**
+Your personal Hyderabad city guide.
 I can help you with:
 🏛️ **Monuments** - Charminar, Golconda Fort
 👑 **Palaces** - Chowmahalla, Falaknuma Palace
@@ -518,6 +556,8 @@ I can help you with:
 🏥 **Healthcare** - Hospitals, emergency services
 🎓 **Education** - Universities, colleges, schools
 📜 **History** - Trivia, facts about Hyderabad
+🎪 **Events** - HITEX, Comic Con, Numaish & more
+🏛️ **Govt Services** - MeeSeva, RTA, Passport, Aadhaar
 🚨 **Emergency** - Important contacts
 
 What would you like to know?"""
@@ -1234,12 +1274,89 @@ def handle_festival(state: BotState):
     
     return state
 
+# ── events & exhibitions ────────────────────────────────────────────────────
 
+def handle_events(state: BotState):
+    if not EVENTS_DATA:
+        state["response"] = "🎪 Sorry, no upcoming events information is currently available."
+        return state
+
+    query = state["user_input"]
+    matched = _match_item(query, EVENTS_DATA)
+
+    if matched:
+        lines = [f"🎪 **{matched['name']}**\n"]
+        lines.append(f"📅 **Dates:** {matched['dates']}")
+        lines.append(f"📍 **Location:** {matched['location']}")
+        lines.append(f"💰 **Cost:** {matched['cost']}")
+        if matched.get("type"):
+            lines.append(f"🏷️  **Type:** {matched['type']}")
+        lines.append(f"\n📖 **About:**\n{matched['description']}")
+        state["response"] = "\n".join(lines)
+    else:
+        lines = ["🎪 **Upcoming Events & Exhibitions in Hyderabad**\n"]
+        lines.append("Ask me about any event for full details:\n")
+        for i, evt in enumerate(EVENTS_DATA, 1):
+            lines.append(f"**{i}. {evt['name']}**")
+            lines.append(f"   📅 {evt['dates']}")
+            lines.append(f"   📍 {evt['location']}")
+            lines.append(f"   💰 {evt['cost']}")
+            lines.append("")
+        lines.append("💡 **Pro Tip:** This list is manually updated. For real-time events, check Insider.in or BookMyShow.")
+        state["response"] = "\n".join(lines)
+    return state
+
+
+# ── government services ─────────────────────────────────────────────────────
+def handle_govt(state: BotState):
+    if not GOVT_SERVICES:
+        state["response"] = "🏛️ Sorry, government services information is currently unavailable."
+        return state
+
+    query = state["user_input"]
+    matched = _match_item(query, GOVT_SERVICES)
+
+    if matched:
+        lines = [f"🏛️ **{matched['name']}**\n"]
+        if matched.get("type"):
+            lines.append(f"🏷️  **Type:** {matched['type']}")
+        lines.append(f"📍 **Location:** {matched['location']}")
+        if matched.get("url"):
+            lines.append(f"🌐 **Website:** {matched['url']}")
+        services = matched.get("services", [])
+        if services:
+            lines.append(f"\n📋 **Services Offered:**")
+            for s in services:
+                lines.append(f"   • {s}")
+        if matched.get("hours"):
+            lines.append(f"\n⏰ **Hours:** {matched['hours']}")
+        if matched.get("contact"):
+            lines.append(f"📞 **Contact:** {matched['contact']}")
+        lines.append(f"\n📖 **About:**\n{matched['description']}")
+        state["response"] = "\n".join(lines)
+    else:
+        lines = ["🏛️ **Government Services in Hyderabad**\n"]
+        lines.append("Ask me about any service for full details:\n")
+        for i, svc in enumerate(GOVT_SERVICES, 1):
+            lines.append(f"**{i}. {svc['name']}**")
+            lines.append(f"   🏷️  {svc.get('type','Service')}")
+            lines.append(f"   🌐 {svc.get('url','')}")
+            top_services = svc.get("services", [])[:3]
+            if top_services:
+                lines.append(f"   📋 Key: {', '.join(top_services)}")
+            lines.append("")
+        lines.append("💡 **Quick Links:**")
+        lines.append("   • MeeSeva (all certificates): https://meeseva.telangana.gov.in")
+        lines.append("   • T-Seva (bills & subsidies): https://www.tganywhere.telangana.gov.in")
+        lines.append("   • Passport: https://portal2.passportindia.gov.in")
+        lines.append("   • RTA: https://transport.telangana.gov.in")
+        state["response"] = "\n".join(lines)
+    return state
 
 # ── general fallback ────────────────────────────────────────────────────────
 
 def handle_general(state: BotState):
-    state["response"] = """I can help you with:
+    state["response"] = """It look like i can't help with that but I can help you with any of these topics related to Hyderabad:
 
 🏛️ **Monuments** - Charminar, Golconda Fort
 👑 **Palaces** - Chowmahalla, Falaknuma Palace
@@ -1263,6 +1380,8 @@ def handle_general(state: BotState):
 🏥 **Healthcare** - Hospitals, emergency services
 🎓 **Education** - Universities, colleges, schools
 📜 **History** - Trivia, facts about Hyderabad
+🎪 **Events** - HITEX, Comic Con, Numaish & more
+🏛️ **Govt Services** - MeeSeva, RTA, Passport, Aadhaar
 🚨 **Emergency** - Important contacts
 
 Please ask me about any of these!"""
@@ -1304,6 +1423,8 @@ def create_workflow():
     workflow.add_node("trivia",      handle_trivia)
     workflow.add_node("festival",    handle_festival)
     workflow.add_node("crowd",       handle_crowd) 
+    workflow.add_node("events",      handle_events)
+    workflow.add_node("govt",        handle_govt)
     workflow.add_node("general",     handle_general)
 
     workflow.set_entry_point("classifier")
@@ -1335,6 +1456,8 @@ def create_workflow():
         "trivia":     "trivia",
         "festival":   "festival",
         "crowd":      "crowd",
+        "events":     "events",
+        "govt":       "govt",  
         "general":    "general",
     }
 
@@ -1438,6 +1561,10 @@ with st.sidebar:
         st.session_state.last_query = "university in hyderabad"
     if st.button("📜 Hyderabad History"):
         st.session_state.last_query = "tell me about hyderabad history"
+    if st.button("🎪 Events"):
+        st.session_state.last_query = "upcoming events in hyderabad"
+    if st.button("🏛️ Government Services"):
+        st.session_state.last_query = "government services in hyderabad"
     if st.button("🚨 Emergency Contacts"):
         st.session_state.last_query = "emergency numbers"
 
@@ -1451,7 +1578,7 @@ with st.sidebar:
 if "messages" not in st.session_state:
     st.session_state.messages = []
     st.session_state.messages.append(
-        {"role": "assistant", "content": "👋 **Welcome to Hyderabad City Guide!** How can I help you today?"}
+        {"role": "assistant", "content": "👋 **Welcome to Mitr!** I am your personal assistant for exploring Hyderabad. How can I help you today?"}
     )
 
 for message in st.session_state.messages:

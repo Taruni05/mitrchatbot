@@ -32,73 +32,41 @@ def _get_client() -> genai.Client:
     return genai.Client(api_key=key)
 
 
-# ─── Speech-to-Text ──────────────────────────────────────────────────────────
+from google.genai import types 
+
 def transcribe(audio_bytes: bytes, language: str = "en") -> str:
-    """
-    Send raw WAV/WebM bytes to Gemini and get back a plain-text transcript.
-
-    Args:
-        audio_bytes: The raw bytes from st.audio_input().getvalue()
-        language:    Two-letter language code ("en", "te", "hi", "ur").
-                     Passed as a hint in the prompt so Gemini picks the right language.
-
-    Returns:
-        Transcribed text string.  Empty string on any error.
-    """
     if not audio_bytes:
         return ""
 
-    LANG_NAMES = {
-        "en": "English",
-        "te": "Telugu",
-        "hi": "Hindi",
-        "ur": "Urdu",
-    }
+    LANG_NAMES = {"en": "English", "te": "Telugu", "hi": "Hindi", "ur": "Urdu"}
     lang_hint = LANG_NAMES.get(language, "English")
 
     try:
         client = _get_client()
 
-        # Gemini Parts API expects base64-encoded inline data
-        audio_b64 = base64.b64encode(audio_bytes).decode("utf-8")
+        # Sniff media type
+        media_type = "audio/wav" if audio_bytes[:4] == b"RIFF" else "audio/webm"
 
-        # Detect media type — st.audio_input() gives WebM in most browsers
-        # but can also give WAV.  We sniff the first 4 bytes.
-        if audio_bytes[:4] == b"RIFF":
-            media_type = "audio/wav"
-        else:
-            media_type = "audio/webm"
-
-        prompt_parts = [
-            {
-                "type": "text",
-                "text": (
-                    f"Transcribe the following audio clip into {lang_hint} text. "
-                    "Return ONLY the transcribed words, nothing else."
-                ),
-            },
-            {
-                "type": "inline_data",
-                "inline_data": {
-                    "mime_type": media_type,
-                    "data": audio_b64,
-                },
-            },
-        ]
+        # The SDK expects a list of parts. 
+        # We use types.Part.from_text and types.Part.from_bytes.
+        prompt_text = (
+            f"Transcribe the following audio clip into {lang_hint} text. "
+            "Return ONLY the transcribed words, nothing else."
+        )
 
         response = client.models.generate_content(
             model="gemini-2.5-flash-lite",
-            contents=[{"role": "user", "parts": prompt_parts}],
+            contents=[
+                types.Part.from_text(text=prompt_text),
+                types.Part.from_bytes(data=audio_bytes, mime_type=media_type)
+            ]
         )
 
-        # Strip any surrounding whitespace/quotes Gemini might add
-        transcript = response.text.strip().strip('"').strip("'")
-        return transcript
+        return response.text.strip().strip('"').strip("'")
 
     except Exception as e:
         print(f"[voice_service] transcribe error: {e}")
         return ""
-
 
 # ─── Text-to-Speech ─────────────────────────────────────────────────────────
 def synthesize(text: str, language: str = "en") -> bytes:
@@ -125,7 +93,8 @@ def synthesize(text: str, language: str = "en") -> bytes:
     try:
         tts = gTTS(text=clean, lang=language, slow=False)
         buf = io.BytesIO()
-        tts.save(buf)
+        tts.write_to_fp(buf)
+        buf.seek(0)
         return buf.getvalue()
     except Exception as e:
         print(f"[voice_service] synthesize error: {e}")
