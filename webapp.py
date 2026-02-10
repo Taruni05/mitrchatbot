@@ -46,6 +46,16 @@ from services.translator import translate_response, get_language_name
 from services.metro_rail import(extract_stations_from_query,find_metro_route,format_metro_route,get_general_metro_info,format_metro_station_list)
 from services.voice_service import render_audio_input, render_audio_output
 from services.crowd import get_crowd_info
+from services.utilities import handle_utilities_query,get_all_active_alerts,check_alerts_for_saved_areas,clear_alerts_cache
+from services.ai_preferences import (
+    initialize_preferences,
+    learn_from_query,
+    get_personalized_greeting,
+    get_personalized_suggestions,
+    apply_personalization_to_response
+)
+from services.festivals_traffic_alerts import handle_festival_traffic_query,get_active_festivals,get_festival_alerts_for_saved_areas
+from services.live_deals import handle_deals_query,get_all_food_deals,get_all_ecommerce_deals,get_personalized_deals
 
 import base64
 from datetime import datetime
@@ -63,9 +73,54 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="expanded",
 )
+initialize_preferences()
 # Header
-st.title("🏙️ Mitr - Your Personal Assistant for Exploring Hyderabad")
+st.title(" Mitr - Your Personal Assistant for Exploring Hyderabad")
 st.markdown("---")
+
+
+
+# ========================================
+# PERSONALIZED GREETING & SUGGESTIONS
+# ========================================
+from services.ai_preferences import get_current_preferences
+
+# Show personalized greeting
+prefs = get_current_preferences()
+greeting = get_personalized_greeting(prefs)
+st.markdown(f"### {greeting}")
+
+# Show personalized suggestions as quick action buttons
+suggestions = get_personalized_suggestions(prefs)
+if suggestions:
+    st.markdown("**🎯 Suggested for you:**")
+    cols = st.columns(min(len(suggestions), 5))
+    for i, suggestion in enumerate(suggestions[:5]):
+        with cols[i]:
+            # Extract the main text after emoji
+            button_text = suggestion.split(" ", 1)[1] if " " in suggestion else suggestion
+            if st.button(button_text, key=f"suggestion_{i}", use_container_width=True):
+                st.session_state.last_query = button_text
+                st.rerun()
+    st.markdown("---")
+# ========================================
+# PROACTIVE ALERTS FOR SAVED AREAS
+# ========================================
+saved_areas = prefs.get("frequent_areas", [])
+
+if saved_areas:
+    # Store in session state for utilities_alerts to access
+    if "user_preferences" not in st.session_state:
+        st.session_state["user_preferences"] = prefs
+    
+    # Call without arguments (reads from session state internally)
+    utility_alerts = check_alerts_for_saved_areas()
+    
+    if utility_alerts:
+        st.warning("⚡💧 **Utility Alerts in Your Areas**")
+        for alert in utility_alerts:
+            st.markdown(f"• {alert}")
+        st.markdown("---")
 
 st.empty()
 
@@ -134,7 +189,7 @@ REMOVE STREAMLIT DEFAULT LAYERS
 SIDEBAR
 =============================== */
 [data-testid="stSidebar"] {{
-    background: rgba(0, 0, 0, 0.78) !important;
+    background: rgba(0, 0, 0, 0) !important;
     backdrop-filter: blur(14px);
     border-right: 1px solid rgba(255,255,255,0.08);
 }}
@@ -143,11 +198,11 @@ SIDEBAR
 CHAT MESSAGES
 =============================== */
 [data-testid="stChatMessage"] {{
-    background: rgba(255, 255, 255, 0.12) !important;
+    background: rgba(0, 0, 0, 0) !important;
     border-radius: 14px;
     padding: 12px;
     backdrop-filter: blur(10px);
-    border: 1px solid rgba(255,255,255,0.08);
+    border: 1px solid rgba(0,0,0,0);
 }}
 
 /* ================================
@@ -156,7 +211,7 @@ TEXT READABILITY
 h1, h2, h3, h4, p, span,
 [data-testid="stMarkdownContainer"] {{
     color: #ffffff !important;
-    text-shadow: 0 1px 3px rgba(0,0,0,0.85);
+    text-shadow: 0 1px 3px rgba(0,0,0,0);
 }}
 
 /* ================================
@@ -172,6 +227,63 @@ MOBILE OPTIMIZATION
 """,
     unsafe_allow_html=True,
 )
+st.markdown("""
+<div id="chat-anchor"></div>
+
+<style>
+.floating-chat-btn {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #6366F1, #4F46E5);
+    color: white;
+    font-size: 26px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 9999;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+}
+.floating-chat-btn:hover {
+    transform: scale(1.05);
+}
+</style>
+            
+<style>/* =====================================
+FINAL CHAT LAYOUT FIX (USE ONLY THIS)
+===================================== */
+
+[data-testid="stChatMessage"] {
+    display: grid !important;
+    grid-template-columns: auto 1fr !important;
+    column-gap: 0.5rem !important;
+    padding-left: 0.75rem !important;
+    margin-bottom: 10px;
+}
+
+[data-testid="stChatMessageAvatar"] img {
+    width: 36px !important;
+    height: 36px !important;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+[data-testid="stChatMessageContent"] {
+    margin-left: 0 !important;
+    padding-left: 0 !important;
+}
+</style>
+
+<div class="floating-chat-btn"
+     onclick="document.getElementById('chat-anchor').scrollIntoView({behavior: 'smooth'});">
+💬
+</div>
+""", unsafe_allow_html=True)
+
 
 
 # ========================================
@@ -204,7 +316,7 @@ EMERGENCY = KB.get("emergency contacts", {})
 EVENTS_DATA = [
     {"name":"HITEX Technology Expo 2026","dates":"March 10–14, 2026","location":"HITEX Exhibition Centre, Madhapur","cost":"Free (business days) / ₹200 (public weekend)","description":"India's largest technology exhibition. Covers AI, IoT, robotics, cloud computing, and startup innovations. Over 300 exhibitors expected.","type":"Technology Expo"},
     {"name":"Hyderabad Comic Con 2026","dates":"April 5–7, 2026","location":"HITEX Exhibition Centre","cost":"₹500 (1-day) / ₹800 (weekend pass)","description":"South India's biggest pop culture convention. Cosplay competitions, artist alleys, celebrity panels, exclusive merch, and gaming zones.","type":"Pop Culture Convention"},
-    {"name":"All India Industrial Exhibition (Numaish)","dates":"January 1 – February 15, 2026","location":"Nampally Exhibition Grounds","cost":"₹20 entry","description":"One of India's oldest and largest trade fairs. Over 2,500 stalls selling crafts, textiles, electronics, food, and more. A Hyderabad tradition since 1938.","type":"Trade Fair"},
+    {"name":"All India Industrial Exhibition (Numaish)","dates":"January 1 – February 15, 2026","location":"Nampally Exhibition Grounds","cost":"₹50 entry","description":"One of India's oldest and largest trade fairs. Over 2,500 stalls selling crafts, textiles, electronics, food, and more. A Hyderabad tradition since 1938.","type":"Trade Fair"},
     {"name":"Deccan Heritage & Arts Festival","dates":"March 22–24, 2026","location":"Qutb Shahi Tombs, Golconda","cost":"₹300 (day pass) / ₹500 (3-day pass)","description":"Celebrating Deccan art, architecture, and culture. Live performances, heritage walks, craft bazaar, poetry readings, and classical music.","type":"Cultural Festival"},
     {"name":"Hyderabad Book Fair 2026","dates":"February 20–28, 2026","location":"NTR Stadium, Indira Park","cost":"₹50 entry","description":"Annual book fair with over 400 publishers. Meet authors, attend workshops, and explore books in Telugu, English, Urdu, and Hindi.","type":"Book Fair"},
     {"name":"Bonalu Festival","dates":"July 2026 (dates vary by temple)","location":"Temples across Hyderabad (Ujjaini Mahankali, Akkanna Madanna, etc.)","cost":"Free","description":"Telangana's state festival dedicated to Goddess Mahakali. Grand processions (ghatams), traditional dances, and offerings. Major celebrations at Secunderabad and Old City temples.","type":"Religious Festival"},
@@ -410,6 +522,12 @@ def classify_intent(state: BotState):
         "from" in message and "to" in message and any(w in message for w in ["train", "rail"])
     ):
         state["intent"] = "mmts"
+    elif any(word in message.lower() for word in 
+           ["power", "power cut", "electricity", "outage", "load shed",
+            "water", "water supply", "tap water"]):
+        state["intent"] = "utilities"
+        return state
+    
     elif any(word in message for word in ["crowd","crowded", "busy", "best time", "avoid crowd",
         "peaceful", "quiet", "less people", "when to visit",]):
         state["intent"] = "crowd"
@@ -512,6 +630,11 @@ def classify_intent(state: BotState):
         "hyderabadi", "heritage", "legacy",
     ]):
         state["intent"] = "trivia"
+    elif any(word in message for word in [
+    "festival", "ganesh", "diwali", "bonalu", "eid", "ramadan",
+    "numaish", "rush", "crowd today", "procession", "immersion"
+    ]):
+        state["intent"] = "festival_traffic"
 
     elif any(word in message for word in [
         "festival", "festivals", "bonalu", "bathukamma", "dussehra", "ganesh",
@@ -520,7 +643,12 @@ def classify_intent(state: BotState):
     ]):
         state["intent"] = "festival"
     # ── events & exhibitions ───────────────────────────────────────────
-    
+    elif any(word in message for word in [
+    "deal", "deals", "offer", "offers", "discount", "discounts",
+    "swiggy", "zomato", "amazon", "flipkart", "coupon", "sale",
+    "cheap", "save money", "cashback", "promo"
+    ]):
+        state["intent"] = "deals"
 
     else:
         state["intent"] = "general"
@@ -558,6 +686,8 @@ I can help you with:
 📜 **History** - Trivia, facts about Hyderabad
 🎪 **Events** - HITEX, Comic Con, Numaish & more
 🏛️ **Govt Services** - MeeSeva, RTA, Passport, Aadhaar
+🎉 **Festival Traffic** - Live crowd & traffic alerts
+💰 **Live Deals** - Swiggy, Zomato, Amazon offers
 🚨 **Emergency** - Important contacts
 
 What would you like to know?"""
@@ -629,6 +759,14 @@ def handle_temple(state: BotState):
 
     return state
 
+def handle_utilities(state: BotState) -> BotState:
+    """Handle power-cut and water-supply queries"""
+    try:
+        response = handle_utilities_query(state["user_input"])
+        state["response"] = response
+    except Exception as e:
+        state["response"] = "Sorry, utility alerts are currently unavailable."
+    return state
 
 def handle_palace(state: BotState):
     items = PROFILE.get("tourism_and_landmarks", {}).get("palaces", [])
@@ -1353,6 +1491,59 @@ def handle_govt(state: BotState):
         state["response"] = "\n".join(lines)
     return state
 
+# ── festival traffic handler ────────────────────────────────────────────────
+
+def handle_festival_traffic(state: BotState):
+    """Handle queries about festival traffic and crowds."""
+    try:
+        response = handle_festival_traffic_query(state["user_input"])
+        state["response"] = response
+    except Exception as e:
+        state["response"] = """🎉 **Festival Traffic Information**
+
+I can help you check:
+- Active festivals today
+- Upcoming festivals calendar
+- Traffic impact in specific areas
+- Crowd predictions
+
+Try asking:
+- "What festivals are happening today?"
+- "Traffic at Charminar during Ganesh Chaturthi"
+- "Upcoming festivals next week"
+- "Is Tank Bund crowded right now?"
+
+⚠️ Note: Live traffic data requires TomTom API key configuration."""
+    
+    return state
+
+
+# ── deals handler ───────────────────────────────────────────────────────────
+
+def handle_deals(state: BotState):
+    """Handle queries about food delivery and e-commerce deals."""
+    try:
+        response = handle_deals_query(state["user_input"])
+        state["response"] = response
+    except Exception as e:
+        state["response"] = """💰 **Live Deals & Offers**
+
+I can show you deals from:
+🍔 **Food Delivery:** Swiggy, Zomato
+🛍️ **E-commerce:** Amazon, Flipkart
+💳 **Bank Offers:** HDFC, ICICI, Axis, SBI
+
+Try asking:
+- "Show me Swiggy offers"
+- "Amazon deals on electronics"
+- "Best food delivery discounts today"
+- "Bank card offers"
+- "Shopping deals"
+
+💡 Note: Live deals require RapidAPI key configuration."""
+    
+    return state
+
 # ── general fallback ────────────────────────────────────────────────────────
 
 def handle_general(state: BotState):
@@ -1382,6 +1573,8 @@ def handle_general(state: BotState):
 📜 **History** - Trivia, facts about Hyderabad
 🎪 **Events** - HITEX, Comic Con, Numaish & more
 🏛️ **Govt Services** - MeeSeva, RTA, Passport, Aadhaar
+🎉 **Festival Traffic** - Live crowd & traffic alerts
+💰 **Live Deals** - Swiggy, Zomato, Amazon offers
 🚨 **Emergency** - Important contacts
 
 Please ask me about any of these!"""
@@ -1425,6 +1618,9 @@ def create_workflow():
     workflow.add_node("crowd",       handle_crowd) 
     workflow.add_node("events",      handle_events)
     workflow.add_node("govt",        handle_govt)
+    workflow.add_node("utilities",    handle_utilities)
+    workflow.add_node("festival_traffic", handle_festival_traffic)
+    workflow.add_node("deals", handle_deals)
     workflow.add_node("general",     handle_general)
 
     workflow.set_entry_point("classifier")
@@ -1458,6 +1654,9 @@ def create_workflow():
         "crowd":      "crowd",
         "events":     "events",
         "govt":       "govt",  
+        "utilities":   "utilities",
+        "festival_traffic": "festival_traffic",
+        "deals": "deals",
         "general":    "general",
     }
 
@@ -1506,66 +1705,116 @@ with st.sidebar:
 
     st.sidebar.markdown("---")
 
+    # ── AI Preferences Dashboard ────────────────────────────────────────
+    st.sidebar.subheader("🎯 Your Preferences")
+    
+    with st.sidebar.expander("📊 View My Data", expanded=False):
+        prefs = get_current_preferences()
+        
+        # Show stats
+        st.metric("Total Interactions", prefs["total_interactions"])
+        st.metric("Personalization Level", f"{int(prefs['personalization_score']*100)}%")
+        
+        # Show top interests
+        if prefs["total_interactions"] > 0:
+            st.markdown("**Your Top Interests:**")
+            top_interests = sorted(
+                prefs["interests"].items(),
+                key=lambda x: x[1],
+                reverse=True
+            )[:5]
+            
+            for interest, count in top_interests:
+                if count > 0:
+                    st.progress(min(count/20, 1.0), text=f"{interest.title()}: {count}")
+        
+        # Show frequent areas
+        if prefs.get("frequent_areas"):
+            st.markdown("**Your Frequent Areas:**")
+            for area in prefs["frequent_areas"][:5]:
+                st.markdown(f"• {area}")
+        
+        # Privacy controls
+        st.markdown("---")
+        st.markdown("**🔒 Privacy Controls**")
+        
+        col_a, col_b = st.columns(2)
+        with col_a:
+            if st.button("📄 View Privacy", key="view_privacy"):
+                from services.ai_preferences import get_privacy_summary
+                st.info(get_privacy_summary(prefs))
+        
+        with col_b:
+            if st.button("🗑️ Clear Data", key="clear_data"):
+                from services.ai_preferences import clear_user_data
+                clear_user_data()
+                st.success("✅ All data cleared!")
+                st.rerun()
+
     # ── voice settings ──────────────────────────────────────────────────
     st.sidebar.subheader("🎙️ Voice Settings")
     voice_enabled = st.sidebar.toggle("Enable voice input",  key="voice_enabled",  value=False)
     auto_speak    = st.sidebar.toggle("Auto-play responses", key="auto_speak",     value=False)
 
     # ── quick links ─────────────────────────────────────────────────────
-    st.header("🎯 Quick Links")
-    st.info("**Popular Queries:**")
+    st.sidebar.header("🎯 Quick Links")
+    st.sidebar.info("**Popular Queries:**")
 
-    if st.button("🏛️ Famous Monuments"):
+    if st.sidebar.button("🏛️ Famous Monuments"):
         st.session_state.last_query = "tell me about famous monuments"
-    if st.button("👑 Royal Palaces"):
+    if st.sidebar.button("👑 Royal Palaces"):
         st.session_state.last_query = "royal palaces in hyderabad"
-    if st.button("🏛️ Museums"):
+    if st.sidebar.button("🏛️ Museums"):
         st.session_state.last_query = "museums in hyderabad"
-    if st.button("🌳 Parks & Nature"):
+    if st.sidebar.button("🌳 Parks & Nature"):
         st.session_state.last_query = "parks and nature in hyderabad"
-    if st.button("🎬 Attractions"):
+    if st.sidebar.button("🎬 Attractions"):
         st.session_state.last_query = "modern attractions in hyderabad"
-    if st.button("🍛 Best Biryani Places"):
+    if st.sidebar.button("🍛 Best Biryani Places"):
         st.session_state.last_query = "best biryani places"
-    if st.button("🛕 Temples"):
+    if st.sidebar.button("🛕 Temples"):
         st.session_state.last_query = "famous temples"
-    if st.button("🚇 Metro Info"):
+    if st.sidebar.button("🚇 Metro Info"):
         st.session_state.last_query = "metro timings"
-    if st.button("🚌 Bus Routes"):
+    if st.sidebar.button("🚌 Bus Routes"):
         st.session_state.last_query = "bus routes in hyderabad"
-    if st.button("🚆 MMTS Train Info"):
+    if st.sidebar.button("🚆 MMTS Train Info"):
         st.session_state.last_query = "mmts train info"
-    if st.button("⛽ Fuel Prices"):
+    if st.sidebar.button("⛽ Fuel Prices"):
         st.session_state.last_query = "fuel prices today"
-    if st.button("📰 City News"):
+    if st.sidebar.button("📰 City News"):
         st.session_state.last_query = "hyderabad news"
-    if st.button("🛍️ Shopping Malls"):
+    if st.sidebar.button("🛍️ Shopping Malls"):
         st.session_state.last_query = "shopping malls in hyderabad"
-    if st.button("👥 Crowd Guide"):
+    if st.sidebar.button("👥 Crowd Guide"):
         st.session_state.last_query = "best time to visit places"
-    if st.button("🗓️ Plan My Day"):
+    if st.sidebar.button("🗓️ Plan My Day"):
         st.session_state.last_query = "plan my one day hyderabad tour"
-    if st.button("🎬 Movie Theaters"):
+    if st.sidebar.button("🎬 Movie Theaters"):
         st.session_state.last_query = "movie theaters in hyderabad"
-    if st.button("🌦️ Weather Update"):
+    if st.sidebar.button("🌦️ Weather Update"):
         st.session_state.last_query = "weather in hyderabad"
-    if st.button("🚦 Traffic Update"):
+    if st.sidebar.button("🚦 Traffic Update"):
         st.session_state.last_query = "traffic in hyderabad"
-    if st.button("🎉 Festivals & Culture"):
+    if st.sidebar.button("🎉 Festivals & Culture"):
         st.session_state.last_query = "festivals in hyderabad"
-    if st.button("⚽ Sports & Stadiums"):
+    if st.sidebar.button("⚽ Sports & Stadiums"):
         st.session_state.last_query = "sports stadiums"
-    if st.button("🏥 Hospitals & Healthcare"):
+    if st.sidebar.button("🏥 Hospitals & Healthcare"):
         st.session_state.last_query = "major hospitals"
-    if st.button("🎓 Education & Universities"):
+    if st.sidebar.button("🎓 Education & Universities"):
         st.session_state.last_query = "university in hyderabad"
-    if st.button("📜 Hyderabad History"):
+    if st.sidebar.button("📜 Hyderabad History"):
         st.session_state.last_query = "tell me about hyderabad history"
-    if st.button("🎪 Events"):
+    if st.sidebar.button("🎪 Events"):
         st.session_state.last_query = "upcoming events in hyderabad"
-    if st.button("🏛️ Government Services"):
+    if st.sidebar.button("🏛️ Government Services"):
         st.session_state.last_query = "government services in hyderabad"
-    if st.button("🚨 Emergency Contacts"):
+    if st.sidebar.button("🎉 Festival Traffic"):
+        st.session_state.last_query = "what festivals are happening today"
+    if st.sidebar.button("💰 Live Deals & Offers"):
+        st.session_state.last_query = "show me food delivery offers"
+    if st.sidebar.button("🚨 Emergency Contacts"):
         st.session_state.last_query = "emergency numbers"
 
     st.markdown("---")
@@ -1578,12 +1827,19 @@ with st.sidebar:
 if "messages" not in st.session_state:
     st.session_state.messages = []
     st.session_state.messages.append(
-        {"role": "assistant", "content": "👋 **Welcome to Mitr!** I am your personal assistant for exploring Hyderabad. How can I help you today?"}
+        {"role": "assistant", "content": "👋 Welcome to Mitr! I am your personal assistant for exploring Hyderabad. How can I help you today?"}
     )
 
 for message in st.session_state.messages:
-    with st.chat_message(message["role"]):
-        st.markdown(message["content"])
+    if message["role"] == "assistant":
+        with st.chat_message(
+            "assistant",
+            avatar="https://raw.githubusercontent.com/Taruni05/mitrchatbot/master/mitr_avatar.png"
+        ):
+            st.markdown(message["content"])
+    else:
+        with st.chat_message("user"):
+            st.markdown(message["content"])
 
 
 # ── voice input (browser mic) ───────────────────────────────────────────────
@@ -1613,50 +1869,69 @@ if "last_query" in st.session_state:
 
 # ── process ─────────────────────────────────────────────────────────────────
 if user_input:
-    st.session_state.messages.append({"role": "user", "content": user_input})
+    # 1️⃣ Save + render USER message
+    st.session_state.messages.append(
+        {"role": "user", "content": user_input}
+    )
 
     with st.chat_message("user"):
         st.markdown(user_input)
 
-    with st.chat_message("assistant"):
-        with st.spinner("Thinking..."):
-            try:
-                # translate input to English if needed
-                normalized_input = (
-                    translate_response(user_input, "en")
-                    if language != "en"
-                    else user_input
-                )
+    # 2️⃣ Show spinner OUTSIDE chat messages
+    with st.spinner("Thinking..."):
+        try:
+            # translate input to English if needed
+            normalized_input = (
+                translate_response(user_input, "en")
+                if language != "en"
+                else user_input
+            )
 
-                result   = app.invoke({"user_input": normalized_input, "intent": "", "response": ""})
-                response = result["response"]
+            # Run LangGraph
+            result   = app.invoke({
+                "user_input": normalized_input,
+                "intent": "",
+                "response": ""
+            })
 
-                # translate output back if needed
-                if language != "en":
-                    response = translate_response(response, language)
+            intent   = result["intent"]
+            response = result["response"]
 
-                st.markdown(response)
+            # Learn + personalize
+            learn_from_query(normalized_input, intent)
+            response = apply_personalization_to_response(response)
 
-                # 🔊 voice output
-                if st.session_state.get("voice_enabled", False):
-                    render_audio_output(
-                        text=response,
-                        language=language,
-                        auto_play=st.session_state.get("auto_speak", False),
-                    )
+            # translate output back if needed
+            if language != "en":
+                response = translate_response(response, language)
 
-                st.session_state.messages.append({"role": "assistant", "content": response})
+        except Exception as e:
+            response = f"❌ Error: {str(e)}"
 
-            except Exception as e:
-                error_msg = f"❌ Error: {str(e)}"
-                st.error(error_msg)
-                st.session_state.messages.append({"role": "assistant", "content": error_msg})
+    # 3️⃣ Render ASSISTANT message (NO spinner here)
+    with st.chat_message(
+        "assistant",
+        avatar="https://raw.githubusercontent.com/Taruni05/mitrchatbot/master/mitr_avatar.png"
+    ):
+        st.markdown(response)
 
+        # 🔊 voice output
+        if st.session_state.get("voice_enabled", False):
+            render_audio_output(
+                text=response,
+                language=language,
+                auto_play=st.session_state.get("auto_speak", False),
+            )
+
+    # 4️⃣ Save assistant message
+    st.session_state.messages.append(
+        {"role": "assistant", "content": response}
+    )
 
 # ========================================
 # LIVE SNAPSHOT DASHBOARD
 # ========================================
-st.subheader("🌍 Hyderabad Live Snapshot")
+st.subheader("🌏  Hyderabad Live Snapshot")
 
 area       = st.session_state.selected_area
 lat, lon   = st.session_state.selected_coords
@@ -1690,7 +1965,7 @@ with col4:
 st.markdown("---")
 st.markdown(
     "<div style='text-align: center'>"
-    "<p>Made with ❤️ for Hyderabad | Data last updated: October 2025</p>"
+    "<p>Made with ❤️ for Hyderabad | Thank You for Visiting!</p>"
     "</div>",
     unsafe_allow_html=True,
 )

@@ -1,0 +1,125 @@
+{
+  "user_id": "cc0f1eb24d95f3e1",
+  "created_at": "2026-02-10T11:56:40.925896",
+  "last_active": "2026-02-10T12:40:07.097123",
+  "total_interactions": 9,
+  "frequent_areas": [
+    "uppal"
+  ],
+  "home_area": null,
+  "work_area": "uppal",
+  "interests": {
+    "food": 1,
+    "transport": 2,
+    "tourism": 0,
+    "shopping": 0,
+    "entertainment": 0,
+    "news": 0,
+    "weather": 2,
+    "utilities": 0,
+    "sports": 0,
+    "healthcare": 0
+  },
+  "food_preferences": {
+    "cuisines": [
+      "biryani"
+    ],
+    "price_range": "medium",
+    "dietary": []
+  },
+  "transport_preferences": {
+    "modes": [
+      "metro"
+    ],
+    "frequent_routes": []
+  },
+  "tourism_preferences": {
+    "types": [],
+    "crowd_tolerance": "medium"
+  },
+  "language": "en",
+  "active_hours": {
+    "0": 0,
+    "1": 0,
+    "2": 0,
+    "3": 0,
+    "4": 0,
+    "5": 0,
+    "6": 0,
+    "7": 0,
+    "8": 0,
+    "9": 0,
+    "10": 0,
+    "11": 3,
+    "12": 6,
+    "13": 0,
+    "14": 0,
+    "15": 0,
+    "16": 0,
+    "17": 0,
+    "18": 0,
+    "19": 0,
+    "20": 0,
+    "21": 0,
+    "22": 0,
+    "23": 0
+  },
+  "active_days": {
+    "monday": 0,
+    "tuesday": 9,
+    "wednesday": 0,
+    "thursday": 0,
+    "friday": 0,
+    "saturday": 0,
+    "sunday": 0
+  },
+  "query_history": [
+    {
+      "query": "Check metro routes",
+      "intent": "transport",
+      "timestamp": "2026-02-10T11:56:40.925935"
+    },
+    {
+      "query": "Explore famous biryani places",
+      "intent": "food",
+      "timestamp": "2026-02-10T11:56:55.820418"
+    },
+    {
+      "query": "weather in uppal",
+      "intent": "weather",
+      "timestamp": "2026-02-10T11:57:09.029967"
+    },
+    {
+      "query": "Weather forecast",
+      "intent": "weather",
+      "timestamp": "2026-02-10T12:34:42.316563"
+    },
+    {
+      "query": "fuel prices today",
+      "intent": "fuel",
+      "timestamp": "2026-02-10T12:39:36.783496"
+    },
+    {
+      "query": "metro timings",
+      "intent": "transport",
+      "timestamp": "2026-02-10T12:39:53.090968"
+    },
+    {
+      "query": "tell me about famous monuments",
+      "intent": "monument",
+      "timestamp": "2026-02-10T12:39:59.723631"
+    },
+    {
+      "query": "royal palaces in hyderabad",
+      "intent": "palace",
+      "timestamp": "2026-02-10T12:40:03.220482"
+    },
+    {
+      "query": "museums in hyderabad",
+      "intent": "museum",
+      "timestamp": "2026-02-10T12:40:07.097167"
+    }
+  ],
+  "personalization_enabled": true,
+  "personalization_score": 0.5499999999999999
+}

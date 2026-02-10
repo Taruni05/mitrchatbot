@@ -1,0 +1,136 @@
+{
+  "user_id": "2f0af7c582f7785c",
+  "created_at": "2026-02-10T14:00:31.816845",
+  "last_active": "2026-02-10T14:13:26.789584",
+  "total_interactions": 11,
+  "frequent_areas": [
+    "charminar"
+  ],
+  "home_area": null,
+  "work_area": "charminar",
+  "interests": {
+    "food": 1,
+    "transport": 2,
+    "tourism": 0,
+    "shopping": 0,
+    "entertainment": 0,
+    "news": 0,
+    "weather": 0,
+    "utilities": 0,
+    "sports": 0,
+    "healthcare": 0
+  },
+  "food_preferences": {
+    "cuisines": [
+      "biryani"
+    ],
+    "price_range": "medium",
+    "dietary": []
+  },
+  "transport_preferences": {
+    "modes": [
+      "metro",
+      "bus"
+    ],
+    "frequent_routes": []
+  },
+  "tourism_preferences": {
+    "types": [],
+    "crowd_tolerance": "medium"
+  },
+  "language": "en",
+  "active_hours": {
+    "0": 0,
+    "1": 0,
+    "2": 0,
+    "3": 0,
+    "4": 0,
+    "5": 0,
+    "6": 0,
+    "7": 0,
+    "8": 0,
+    "9": 0,
+    "10": 0,
+    "11": 0,
+    "12": 0,
+    "13": 0,
+    "14": 11,
+    "15": 0,
+    "16": 0,
+    "17": 0,
+    "18": 0,
+    "19": 0,
+    "20": 0,
+    "21": 0,
+    "22": 0,
+    "23": 0
+  },
+  "active_days": {
+    "monday": 0,
+    "tuesday": 11,
+    "wednesday": 0,
+    "thursday": 0,
+    "friday": 0,
+    "saturday": 0,
+    "sunday": 0
+  },
+  "query_history": [
+    {
+      "query": "hello",
+      "intent": "greeting",
+      "timestamp": "2026-02-10T14:00:31.816904"
+    },
+    {
+      "query": "royal palaces in hyderabad",
+      "intent": "palace",
+      "timestamp": "2026-02-10T14:00:36.590672"
+    },
+    {
+      "query": "museums in hyderabad",
+      "intent": "museum",
+      "timestamp": "2026-02-10T14:00:39.038425"
+    },
+    {
+      "query": "parks and nature in hyderabad",
+      "intent": "park",
+      "timestamp": "2026-02-10T14:00:51.690718"
+    },
+    {
+      "query": "Check metro routes",
+      "intent": "transport",
+      "timestamp": "2026-02-10T14:07:54.926514"
+    },
+    {
+      "query": "Explore famous biryani places",
+      "intent": "food",
+      "timestamp": "2026-02-10T14:08:08.617141"
+    },
+    {
+      "query": "Visit Charminar",
+      "intent": "itinerary",
+      "timestamp": "2026-02-10T14:08:14.455162"
+    },
+    {
+      "query": "royal palaces in hyderabad",
+      "intent": "palace",
+      "timestamp": "2026-02-10T14:08:22.548545"
+    },
+    {
+      "query": "famous temples",
+      "intent": "temple",
+      "timestamp": "2026-02-10T14:08:26.897582"
+    },
+    {
+      "query": "Check bus/metro routes",
+      "intent": "transport",
+      "timestamp": "2026-02-10T14:13:18.588011"
+    },
+    {
+      "query": "best time to visit places",
+      "intent": "crowd",
+      "timestamp": "2026-02-10T14:13:26.789708"
+    }
+  ],
+  "personalization_enabled": true,
+  "personalization_score": 0.5499999999999999
+}

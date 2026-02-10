@@ -1,0 +1,108 @@
+{
+  "user_id": "02f4ce32b30f803f",
+  "created_at": "2026-02-10T14:08:30.822353",
+  "last_active": "2026-02-10T14:13:10.665257",
+  "total_interactions": 6,
+  "frequent_areas": [],
+  "home_area": null,
+  "work_area": null,
+  "interests": {
+    "food": 1,
+    "transport": 1,
+    "tourism": 0,
+    "shopping": 0,
+    "entertainment": 0,
+    "news": 0,
+    "weather": 0,
+    "utilities": 0,
+    "sports": 0,
+    "healthcare": 0
+  },
+  "food_preferences": {
+    "cuisines": [
+      "biryani"
+    ],
+    "price_range": "medium",
+    "dietary": []
+  },
+  "transport_preferences": {
+    "modes": [
+      "metro"
+    ],
+    "frequent_routes": []
+  },
+  "tourism_preferences": {
+    "types": [],
+    "crowd_tolerance": "medium"
+  },
+  "language": "en",
+  "active_hours": {
+    "0": 0,
+    "1": 0,
+    "2": 0,
+    "3": 0,
+    "4": 0,
+    "5": 0,
+    "6": 0,
+    "7": 0,
+    "8": 0,
+    "9": 0,
+    "10": 0,
+    "11": 0,
+    "12": 0,
+    "13": 0,
+    "14": 6,
+    "15": 0,
+    "16": 0,
+    "17": 0,
+    "18": 0,
+    "19": 0,
+    "20": 0,
+    "21": 0,
+    "22": 0,
+    "23": 0
+  },
+  "active_days": {
+    "monday": 0,
+    "tuesday": 6,
+    "wednesday": 0,
+    "thursday": 0,
+    "friday": 0,
+    "saturday": 0,
+    "sunday": 0
+  },
+  "query_history": [
+    {
+      "query": "museums in hyderabad",
+      "intent": "museum",
+      "timestamp": "2026-02-10T14:08:30.822501"
+    },
+    {
+      "query": "parks and nature in hyderabad",
+      "intent": "park",
+      "timestamp": "2026-02-10T14:08:32.831819"
+    },
+    {
+      "query": "modern attractions in hyderabad",
+      "intent": "attraction",
+      "timestamp": "2026-02-10T14:08:34.979180"
+    },
+    {
+      "query": "famous temples",
+      "intent": "temple",
+      "timestamp": "2026-02-10T14:08:37.887516"
+    },
+    {
+      "query": "Explore famous biryani places",
+      "intent": "food",
+      "timestamp": "2026-02-10T14:13:05.648251"
+    },
+    {
+      "query": "Check metro routes",
+      "intent": "transport",
+      "timestamp": "2026-02-10T14:13:10.665418"
+    }
+  ],
+  "personalization_enabled": true,
+  "personalization_score": 0.30000000000000004
+}
