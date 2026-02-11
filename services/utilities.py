@@ -8,6 +8,11 @@ import json
 from pathlib import Path
 from typing import Dict, List, Optional
 import requests
+from services.logger import get_logger
+from services.config import config
+
+logger = get_logger(__name__)
+
 
 
 # ═══════════════════════════════════════════════════════════════════════════
@@ -108,7 +113,7 @@ def fetch_live_power_cuts() -> Dict:
         # Example: Check if we have cached data in session state
         if "power_cuts_cache" in st.session_state:
             cache_time = st.session_state.get("power_cuts_cache_time")
-            if cache_time and (datetime.now() - cache_time).total_seconds() < 3600:  # 1 hour cache
+            if cache_time and (datetime.now() - cache_time).seconds < 3600:  # 1 hour cache
                 return st.session_state["power_cuts_cache"]
         
         # TODO: Add actual API call here
@@ -119,7 +124,7 @@ def fetch_live_power_cuts() -> Dict:
         return FALLBACK_POWER_CUTS
         
     except Exception as e:
-        print(f"[utilities_alerts] Error fetching power cuts: {e}")
+        logger.error(f"[utilities_alerts] Error fetching power cuts: {e}", exc_info=True)
         return FALLBACK_POWER_CUTS
 
 
@@ -140,7 +145,7 @@ def fetch_live_water_supply() -> Dict:
         # Check cache
         if "water_supply_cache" in st.session_state:
             cache_time = st.session_state.get("water_supply_cache_time")
-            if cache_time and (datetime.now() - cache_time).total_seconds() < 3600:
+            if cache_time and (datetime.now() - cache_time).seconds < 3600:
                 return st.session_state["water_supply_cache"]
         
         # TODO: Add actual API call here
@@ -151,7 +156,7 @@ def fetch_live_water_supply() -> Dict:
         return FALLBACK_WATER_SUPPLY
         
     except Exception as e:
-        print(f"[utilities_alerts] Error fetching water supply: {e}")
+        logger.error(f"[utilities_alerts] Error fetching water supply: {e}", exc_info=True)
         return FALLBACK_WATER_SUPPLY
 
 
@@ -159,13 +164,13 @@ def fetch_live_water_supply() -> Dict:
 # CACHE MANAGEMENT
 # ═══════════════════════════════════════════════════════════════════════════
 
-@st.cache_data(ttl=3600)  # Cache for 1 hour
+@st.cache_data(ttl=config.cache.ALERTS)  # Cache for 1 hour
 def get_power_cuts() -> Dict:
     """Get power-cut data with caching"""
     return fetch_live_power_cuts()
 
 
-@st.cache_data(ttl=3600)  # Cache for 1 hour
+@st.cache_data(ttl=config.cache.ALERTS)  # Cache for 1 hour
 def get_water_supply() -> Dict:
     """Get water supply data with caching"""
     return fetch_live_water_supply()

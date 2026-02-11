@@ -1,0 +1,81 @@
+{
+  "user_id": "f619dad4f48b07f1b1e0a2c54037a17d",
+  "created_at": "2026-02-10T19:36:11.082822",
+  "last_active": "2026-02-10T19:36:11.082848",
+  "total_interactions": 1,
+  "frequent_areas": [
+    "charminar"
+  ],
+  "home_area": "charminar",
+  "work_area": null,
+  "interests": {
+    "food": 0,
+    "transport": 0,
+    "tourism": 0,
+    "shopping": 0,
+    "entertainment": 0,
+    "news": 0,
+    "weather": 0,
+    "utilities": 0,
+    "sports": 0,
+    "healthcare": 0
+  },
+  "food_preferences": {
+    "cuisines": [],
+    "price_range": "medium",
+    "dietary": []
+  },
+  "transport_preferences": {
+    "modes": [],
+    "frequent_routes": []
+  },
+  "tourism_preferences": {
+    "types": [],
+    "crowd_tolerance": "medium"
+  },
+  "language": "en",
+  "active_hours": {
+    "0": 0,
+    "1": 0,
+    "2": 0,
+    "3": 0,
+    "4": 0,
+    "5": 0,
+    "6": 0,
+    "7": 0,
+    "8": 0,
+    "9": 0,
+    "10": 0,
+    "11": 0,
+    "12": 0,
+    "13": 0,
+    "14": 0,
+    "15": 0,
+    "16": 0,
+    "17": 0,
+    "18": 0,
+    "19": 1,
+    "20": 0,
+    "21": 0,
+    "22": 0,
+    "23": 0
+  },
+  "active_days": {
+    "monday": 0,
+    "tuesday": 1,
+    "wednesday": 0,
+    "thursday": 0,
+    "friday": 0,
+    "saturday": 0,
+    "sunday": 0
+  },
+  "query_history": [
+    {
+      "query": "Visit Charminar",
+      "intent": "itinerary",
+      "timestamp": "2026-02-10T19:36:11.082938"
+    }
+  ],
+  "personalization_enabled": true,
+  "personalization_score": 0.21000000000000002
+}

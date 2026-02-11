@@ -11,6 +11,10 @@ from typing import Dict, List, Optional
 import requests
 from collections import defaultdict
 import hashlib
+from services.logger import get_logger
+from services.config import config
+
+logger = get_logger(__name__)
 
 
 # ═══════════════════════════════════════════════════════════════════════════
@@ -19,7 +23,7 @@ import hashlib
 
 def get_rapidapi_key():
     """Get RapidAPI key for Zomato/Swiggy APIs"""
-    return st.secrets.get("RAPIDAPI_KEY", "")
+    return config.api.get_rapidapi_key
 
 
 # ═══════════════════════════════════════════════════════════════════════════
@@ -42,7 +46,7 @@ def get_swiggy_offers(city: str = "Hyderabad") -> List[Dict]:
     """
     api_key = get_rapidapi_key()
     if not api_key:
-        print("[deals] RAPIDAPI_KEY not configured")
+        logger.warning("[deals] RAPIDAPI_KEY not configured")
         return get_fallback_food_deals("swiggy")
     
     url = "https://swiggy-api.p.rapidapi.com/offers"
@@ -61,7 +65,7 @@ def get_swiggy_offers(city: str = "Hyderabad") -> List[Dict]:
         response = requests.get(url, headers=headers, params=params, timeout=10)
         
         if response.status_code == 429:
-            print("[deals] Swiggy API rate limited")
+            logger.warning("[deals] Swiggy API rate limited")
             return get_fallback_food_deals("swiggy")
         
         response.raise_for_status()
@@ -86,7 +90,7 @@ def get_swiggy_offers(city: str = "Hyderabad") -> List[Dict]:
         return offers if offers else get_fallback_food_deals("swiggy")
         
     except Exception as e:
-        print(f"[deals] Swiggy API error: {e}")
+        logger.error(f"[deals] Swiggy API error: {e}", exc_info=True)
         return get_fallback_food_deals("swiggy")
 
 
@@ -143,7 +147,7 @@ def get_zomato_offers(city_id: int = 4) -> List[Dict]:
         return offers if offers else get_fallback_food_deals("zomato")
         
     except Exception as e:
-        print(f"[deals] Zomato API error: {e}")
+        logger.error(f"[deals] Zomato API error: {e}", exc_info=True)
         return get_fallback_food_deals("zomato")
 
 
@@ -208,7 +212,7 @@ def get_amazon_deals(category: str = "electronics") -> List[Dict]:
         return deals if deals else get_fallback_ecommerce_deals("amazon")
         
     except Exception as e:
-        print(f"[deals] Amazon API error: {e}")
+        logger.error(f"[deals] Amazon API error: {e}", exc_info=True)
         return get_fallback_ecommerce_deals("amazon")
 
 

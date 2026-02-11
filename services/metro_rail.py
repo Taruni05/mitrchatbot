@@ -1,11 +1,14 @@
 import json
 from pathlib import Path
 import re
+from services.logger import get_logger
+from services.config import config
 
+# Initialize logger
+logger = get_logger(__name__)
 def load_metro_data():
     """Load Metro Rail data from knowledge base."""
-    kb_path = Path(__file__).resolve().parent.parent / "knowledge_base.json"
-    
+    kb_path = Path(__file__).resolve().parent.parent / "knowledge_base.json"   
     with open(kb_path, "r", encoding="utf-8") as f:
         kb = json.load(f)
     

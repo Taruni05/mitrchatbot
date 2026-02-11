@@ -2,9 +2,17 @@ import pandas as pd
 import streamlit as st
 from typing import List, Dict, Tuple, Optional
 from pathlib import Path
+from services.logger import get_logger
+from services.config import config
+
+# Initialize logger
+logger = get_logger(__name__)
+
 
 # Load CSV data
 @st.cache_data
+
+
 def load_rtc_routes():
     """Load RTC routes from CSV file"""
     try:
@@ -241,6 +249,14 @@ def get_connecting_routes(from_area: str, to_area: str) -> List[Dict]:
         
         if not leg1_routes.empty and not leg2_routes.empty:
             # Calculate total journey metrics
+            if leg1_routes.empty or leg2_routes.empty:
+
+                logger.warning(f"Empty routes found for hub {hub}")
+
+                continue
+
+            
+
             leg1_time = leg1_routes.iloc[0]['duration_mins']
             leg2_time = leg2_routes.iloc[0]['duration_mins']
             
@@ -302,6 +318,12 @@ def format_connecting_routes(from_area: str, to_area: str, connections: List[Dic
         response += f"**Leg 1:** {from_area.title()} → {hub}\n"
         
         buses_leg1 = ", ".join(leg1['route_number'].head(3).tolist())
+        if leg1.empty:
+
+            logger.error("leg1 DataFrame is empty")
+
+            continue
+
         avg_time_leg1 = leg1.iloc[0]['duration_mins']
         fare_min_leg1 = leg1.iloc[0]['fare_min']
         fare_max_leg1 = leg1.iloc[0]['fare_max']

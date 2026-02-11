@@ -1,4 +1,10 @@
 import json
+from services.logger import get_logger
+from services.config import config
+
+# Initialize logger
+logger = get_logger(__name__)
+
 from services.kb_loader import get_shopping
 
 

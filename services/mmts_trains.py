@@ -4,12 +4,23 @@ from typing import List, Dict, Tuple, Optional
 from pathlib import Path
 from datetime import datetime, time
 from services.kb_loader import get_mmts_data
+from services.logger import get_logger
+from services.config import config
+
+# Initialize logger
+logger = get_logger(__name__)
+
+
 
 
 # Load knowledge base
 @st.cache_data
 def load_mmts_data():
-    return get_mmts_data()
+    logger.debug("Loading MMTS train data from knowledge base")
+    data = get_mmts_data()
+    if data:
+        logger.info(f"✅ Loaded MMTS data")
+    return data
 
 
 # Station name normalization

@@ -10,6 +10,10 @@ from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 import requests
 from collections import defaultdict
+from services.logger import get_logger
+from services.config import config
+
+logger = get_logger(__name__)
 
 
 # ═══════════════════════════════════════════════════════════════════════════
@@ -143,7 +147,7 @@ HYDERABAD_FESTIVALS = {
 
 def get_tomtom_key():
     """Get TomTom API key from secrets"""
-    return st.secrets.get("TOMTOM_API_KEY", "")
+    return config.api.get_tomtom_key()
 
 
 def get_live_traffic_severity(lat: float, lon: float) -> Dict:
@@ -167,7 +171,7 @@ def get_live_traffic_severity(lat: float, lon: float) -> Dict:
     )
     
     try:
-        response = requests.get(url, timeout=5)
+        response = requests.get(url, timeout=config.api.TRAFFIC_TIMEOUT)
         response.raise_for_status()
         data = response.json()
         
@@ -196,7 +200,7 @@ def get_live_traffic_severity(lat: float, lon: float) -> Dict:
         }
         
     except Exception as e:
-        print(f"[festival_alerts] TomTom API error: {e}")
+        logger.error(f"[festival_alerts] TomTom API error: {e}", exc_info=True)
         return {"severity": "unknown", "speed_ratio": 0}
 
 

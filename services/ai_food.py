@@ -5,11 +5,17 @@ Handles ANY food-related query comprehensively using Gemini
 from google import genai
 import streamlit as st
 import time
-import os
 from services.food_loader import load_restaurants
 
-# Initialize Gemini client
-client = genai.Client(api_key=st.secrets.get("GEMINI_API_KEY", ""))
+# Import logger and config
+from services.logger import setup_logger
+from services.config import config
+
+# Set up logger
+logger = setup_logger('ai_food', 'ai_food.log')
+
+# Initialize Gemini client with config
+client = genai.Client(api_key=config.api.get_gemini_api_key())
 
 # Load restaurant knowledge base
 RESTAURANTS = load_restaurants()
@@ -51,6 +57,8 @@ def generate_food_recommendation(user_query: str):
     - "Street food recommendations"
     - etc.
     """
+    
+    logger.info(f"Generating food recommendation for: {user_query[:100]}...")
     
     # Create restaurant knowledge base context
     restaurant_context = create_restaurant_context()
@@ -106,31 +114,35 @@ RESPONSE STYLE:
 
 Generate your recommendation now:"""
 
-    try:
-        response = client.models.generate_content(
-            model="gemini-2.5-flash-lite",
-            contents=prompt,
-        )
-        return response.text
-
-    except Exception as e:
-        # Retry once on failure
-        print(f"[ai_food] First attempt failed: {e}")
-        time.sleep(1)
-        
+    # Retry logic with config
+    for attempt in range(1, config.api.GEMINI_MAX_RETRIES + 1):
         try:
+            logger.debug(f"Gemini API attempt {attempt}/{config.api.GEMINI_MAX_RETRIES}")
+            
             response = client.models.generate_content(
-                model="gemini-2.5-flash-lite",
+                model=config.api.GEMINI_MODEL,
                 contents=prompt,
             )
-            return response.text
-        except Exception as e2:
-            print(f"[ai_food] Second attempt failed: {e2}")
-            return fallback_food_response(user_query)
+            
+            result = response.text
+            logger.info(f"✅ Generated {len(result)} chars food recommendation")
+            return result
+
+        except Exception as e:
+            logger.warning(f"Attempt {attempt} failed: {e}")
+            
+            if attempt < config.api.GEMINI_MAX_RETRIES:
+                time.sleep(1)
+                continue
+            else:
+                logger.error("All Gemini attempts failed for food recommendation", exc_info=True)
+                return fallback_food_response(user_query)
 
 
 def fallback_food_response(query: str):
     """Fallback response when Gemini API fails"""
+    
+    logger.info("Using fallback food response")
     
     # Try to give a basic response based on keywords
     query_lower = query.lower()

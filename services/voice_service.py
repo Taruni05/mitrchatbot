@@ -23,12 +23,17 @@ import re
 import streamlit as st
 from google import genai
 from gtts import gTTS
+from services.logger import get_logger
+from services.config import config
+
+logger = get_logger(__name__)
+
 
 
 # ─── Gemini client (same key the rest of the app uses) ───────────────────────
 def _get_client() -> genai.Client:
     """Return a Gemini client, reading the key from st.secrets or env."""
-    key = os.getenv("GEMINI_API_KEY") or st.secrets.get("GEMINI_API_KEY", "")
+    key = config.api.get_gemini_api_key()
     return genai.Client(api_key=key)
 
 
@@ -55,7 +60,7 @@ def transcribe(audio_bytes: bytes, language: str = "en") -> str:
         )
 
         response = client.models.generate_content(
-            model="gemini-2.5-flash-lite",
+            model=config.api.GEMINI_MODEL,
             contents=[
                 types.Part.from_text(text=prompt_text),
                 types.Part.from_bytes(data=audio_bytes, mime_type=media_type)
@@ -65,7 +70,7 @@ def transcribe(audio_bytes: bytes, language: str = "en") -> str:
         return response.text.strip().strip('"').strip("'")
 
     except Exception as e:
-        print(f"[voice_service] transcribe error: {e}")
+        logger.error(f"[voice_service] transcribe error: {e}", exc_info=True)
         return ""
 
 # ─── Text-to-Speech ─────────────────────────────────────────────────────────
@@ -97,7 +102,7 @@ def synthesize(text: str, language: str = "en") -> bytes:
         buf.seek(0)
         return buf.getvalue()
     except Exception as e:
-        print(f"[voice_service] synthesize error: {e}")
+        logger.error(f"[voice_service] synthesize error: {e}", exc_info=True)
         return b""
 
 

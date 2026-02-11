@@ -1,14 +1,22 @@
 """
 Enhanced Translation Service with Context Preservation
 Handles Hyderabad-specific terms and maintains meaning accuracy
+
+NOTE: This file uses googletrans which is unmaintained. Consider migrating to:
+- deep_translator (recommended)
+- google.cloud.translate_v2 (official, requires API key)
 """
 
 import streamlit as st
 from googletrans import Translator
 import re
 
-# Initialize translator
-translator = Translator()
+# Import logger and config
+from services.logger import setup_logger
+from services.config import config
+
+# Set up logger
+logger = setup_logger('translator', 'translator.log')
 
 
 # ========================================
@@ -74,6 +82,7 @@ LANGUAGE_FIXES = {
 @st.cache_resource
 def get_translator():
     """Get cached translator instance"""
+    logger.debug("Initializing translator instance")
     return Translator()
 
 
@@ -99,6 +108,7 @@ def preserve_terms(text: str) -> tuple:
             mapping[placeholder] = term
             modified_text = pattern.sub(placeholder, modified_text)
     
+    logger.debug(f"Preserved {len(mapping)} terms")
     return modified_text, mapping
 
 
@@ -197,6 +207,7 @@ def preserve_special_elements(text: str) -> tuple:
     
     text = re.sub(r'\b\d+\b', replace_number, text)
     
+    logger.debug(f"Preserved {len(elements)} special elements")
     return text, elements
 
 
@@ -234,6 +245,7 @@ def split_into_chunks(text: str, max_length: int = 500) -> list:
     if current_chunk:
         chunks.append(current_chunk.strip())
     
+    logger.debug(f"Split text into {len(chunks)} chunks")
     return chunks
 
 
@@ -244,7 +256,7 @@ def translate_chunk(text: str, target_lang: str) -> str:
         result = trans.translate(text, dest=target_lang)
         return result.text
     except Exception as e:
-        print(f"Translation error: {e}")
+        logger.error(f"Chunk translation failed: {e}")
         return text  # Return original on error
 
 
@@ -262,6 +274,8 @@ def translate_text(text: str, target_lang: str = "te") -> str:
     if not text or target_lang == "en":
         return text
     
+    logger.info(f"Translating {len(text)} chars to {target_lang}")
+    
     try:
         # Step 1: Preserve Hyderabad-specific terms
         text_with_placeholders, term_mapping = preserve_terms(text)
@@ -274,8 +288,9 @@ def translate_text(text: str, target_lang: str = "te") -> str:
         
         # Step 4: Translate each chunk
         translated_chunks = []
-        for chunk in chunks:
+        for i, chunk in enumerate(chunks, 1):
             if chunk.strip():
+                logger.debug(f"Translating chunk {i}/{len(chunks)}")
                 translated = translate_chunk(chunk, target_lang)
                 translated_chunks.append(translated)
         
@@ -288,10 +303,11 @@ def translate_text(text: str, target_lang: str = "te") -> str:
         # Step 7: Restore Hyderabad-specific terms
         translated_text = restore_terms(translated_text, term_mapping)
         
+        logger.info(f"✅ Translation complete: {len(translated_text)} chars")
         return translated_text
         
     except Exception as e:
-        print(f"Translation failed: {e}")
+        logger.error(f"Translation failed: {e}", exc_info=True)
         return text  # Return original text on error
 
 
@@ -308,12 +324,7 @@ def translate_response(response: str, target_lang: str) -> str:
 # ========================================
 def get_language_name(code: str) -> str:
     """Get language display name from code"""
-    names = {
-        "en": "English",
-        "te": "తెలుగు (Telugu)",
-        "ur": "اردو (Urdu)",
-        "hi": "हिंदी (Hindi)"
-    }
+    names = config.ui.LANGUAGES
     return names.get(code, "English")
 
 

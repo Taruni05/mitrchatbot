@@ -1,7 +1,13 @@
 import requests
 import streamlit as st
 
-TOMTOM_API_KEY = st.secrets["TOMTOM_API_KEY"]
+# Import logger and config
+from services.logger import setup_logger
+from services.config import config
+
+# Set up logger
+logger = setup_logger('traffic', 'traffic.log')
+
 
 # ══════════════════════════════════════════════════════════════════════════════
 # ALTERNATE ROUTES MAP
@@ -28,16 +34,54 @@ ALTERNATE_ROUTES = {
 
 
 def get_traffic_flow(lat, lon):
+    """
+    Fetch traffic flow data from TomTom API.
+    
+    Args:
+        lat: Latitude
+        lon: Longitude
+    
+    Returns:
+        Traffic flow data dict or None on error
+    """
+    api_key = config.api.get_tomtom_api_key()
+    
+    if not api_key:
+        logger.error("TOMTOM_API_KEY not configured")
+        return None
+    
+    logger.debug(f"Fetching traffic for coordinates ({lat:.4f}, {lon:.4f})")
+    
     url = (
         "https://api.tomtom.com/traffic/services/4/flowSegmentData/absolute/10/json"
-        f"?point={lat},{lon}&key={TOMTOM_API_KEY}"
+        f"?point={lat},{lon}&key={api_key}"
     )
 
     try:
-        response = requests.get(url, timeout=5)
+        response = requests.get(url, timeout=config.api.TRAFFIC_TIMEOUT)
         response.raise_for_status()
-        return response.json()
+        data = response.json()
+        
+        # Log traffic status
+        if "flowSegmentData" in data:
+            flow = data["flowSegmentData"]
+            current_speed = flow.get("currentSpeed", 0)
+            free_speed = flow.get("freeFlowSpeed", 1)
+            ratio = current_speed / max(free_speed, 1)
+            
+            status = "smooth" if ratio >= 0.8 else "moderate" if ratio >= 0.5 else "heavy"
+            logger.info(f"Traffic status: {status} (current: {current_speed} km/h, free flow: {free_speed} km/h)")
+        
+        return data
+        
+    except requests.exceptions.Timeout:
+        logger.warning(f"Traffic API timeout for ({lat:.4f}, {lon:.4f})")
+        return None
+    except requests.exceptions.HTTPError as e:
+        logger.error(f"Traffic API HTTP error: {e.response.status_code}")
+        return None
     except Exception as e:
+        logger.error(f"Traffic fetch failed: {e}", exc_info=True)
         return None
 
 

@@ -9,8 +9,10 @@ from pathlib import Path
 from typing import Dict, List, Optional, Any
 from collections import defaultdict, Counter
 import hashlib
-import copy
+from services.logger import get_logger
+from services.config import config
 
+logger = get_logger(__name__)
 
 # ═══════════════════════════════════════════════════════════════════════════
 # USER IDENTIFICATION & SESSION MANAGEMENT
@@ -119,7 +121,7 @@ DEFAULT_PREFERENCES = {
 
 def get_preferences_dir() -> Path:
     """Get or create preferences storage directory"""
-    prefs_dir = Path("user_preferences")
+    prefs_dir = Path(config.app.USER_PREFS_DIR)
     prefs_dir.mkdir(exist_ok=True)
     return prefs_dir
 
@@ -155,10 +157,10 @@ def load_user_preferences(user_id: str = None) -> Dict:
             
             return prefs
         except Exception as e:
-            print(f"[ai_preferences] Error loading preferences: {e}")
+            logger.error(f"Error loading preferences for user {user_id}: {e}", exc_info=True)
     
     # Return default preferences for new users
-    prefs = copy.deepcopy(DEFAULT_PREFERENCES)
+    prefs = DEFAULT_PREFERENCES.copy()
     prefs["user_id"] = user_id
     prefs["created_at"] = datetime.now().isoformat()
     prefs["last_active"] = datetime.now().isoformat()
@@ -183,9 +185,10 @@ def save_user_preferences(preferences: Dict, user_id: str = None):
         with open(prefs_file, "w", encoding="utf-8") as f:
             json.dump(preferences, f, indent=2, ensure_ascii=False)
         
-        print(f"[ai_preferences] Saved preferences for user {user_id}")
+        logger.info(f"Saved preferences for user {user_id}")
+
     except Exception as e:
-        print(f"[ai_preferences] Error saving preferences: {e}")
+        logger.error(f"Error saving preferences for user {user_id}: {e}", exc_info=True)
 
 
 # ═══════════════════════════════════════════════════════════════════════════

@@ -59,26 +59,71 @@ from services.live_deals import handle_deals_query,get_all_food_deals,get_all_ec
 
 import base64
 from datetime import datetime
+from services.logger import setup_logger
+from services.config import config
+import logging
+
+# Initialize main app logger
+logger = setup_logger(
+    name="webapp",
+    log_file="webapp.log",
+    level=getattr(logging, config.app.LOG_LEVEL),
+    console_output=True,
+    max_bytes=config.app.LOG_MAX_SIZE,
+    backup_count=config.app.LOG_BACKUP_COUNT
+)
 
 import os
-os.environ["GEMINI_API_KEY"] = st.secrets["GEMINI_API_KEY"]
+os.environ["GEMINI_API_KEY"] = config.api.get_gemini_api_key()
 
 
 # ========================================
 # PAGE CONFIG - Must be first Streamlit command
 # ========================================
 st.set_page_config(
-    page_title="Mitr - Hyderabad City Guide",
-    page_icon="🏙️",
+    page_title=config.app.APP_NAME,
+    page_icon=config.app.APP_ICON,
     layout="wide",
     initial_sidebar_state="expanded",
 )
 initialize_preferences()
 # Header
-st.title(" Mitr - Your Personal Assistant for Exploring Hyderabad")
+st.title(" MITR - Your Friend")
+st.subheader("Your personal assistant for exploring Hyderabad!")
 st.markdown("---")
+# ========================================
+# LIVE SNAPSHOT DASHBOARD
+# ========================================
+st.subheader("🌏  Hyderabad Live Snapshot")
+if "selected_area" not in st.session_state:
+    st.session_state.selected_area = "Hyderabad (Central)"
+    st.session_state.selected_coords = (17.3850, 78.4867)
 
+area       = st.session_state.selected_area
+lat, lon   = st.session_state.selected_coords
 
+weather_data = get_weather_by_coords(lat, lon)
+aqi_data     = get_aqi_by_coords(lat, lon)
+
+col1, col2, col3, col4 = st.columns(4)
+
+with col1:
+    st.metric("🌡️ Temperature", f"{weather_data['main']['temp']} °C" if weather_data else "—")
+with col2:
+    st.metric("💧 Humidity",    f"{weather_data['main']['humidity']} %" if weather_data else "—")
+with col3:
+    st.metric("🌫️ Air Quality", format_aqi(aqi_data) if aqi_data else "—")
+
+traffic_data = get_traffic_flow(lat, lon)
+traffic_text = format_traffic(traffic_data)
+
+with col4:
+    st.metric(
+        "🚦 Traffic",
+        "Heavy"    if "Heavy"    in traffic_text else
+        "Moderate" if "Moderate" in traffic_text else "Smooth"
+    )
+st.markdown("---")
 
 # ========================================
 # PERSONALIZED GREETING & SUGGESTIONS
@@ -135,45 +180,60 @@ if st.session_state.get("trigger_dashboard_update"):
 
 
 def load_base64(path):
-    with open(path, "rb") as f:
-        return base64.b64encode(f.read()).decode()
+    """Load image as base64, return None if not found"""
+    try:
+        with open(path, "rb") as f:
+            return base64.b64encode(f.read()).decode()
+    except FileNotFoundError:
+        logger.warning(f"[webapp] Warning: Image not found: {path}")
+        return None
 
+# 1. Setup Defaults
+DEFAULT_BG = "linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
+bg_image = None
 
-with st.spinner("Loading theme…"):
-    hour = datetime.now().hour
-
-    if 6 <= hour < 18:
-        bg_image = load_base64("hyderabad_day.jpg")
-    else:
-        bg_image = load_base64("hyderabad_night.jpg")
-
-
+# 2. Sidebar UI
 mode = st.sidebar.radio("Theme", ["Auto", "Day", "Night"])
 
-if mode == "Day":
-    bg_image = load_base64("hyderabad_day.jpg")
-elif mode == "Night":
-    bg_image = load_base64("hyderabad_night.jpg")
+# 3. Consolidated Logic Block
+with st.spinner("Setting up your view..."):
+    if mode == "Auto":
+        hour = datetime.now().hour
+        # Day: 6 AM to 6 PM
+        target_file = "hyderabad_day.jpg" if 6 <= hour < 18 else "hyderabad_night.jpg"
+        bg_image = load_base64(target_file)
+    elif mode == "Day":
+        bg_image = load_base64("hyderabad_day.jpg")
+    else:  # Night
+        bg_image = load_base64("hyderabad_night.jpg")
 
+    # Define the background_style variable here so it exists for the CSS
+    if bg_image:
+        background_style = f"""
+            linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
+            url("data:image/jpeg;base64,{bg_image}")
+        """
+    else:
+        background_style = DEFAULT_BG
+
+# 4. Inject CSS
 st.markdown(
     f"""
 <style>
-
-/* ================================
-GLOBAL BACKGROUND
-=============================== */
+/* GLOBAL BACKGROUND */
 html, body, .stApp, [data-testid="stAppViewContainer"] {{
-    height: 100%;
-    margin: 0;
-    background:
-        linear-gradient(
-            rgba(0, 0, 0, 0.6),
-            rgba(0, 0, 0, 0.6)
-        ),
-        url("data:image/jpeg;base64,{bg_image}");
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
+    background: {background_style} !important;
+    /* This prevents the "tiling" effect */
+    background-repeat: no-repeat !important;
+    
+    /* This stretches the image to cover the entire screen */
+    background-size: cover !important;
+    
+    /* This keeps the image centered even when you resize the window */
+    background-position: center center !important;
+    
+    /* This keeps the background from scrolling with the page */
+    background-attachment: fixed !important;
 }}
 
 /* ================================
@@ -199,7 +259,7 @@ CHAT MESSAGES
 =============================== */
 [data-testid="stChatMessage"] {{
     background: rgba(0, 0, 0, 0) !important;
-    border-radius: 14px;
+    border-radius: 20px;
     padding: 12px;
     backdrop-filter: blur(10px);
     border: 1px solid rgba(0,0,0,0);
@@ -527,7 +587,8 @@ def classify_intent(state: BotState):
             "water", "water supply", "tap water"]):
         state["intent"] = "utilities"
         return state
-    
+    elif any(word in message for word in ["news", "headline", "latest news", "today news", "city news", "updates"]):
+        state["intent"] = "news"
     elif any(word in message for word in ["crowd","crowded", "busy", "best time", "avoid crowd",
         "peaceful", "quiet", "less people", "when to visit",]):
         state["intent"] = "crowd"
@@ -546,8 +607,7 @@ def classify_intent(state: BotState):
     elif any(word in message for word in ["plan", "itinerary", "tour", "trip", "day out", "visit", "sightseeing", "trail"]):
         state["intent"] = "itinerary"
 
-    elif any(word in message for word in ["news", "headline", "latest news", "today news", "city news", "updates"]):
-        state["intent"] = "news"
+    
     
 
     elif any(word in message for word in ["traffic", "congestion", "road", "jam", "slow", "block"]):
@@ -1827,7 +1887,7 @@ with st.sidebar:
 if "messages" not in st.session_state:
     st.session_state.messages = []
     st.session_state.messages.append(
-        {"role": "assistant", "content": "👋 Welcome to Mitr! I am your personal assistant for exploring Hyderabad. How can I help you today?"}
+        {"role": "assistant", "content": "👋 Welcome to MITR! I am your personal assistant for exploring Hyderabad. How can I help you today?"}
     )
 
 for message in st.session_state.messages:
@@ -1876,6 +1936,7 @@ if user_input:
 
     with st.chat_message("user"):
         st.markdown(user_input)
+    logger.info(f"User query received: {user_input}")
 
     # 2️⃣ Show spinner OUTSIDE chat messages
     with st.spinner("Thinking..."):
@@ -1893,6 +1954,7 @@ if user_input:
                 "intent": "",
                 "response": ""
             })
+            logger.debug(f"Detected intent: {result['intent']}")
 
             intent   = result["intent"]
             response = result["response"]
@@ -1928,35 +1990,6 @@ if user_input:
         {"role": "assistant", "content": response}
     )
 
-# ========================================
-# LIVE SNAPSHOT DASHBOARD
-# ========================================
-st.subheader("🌏  Hyderabad Live Snapshot")
-
-area       = st.session_state.selected_area
-lat, lon   = st.session_state.selected_coords
-
-weather_data = get_weather_by_coords(lat, lon)
-aqi_data     = get_aqi_by_coords(lat, lon)
-
-col1, col2, col3, col4 = st.columns(4)
-
-with col1:
-    st.metric("🌡️ Temperature", f"{weather_data['main']['temp']} °C" if weather_data else "—")
-with col2:
-    st.metric("💧 Humidity",    f"{weather_data['main']['humidity']} %" if weather_data else "—")
-with col3:
-    st.metric("🌫️ Air Quality", format_aqi(aqi_data) if aqi_data else "—")
-
-traffic_data = get_traffic_flow(lat, lon)
-traffic_text = format_traffic(traffic_data)
-
-with col4:
-    st.metric(
-        "🚦 Traffic",
-        "Heavy"    if "Heavy"    in traffic_text else
-        "Moderate" if "Moderate" in traffic_text else "Smooth"
-    )
 
 
 # ========================================

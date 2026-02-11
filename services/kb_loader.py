@@ -1,6 +1,16 @@
+"""
+Knowledge Base Loader - Migrated with logging and config
+Loads and provides access to Hyderabad city knowledge base
+"""
+
 from pathlib import Path
 import json
 from functools import lru_cache
+from services.logger import get_logger
+from services.config import config
+
+# Initialize logger
+logger = get_logger(__name__)
 
 
 # ─── CENTRALIZED KB LOADER ──────────────────────────────────────────────────
@@ -17,6 +27,8 @@ def load_knowledge_base():
     Raises:
         FileNotFoundError: If KB not found in any standard location
     """
+    logger.debug("Attempting to load knowledge base")
+    
     # Try multiple possible locations
     possible_paths = [
         Path("knowledge_base.json"),                           # Current directory
@@ -28,20 +40,24 @@ def load_knowledge_base():
     for kb_path in possible_paths:
         if kb_path.exists():
             try:
+                logger.debug(f"Found knowledge base at: {kb_path}")
                 with open(kb_path, "r", encoding="utf-8") as f:
-                    return json.load(f)
+                    kb_data = json.load(f)
+                logger.info(f"✅ Successfully loaded knowledge base from {kb_path.name}")
+                logger.debug(f"KB contains {len(kb_data)} top-level sections")
+                return kb_data
             except json.JSONDecodeError as e:
-                print(f"[KB] Error parsing {kb_path}: {e}")
+                logger.error(f"JSON parsing error in {kb_path}: {e}", exc_info=True)
                 continue
             except Exception as e:
-                print(f"[KB] Error loading {kb_path}: {e}")
+                logger.error(f"Error loading {kb_path}: {e}", exc_info=True)
                 continue
     
     # If we get here, KB not found anywhere
-    raise FileNotFoundError(
-        "knowledge_base.json not found in any of these locations:\n" +
-        "\n".join(f"  - {p}" for p in possible_paths)
-    )
+    error_msg = "knowledge_base.json not found in any of these locations:\n" + \
+                "\n".join(f"  - {p}" for p in possible_paths)
+    logger.error(error_msg)
+    raise FileNotFoundError(error_msg)
 
 
 def get_profile():
@@ -53,9 +69,14 @@ def get_profile():
     """
     try:
         kb = load_knowledge_base()
-        return kb.get("hyderabad_comprehensive_profile", {})
+        profile = kb.get("hyderabad_comprehensive_profile", {})
+        if profile:
+            logger.debug(f"Retrieved profile with {len(profile)} sections")
+        else:
+            logger.warning("Profile section not found in knowledge base")
+        return profile
     except FileNotFoundError:
-        print("[KB] Knowledge base not found - returning empty profile")
+        logger.error("Knowledge base not found - returning empty profile")
         return {}
 
 
@@ -80,13 +101,22 @@ def get_section(section_name: str, subsection: str = None):
     profile = get_profile()
     
     if not profile:
+        logger.warning(f"Profile empty, cannot get section: {section_name}")
         return {} if subsection else []
     
     section = profile.get(section_name, {})
     
-    if subsection:
-        return section.get(subsection, [])
+    if not section:
+        logger.warning(f"Section '{section_name}' not found in profile")
+        return {} if subsection else []
     
+    if subsection:
+        result = section.get(subsection, [])
+        if isinstance(result, list):
+            logger.debug(f"Retrieved {len(result)} items from {section_name}.{subsection}")
+        return result
+    
+    logger.debug(f"Retrieved section: {section_name}")
     return section
 
 
@@ -94,8 +124,20 @@ def get_emergency_contacts():
     """Get emergency contacts section."""
     try:
         kb = load_knowledge_base()
-        return kb.get("emergency contacts", {})
+        contacts = kb.get("emergency contacts", {})
+        if contacts:
+            logger.debug(f"Retrieved {len(contacts)} emergency contacts")
+        else:
+            logger.warning("Using fallback emergency contacts")
+            contacts = {
+                "police": "100",
+                "ambulance": "108",
+                "fire": "101",
+                "women_helpline": "181",
+            }
+        return contacts
     except FileNotFoundError:
+        logger.warning("KB not found, using fallback emergency contacts")
         return {
             "police": "100",
             "ambulance": "108",
@@ -144,7 +186,10 @@ def get_restaurants():
 def get_theaters():
     """Get theaters and cinemas."""
     profile = get_profile()
-    return profile.get("Theaters_and_Cinemas", {})
+    theaters = profile.get("Theaters_and_Cinemas", {})
+    if theaters:
+        logger.debug("Retrieved theaters data")
+    return theaters
 
 
 def get_shopping():
@@ -181,6 +226,7 @@ def get_education():
 def get_history_trivia():
     """Get history and trivia."""
     return get_section("history_and_trivia")
+
 
 def get_mmts_data():
     """Get MMTS train data."""

@@ -1,0 +1,103 @@
+{
+  "user_id": "f5dd507350139289f4dcd09e8ec5d48c",
+  "created_at": "2026-02-10T18:55:36.775621",
+  "last_active": "2026-02-10T19:01:09.538178",
+  "total_interactions": 5,
+  "frequent_areas": [
+    "charminar"
+  ],
+  "home_area": "charminar",
+  "work_area": null,
+  "interests": {
+    "food": 1,
+    "transport": 0,
+    "tourism": 0,
+    "shopping": 0,
+    "entertainment": 0,
+    "news": 0,
+    "weather": 1,
+    "utilities": 0,
+    "sports": 0,
+    "healthcare": 0
+  },
+  "food_preferences": {
+    "cuisines": [
+      "biryani"
+    ],
+    "price_range": "medium",
+    "dietary": []
+  },
+  "transport_preferences": {
+    "modes": [],
+    "frequent_routes": []
+  },
+  "tourism_preferences": {
+    "types": [],
+    "crowd_tolerance": "medium"
+  },
+  "language": "en",
+  "active_hours": {
+    "0": 0,
+    "1": 0,
+    "2": 0,
+    "3": 0,
+    "4": 0,
+    "5": 0,
+    "6": 0,
+    "7": 0,
+    "8": 0,
+    "9": 0,
+    "10": 0,
+    "11": 0,
+    "12": 0,
+    "13": 0,
+    "14": 0,
+    "15": 0,
+    "16": 0,
+    "17": 0,
+    "18": 3,
+    "19": 2,
+    "20": 0,
+    "21": 0,
+    "22": 0,
+    "23": 0
+  },
+  "active_days": {
+    "monday": 0,
+    "tuesday": 5,
+    "wednesday": 0,
+    "thursday": 0,
+    "friday": 0,
+    "saturday": 0,
+    "sunday": 0
+  },
+  "query_history": [
+    {
+      "query": "Explore famous biryani places",
+      "intent": "food",
+      "timestamp": "2026-02-10T18:55:36.775810"
+    },
+    {
+      "query": "Visit Charminar",
+      "intent": "itinerary",
+      "timestamp": "2026-02-10T18:55:54.664122"
+    },
+    {
+      "query": "Today's weather",
+      "intent": "weather",
+      "timestamp": "2026-02-10T18:56:26.429939"
+    },
+    {
+      "query": "Hello hello hello where are you",
+      "intent": "greeting",
+      "timestamp": "2026-02-10T19:00:41.235511"
+    },
+    {
+      "query": "fuel prices today",
+      "intent": "fuel",
+      "timestamp": "2026-02-10T19:01:09.538303"
+    }
+  ],
+  "personalization_enabled": true,
+  "personalization_score": 0.39
+}

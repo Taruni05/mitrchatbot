@@ -1,0 +1,93 @@
+{
+  "user_id": "f8dbeef9699041db",
+  "created_at": "2026-02-11T15:18:26.375348",
+  "last_active": "2026-02-11T15:19:04.617301",
+  "total_interactions": 3,
+  "frequent_areas": [
+    "uppal"
+  ],
+  "home_area": null,
+  "work_area": "uppal",
+  "interests": {
+    "food": 1,
+    "transport": 0,
+    "tourism": 0,
+    "shopping": 0,
+    "entertainment": 0,
+    "news": 0,
+    "weather": 1,
+    "utilities": 0,
+    "sports": 0,
+    "healthcare": 0
+  },
+  "food_preferences": {
+    "cuisines": [
+      "biryani"
+    ],
+    "price_range": "medium",
+    "dietary": []
+  },
+  "transport_preferences": {
+    "modes": [],
+    "frequent_routes": []
+  },
+  "tourism_preferences": {
+    "types": [],
+    "crowd_tolerance": "medium"
+  },
+  "language": "en",
+  "active_hours": {
+    "0": 0,
+    "1": 0,
+    "2": 0,
+    "3": 0,
+    "4": 0,
+    "5": 0,
+    "6": 0,
+    "7": 0,
+    "8": 0,
+    "9": 0,
+    "10": 0,
+    "11": 0,
+    "12": 0,
+    "13": 0,
+    "14": 0,
+    "15": 3,
+    "16": 0,
+    "17": 0,
+    "18": 0,
+    "19": 0,
+    "20": 0,
+    "21": 0,
+    "22": 0,
+    "23": 0
+  },
+  "active_days": {
+    "monday": 0,
+    "tuesday": 0,
+    "wednesday": 3,
+    "thursday": 0,
+    "friday": 0,
+    "saturday": 0,
+    "sunday": 0
+  },
+  "query_history": [
+    {
+      "query": "tell me about famous monuments",
+      "intent": "monument",
+      "timestamp": "2026-02-11T15:18:26.375494"
+    },
+    {
+      "query": "best biryani places",
+      "intent": "food",
+      "timestamp": "2026-02-11T15:18:39.330362"
+    },
+    {
+      "query": "weather in uppal",
+      "intent": "weather",
+      "timestamp": "2026-02-11T15:19:04.617344"
+    }
+  ],
+  "personalization_enabled": true,
+  "personalization_score": 0.37
+}

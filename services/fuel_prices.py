@@ -2,6 +2,13 @@ import requests
 import streamlit as st
 from datetime import datetime
 
+# Import logger and config
+from services.logger import setup_logger
+from services.config import config
+
+# Set up logger
+logger = setup_logger('fuel', 'fuel.log')
+
 
 # ─── hard-coded fallback (update manually when you deploy) ───────────────────
 FALLBACK_PRICES = {
@@ -16,21 +23,16 @@ FALLBACK_PRICES = {
 # The host value is the slug RapidAPI assigns to this listing.  It never changes
 # even if the provider renames the API on their dashboard.
 _BASE_URL = "https://daily-fuel-prices-india.rapidapi.com"
-_HOST      = "daily-fuel-prices-india.rapidapi.com"
-
-
-def _get_key() -> str:
-    """Pull the RapidAPI key from Streamlit secrets (or env as fallback)."""
-    import os
-    return st.secrets.get("RAPIDAPI_KEY", "") or os.getenv("RAPIDAPI_KEY", "")
+_HOST = "daily-fuel-prices-india.rapidapi.com"
 
 
 def _headers() -> dict:
     """Standard three-header block every RapidAPI endpoint needs."""
+    api_key = config.api.get_rapidapi_key()
     return {
-        "x-rapidapi-key":  _get_key(),
+        "x-rapidapi-key": api_key,
         "x-rapidapi-host": _HOST,
-        "Accept":          "application/json",
+        "Accept": "application/json",
     }
 
 
@@ -58,17 +60,17 @@ def _parse_response(data: dict) -> dict | None:
     if not data or not isinstance(data, dict):
         return None
 
-    petrol  = None
-    diesel  = None
-    cng     = None
-    date    = data.get("applicableOn") or data.get("date") or datetime.now().strftime("%Y-%m-%d")
+    petrol = None
+    diesel = None
+    cng = None
+    date = data.get("applicableOn") or data.get("date") or datetime.now().strftime("%Y-%m-%d")
 
     # ── try nested first ──────────────────────────────────────────────────
     fuel = data.get("fuel")
     if isinstance(fuel, dict):
         petrol = _safe_float(fuel.get("petrol", {}).get("retailPrice"))
         diesel = _safe_float(fuel.get("diesel", {}).get("retailPrice"))
-        cng    = _safe_float(fuel.get("cng",    {}).get("retailPrice"))
+        cng = _safe_float(fuel.get("cng", {}).get("retailPrice"))
 
     # ── fall back to flat keys ────────────────────────────────────────────
     if petrol is None:
@@ -97,8 +99,8 @@ def _parse_response(data: dict) -> dict | None:
     return {
         "petrol": petrol,
         "diesel": diesel,
-        "cng":    cng,          # may still be None — handled downstream
-        "date":   date,
+        "cng": cng,  # may still be None — handled downstream
+        "date": date,
     }
 
 
@@ -113,7 +115,7 @@ def _safe_float(value) -> float | None:
 
 
 # ─── main fetcher ────────────────────────────────────────────────────────────
-@st.cache_data(ttl=86400)          # cache 24 h — prices change once/day at 6 AM
+@st.cache_data(ttl=config.cache.FUEL)
 def get_fuel_prices_hyderabad() -> dict:
     """
     Fetch today's Hyderabad fuel prices from RapidAPI.
@@ -127,10 +129,13 @@ def get_fuel_prices_hyderabad() -> dict:
             "source":  "live" | "cached"
         }
     """
-    key = _get_key()
-    if not key:
-        print("[fuel_prices] RAPIDAPI_KEY not set — using fallback prices")
+    api_key = config.api.get_rapidapi_key()
+    
+    if not api_key:
+        logger.warning("RAPIDAPI_KEY not configured - using fallback prices")
         return FALLBACK_PRICES
+
+    logger.info("Fetching live fuel prices for Hyderabad")
 
     # ── try the primary endpoint: /prices/city ───────────────────────────
     # Most apiexpress-style listings use ?city=Hyderabad or /city/Hyderabad.
@@ -141,17 +146,20 @@ def get_fuel_prices_hyderabad() -> dict:
         f"{_BASE_URL}/city/Hyderabad",                          # alternate path
     ]
 
-    for url in urls_to_try:
+    for i, url in enumerate(urls_to_try, 1):
         try:
-            resp = requests.get(url, headers=_headers(), timeout=6)
+            logger.debug(f"Trying URL {i}/{len(urls_to_try)}: {url}")
+            
+            resp = requests.get(url, headers=_headers(), timeout=config.api.FUEL_TIMEOUT)
 
             # 429 = rate-limited → don't burn remaining attempts, bail now
             if resp.status_code == 429:
-                print("[fuel_prices] RapidAPI rate-limit hit (429) — using fallback")
+                logger.warning("RapidAPI rate-limit hit (429) - using fallback")
                 return FALLBACK_PRICES
 
             # skip non-success without crashing
             if resp.status_code != 200:
+                logger.debug(f"URL {i} returned status {resp.status_code}")
                 continue
 
             data = resp.json()
@@ -162,23 +170,30 @@ def get_fuel_prices_hyderabad() -> dict:
 
             parsed = _parse_response(data)
             if parsed:
+                logger.info(
+                    f"✅ Fuel prices fetched: Petrol ₹{parsed['petrol']:.2f}, "
+                    f"Diesel ₹{parsed['diesel']:.2f}, Date: {parsed['date']}"
+                )
                 return {
                     "petrol": parsed["petrol"],
                     "diesel": parsed["diesel"],
-                    "cng":    parsed["cng"] if parsed["cng"] else FALLBACK_PRICES["cng"],
-                    "date":   parsed["date"],
+                    "cng": parsed["cng"] if parsed["cng"] else FALLBACK_PRICES["cng"],
+                    "date": parsed["date"],
                     "source": "live",
                 }
 
         except requests.exceptions.Timeout:
-            print("[fuel_prices] RapidAPI request timed out")
+            logger.warning(f"Timeout on URL {i}")
+            continue
+        except requests.exceptions.RequestException as e:
+            logger.error(f"Request error on URL {i}: {e}")
             continue
         except Exception as e:
-            print(f"[fuel_prices] error on {url}: {e}")
+            logger.error(f"Unexpected error on URL {i}: {e}", exc_info=True)
             continue
 
     # ── all attempts failed → fallback ────────────────────────────────────
-    print("[fuel_prices] all RapidAPI attempts failed — using fallback")
+    logger.warning("All RapidAPI attempts failed - using fallback prices")
     return FALLBACK_PRICES
 
 
@@ -192,13 +207,13 @@ def format_fuel_prices(prices_data: dict) -> str:
 
     petrol = prices_data.get("petrol", 0)
     diesel = prices_data.get("diesel", 0)
-    cng    = prices_data.get("cng", 0)
-    date   = prices_data.get("date", "Unknown")
+    cng = prices_data.get("cng", 0)
+    date = prices_data.get("date", "Unknown")
     source = prices_data.get("source", "cached")
 
-    source_text      = "🟢 Live"  if source == "live"  else "📦 Cached"
-    diff             = abs(petrol - diesel)
-    comparison_text  = (
+    source_text = "🟢 Live" if source == "live" else "📦 Cached"
+    diff = abs(petrol - diesel)
+    comparison_text = (
         "📈 Petrol is higher than diesel"
         if petrol > diesel
         else "📉 Diesel is higher than petrol"

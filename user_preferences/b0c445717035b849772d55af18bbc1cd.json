@@ -1,0 +1,114 @@
+{
+  "user_id": "b0c445717035b849772d55af18bbc1cd",
+  "created_at": "2026-02-10T18:37:06.762965",
+  "last_active": "2026-02-10T18:46:20.007425",
+  "total_interactions": 8,
+  "frequent_areas": [],
+  "home_area": null,
+  "work_area": null,
+  "interests": {
+    "food": 0,
+    "transport": 0,
+    "tourism": 0,
+    "shopping": 0,
+    "entertainment": 0,
+    "news": 5,
+    "weather": 1,
+    "utilities": 0,
+    "sports": 0,
+    "healthcare": 0
+  },
+  "food_preferences": {
+    "cuisines": [],
+    "price_range": "medium",
+    "dietary": []
+  },
+  "transport_preferences": {
+    "modes": [],
+    "frequent_routes": []
+  },
+  "tourism_preferences": {
+    "types": [],
+    "crowd_tolerance": "medium"
+  },
+  "language": "en",
+  "active_hours": {
+    "0": 0,
+    "1": 0,
+    "2": 0,
+    "3": 0,
+    "4": 0,
+    "5": 0,
+    "6": 0,
+    "7": 0,
+    "8": 0,
+    "9": 0,
+    "10": 0,
+    "11": 0,
+    "12": 0,
+    "13": 0,
+    "14": 0,
+    "15": 0,
+    "16": 0,
+    "17": 0,
+    "18": 8,
+    "19": 0,
+    "20": 0,
+    "21": 0,
+    "22": 0,
+    "23": 0
+  },
+  "active_days": {
+    "monday": 0,
+    "tuesday": 8,
+    "wednesday": 0,
+    "thursday": 0,
+    "friday": 0,
+    "saturday": 0,
+    "sunday": 0
+  },
+  "query_history": [
+    {
+      "query": "Today's weather",
+      "intent": "weather",
+      "timestamp": "2026-02-10T18:37:06.763119"
+    },
+    {
+      "query": "Latest Hyderabad news",
+      "intent": "news",
+      "timestamp": "2026-02-10T18:37:28.060668"
+    },
+    {
+      "query": "tech news today",
+      "intent": "news",
+      "timestamp": "2026-02-10T18:38:06.276109"
+    },
+    {
+      "query": "traffic news today",
+      "intent": "news",
+      "timestamp": "2026-02-10T18:38:43.812405"
+    },
+    {
+      "query": "business news today",
+      "intent": "bus",
+      "timestamp": "2026-02-10T18:38:54.608045"
+    },
+    {
+      "query": "business news today",
+      "intent": "bus",
+      "timestamp": "2026-02-10T18:39:44.079557"
+    },
+    {
+      "query": "Latest Hyderabad news",
+      "intent": "news",
+      "timestamp": "2026-02-10T18:42:03.756615"
+    },
+    {
+      "query": "hyderabad news",
+      "intent": "news",
+      "timestamp": "2026-02-10T18:46:20.007628"
+    }
+  ],
+  "personalization_enabled": true,
+  "personalization_score": 0.12000000000000001
+}

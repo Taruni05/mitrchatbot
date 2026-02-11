@@ -1,13 +1,28 @@
 import requests
 import streamlit as st
 from datetime import datetime
+from collections import defaultdict
 
-@st.cache_data(ttl=600)
+# Import logger and config
+from services.logger import setup_logger
+from services.config import config
+
+# Set up logger
+logger = setup_logger('weather', 'weather.log')
+
+
+@st.cache_data(ttl=config.cache.WEATHER)
 def get_weather_by_coords(lat: float, lon: float):
     """
     Fetch weather using latitude & longitude.
     """
-    api_key = st.secrets["OPENWEATHER_API_KEY"]
+    api_key = config.api.get_openweather_api_key()
+    
+    if not api_key:
+        logger.error("OPENWEATHER_API_KEY not configured")
+        return None
+
+    logger.debug(f"Fetching weather for coordinates ({lat:.4f}, {lon:.4f})")
 
     url = (
         "https://api.openweathermap.org/data/2.5/weather"
@@ -15,10 +30,24 @@ def get_weather_by_coords(lat: float, lon: float):
     )
 
     try:
-        response = requests.get(url, timeout=5)
+        response = requests.get(url, timeout=config.api.WEATHER_TIMEOUT)
         response.raise_for_status()
-        return response.json()
-    except Exception:
+        data = response.json()
+        
+        # Log the weather condition
+        temp = data.get("main", {}).get("temp", "N/A")
+        condition = data.get("weather", [{}])[0].get("main", "Unknown")
+        logger.info(f"Weather: {temp}°C, {condition}")
+        
+        return data
+    except requests.exceptions.Timeout:
+        logger.warning(f"Weather API timeout for ({lat:.4f}, {lon:.4f})")
+        return None
+    except requests.exceptions.HTTPError as e:
+        logger.error(f"Weather API HTTP error: {e.response.status_code}")
+        return None
+    except Exception as e:
+        logger.error(f"Weather fetch failed: {e}", exc_info=True)
         return None
 
     
@@ -38,13 +67,20 @@ def format_weather(data):
         f"Humidity is around {humidity}%."
     )
 
-@st.cache_data(ttl=1800)  # Cache for 30 min (forecasts change less frequently)
+
+@st.cache_data(ttl=config.cache.WEATHER * 3)  # Forecast cached 3x longer
 def get_forecast_by_coords(lat: float, lon: float):
     """
     Fetch 5-day/3-hour forecast from OpenWeather.
     Returns forecast data or None on error.
     """
-    api_key = st.secrets["OPENWEATHER_API_KEY"]
+    api_key = config.api.get_openweather_api_key()
+    
+    if not api_key:
+        logger.error("OPENWEATHER_API_KEY not configured")
+        return None
+    
+    logger.debug(f"Fetching forecast for coordinates ({lat:.4f}, {lon:.4f})")
     
     url = (
         "https://api.openweathermap.org/data/2.5/forecast"
@@ -52,11 +88,22 @@ def get_forecast_by_coords(lat: float, lon: float):
     )
     
     try:
-        response = requests.get(url, timeout=5)
+        response = requests.get(url, timeout=config.api.WEATHER_TIMEOUT)
         response.raise_for_status()
-        return response.json()
+        data = response.json()
+        
+        num_items = len(data.get("list", []))
+        logger.info(f"Forecast fetched: {num_items} data points")
+        
+        return data
+    except requests.exceptions.Timeout:
+        logger.warning(f"Forecast API timeout for ({lat:.4f}, {lon:.4f})")
+        return None
+    except requests.exceptions.HTTPError as e:
+        logger.error(f"Forecast API HTTP error: {e.response.status_code}")
+        return None
     except Exception as e:
-        print(f"[weatherapi] Forecast fetch failed: {e}")
+        logger.error(f"Forecast fetch failed: {e}", exc_info=True)
         return None
 
 
@@ -78,7 +125,6 @@ def format_forecast_3day(forecast_data):
         return ""
     
     # Group by date
-    from collections import defaultdict
     daily = defaultdict(list)
     
     for item in items[:24]:  # First 3 days (24 data points = 3 days × 8)
@@ -167,12 +213,19 @@ def get_rain_alert(forecast_data):
     
     return ""
 
-@st.cache_data(ttl=600)
+
+@st.cache_data(ttl=config.cache.WEATHER)
 def get_aqi_by_coords(lat: float, lon: float):
     """
     Fetch Air Quality Index (AQI) using latitude & longitude.
     """
-    api_key = st.secrets["OPENWEATHER_API_KEY"]
+    api_key = config.api.get_openweather_api_key()
+    
+    if not api_key:
+        logger.error("OPENWEATHER_API_KEY not configured")
+        return None
+
+    logger.debug(f"Fetching AQI for coordinates ({lat:.4f}, {lon:.4f})")
 
     url = (
         "https://api.openweathermap.org/data/2.5/air_pollution"
@@ -180,11 +233,25 @@ def get_aqi_by_coords(lat: float, lon: float):
     )
 
     try:
-        response = requests.get(url, timeout=5)
+        response = requests.get(url, timeout=config.api.WEATHER_TIMEOUT)
         response.raise_for_status()
-        return response.json()
-    except Exception:
+        data = response.json()
+        
+        # Log AQI value
+        aqi_value = data.get("list", [{}])[0].get("main", {}).get("aqi", "N/A")
+        logger.info(f"AQI fetched: {aqi_value}")
+        
+        return data
+    except requests.exceptions.Timeout:
+        logger.warning(f"AQI API timeout for ({lat:.4f}, {lon:.4f})")
         return None
+    except requests.exceptions.HTTPError as e:
+        logger.error(f"AQI API HTTP error: {e.response.status_code}")
+        return None
+    except Exception as e:
+        logger.error(f"AQI fetch failed: {e}", exc_info=True)
+        return None
+
 
 def format_aqi(aqi_data):
     """
@@ -204,6 +271,7 @@ def format_aqi(aqi_data):
     }
 
     return mapping.get(aqi, "Unknown")
+
 
 def get_aqi_advice(aqi_data):
     if not aqi_data:

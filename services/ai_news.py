@@ -4,10 +4,18 @@ Better prompts, error handling, and fallback responses
 """
 from google import genai
 import streamlit as st
-import os
 import time
+from datetime import datetime
 
-client = genai.Client(api_key=st.secrets.get("GEMINI_API_KEY", ""))
+# Import logger and config
+from services.logger import setup_logger
+from services.config import config
+
+# Set up logger
+logger = setup_logger('ai_news', 'ai_news.log')
+
+# Initialize Gemini client with config
+client = genai.Client(api_key=config.api.get_gemini_api_key())
 
 
 def summarize_news(articles, query: str = None):
@@ -23,7 +31,10 @@ def summarize_news(articles, query: str = None):
     """
     
     if not articles:
+        logger.warning("No articles provided for summarization")
         return "📰 No news articles available at the moment. Please try again later."
+    
+    logger.info(f"Summarizing {len(articles)} news articles")
     
     # Build context from articles
     articles_text = ""
@@ -42,6 +53,7 @@ def summarize_news(articles, query: str = None):
         articles_text += f"   Source: {source}\n\n"
     
     if not articles_text.strip():
+        logger.warning("All articles were removed or invalid")
         return "📰 No valid news articles available at the moment."
     
     # Build intelligent prompt based on query
@@ -63,6 +75,8 @@ def summarize_news(articles, query: str = None):
             focus = "general city news and important updates"
     else:
         focus = "general city news and important updates"
+    
+    logger.debug(f"News focus: {focus}")
     
     # Enhanced prompt with better instructions
     prompt = f"""You are a Hyderabad city news assistant providing concise, relevant summaries.
@@ -110,29 +124,14 @@ INSTRUCTIONS:
 
 Generate the summary now:"""
 
-    try:
-        response = client.models.generate_content(
-            model="gemini-2.5-flash-lite",
-            contents=prompt,
-        )
-        
-        summary = response.text.strip()
-        
-        # Add timestamp
-        from datetime import datetime
-        timestamp = datetime.now().strftime("%B %d, %Y at %I:%M %p")
-        summary += f"\n\n---\n*Last updated: {timestamp}*"
-        
-        return summary
-        
-    except Exception as e:
-        print(f"[ai_news] First attempt failed: {e}")
-        
-        # Retry once with simpler prompt
-        time.sleep(1)
-        
+    # Retry logic with config
+    for attempt in range(1, config.api.GEMINI_MAX_RETRIES + 1):
         try:
-            simple_prompt = f"""Summarize these Hyderabad news articles briefly:
+            logger.debug(f"Gemini API attempt {attempt}/{config.api.GEMINI_MAX_RETRIES}")
+            
+            # Use simpler prompt on retry
+            if attempt > 1:
+                prompt = f"""Summarize these Hyderabad news articles briefly:
 
 {articles_text}
 
@@ -142,17 +141,31 @@ Format:
 🎉 Events (if any)
 
 Keep it concise and relevant to Hyderabad only."""
-
+                logger.debug("Using simplified prompt for retry")
+            
             response = client.models.generate_content(
-                model="gemini-2.5-flash-lite",
-                contents=simple_prompt,
+                model=config.api.GEMINI_MODEL,
+                contents=prompt,
             )
             
-            return response.text.strip()
+            summary = response.text.strip()
             
-        except Exception as e2:
-            print(f"[ai_news] Second attempt failed: {e2}")
-            return fallback_news_summary(articles)
+            # Add timestamp
+            timestamp = datetime.now().strftime("%B %d, %Y at %I:%M %p")
+            summary += f"\n\n---\n*Last updated: {timestamp}*"
+            
+            logger.info(f"✅ Generated {len(summary)} chars news summary")
+            return summary
+            
+        except Exception as e:
+            logger.warning(f"Attempt {attempt} failed: {e}")
+            
+            if attempt < config.api.GEMINI_MAX_RETRIES:
+                time.sleep(1)
+                continue
+            else:
+                logger.error("All Gemini attempts failed for news summarization", exc_info=True)
+                return fallback_news_summary(articles)
 
 
 def fallback_news_summary(articles):
@@ -160,6 +173,8 @@ def fallback_news_summary(articles):
     Create a basic summary when AI fails.
     Just formats the raw articles nicely.
     """
+    logger.info("Using fallback news summary")
+    
     summary = "📰 **Hyderabad News Today**\n\n"
     summary += "⚠️ *AI summarization unavailable - showing raw headlines*\n\n"
     

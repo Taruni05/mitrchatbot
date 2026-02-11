@@ -1,0 +1,185 @@
+{
+  "user_id": "0bd8bca2cefdadafa4ccaa368d2b1758",
+  "created_at": "2026-02-10T18:49:11.142701",
+  "last_active": "2026-02-10T19:29:09.137251",
+  "total_interactions": 21,
+  "frequent_areas": [
+    "charminar"
+  ],
+  "home_area": "charminar",
+  "work_area": null,
+  "interests": {
+    "food": 1,
+    "transport": 1,
+    "tourism": 0,
+    "shopping": 0,
+    "entertainment": 0,
+    "news": 2,
+    "weather": 1,
+    "utilities": 0,
+    "sports": 1,
+    "healthcare": 1
+  },
+  "food_preferences": {
+    "cuisines": [
+      "biryani"
+    ],
+    "price_range": "medium",
+    "dietary": []
+  },
+  "transport_preferences": {
+    "modes": [
+      "metro"
+    ],
+    "frequent_routes": []
+  },
+  "tourism_preferences": {
+    "types": [],
+    "crowd_tolerance": "medium"
+  },
+  "language": "en",
+  "active_hours": {
+    "0": 0,
+    "1": 0,
+    "2": 0,
+    "3": 0,
+    "4": 0,
+    "5": 0,
+    "6": 0,
+    "7": 0,
+    "8": 0,
+    "9": 0,
+    "10": 0,
+    "11": 0,
+    "12": 0,
+    "13": 0,
+    "14": 0,
+    "15": 0,
+    "16": 0,
+    "17": 0,
+    "18": 1,
+    "19": 20,
+    "20": 0,
+    "21": 0,
+    "22": 0,
+    "23": 0
+  },
+  "active_days": {
+    "monday": 0,
+    "tuesday": 21,
+    "wednesday": 0,
+    "thursday": 0,
+    "friday": 0,
+    "saturday": 0,
+    "sunday": 0
+  },
+  "query_history": [
+    {
+      "query": "Latest Hyderabad news",
+      "intent": "news",
+      "timestamp": "2026-02-10T18:49:11.142745"
+    },
+    {
+      "query": "royal palaces in hyderabad",
+      "intent": "palace",
+      "timestamp": "2026-02-10T19:19:01.185748"
+    },
+    {
+      "query": "museums in hyderabad",
+      "intent": "museum",
+      "timestamp": "2026-02-10T19:20:21.410556"
+    },
+    {
+      "query": "tell me about famous monuments",
+      "intent": "monument",
+      "timestamp": "2026-02-10T19:20:30.393782"
+    },
+    {
+      "query": "royal palaces in hyderabad",
+      "intent": "palace",
+      "timestamp": "2026-02-10T19:20:41.814902"
+    },
+    {
+      "query": "royal palaces in hyderabad",
+      "intent": "palace",
+      "timestamp": "2026-02-10T19:22:00.534256"
+    },
+    {
+      "query": "Explore famous biryani places",
+      "intent": "food",
+      "timestamp": "2026-02-10T19:24:03.544965"
+    },
+    {
+      "query": "Check metro routes",
+      "intent": "transport",
+      "timestamp": "2026-02-10T19:24:31.418304"
+    },
+    {
+      "query": "Visit Charminar",
+      "intent": "itinerary",
+      "timestamp": "2026-02-10T19:24:36.422510"
+    },
+    {
+      "query": "Visit Charminar",
+      "intent": "itinerary",
+      "timestamp": "2026-02-10T19:24:45.082340"
+    },
+    {
+      "query": "Today's weather",
+      "intent": "weather",
+      "timestamp": "2026-02-10T19:24:47.681264"
+    },
+    {
+      "query": "Latest Hyderabad news",
+      "intent": "news",
+      "timestamp": "2026-02-10T19:24:53.251497"
+    },
+    {
+      "query": "What's happening in charminar",
+      "intent": "events",
+      "timestamp": "2026-02-10T19:28:16.078639"
+    },
+    {
+      "query": "festivals in hyderabad",
+      "intent": "festival_traffic",
+      "timestamp": "2026-02-10T19:28:31.979442"
+    },
+    {
+      "query": "sports stadiums",
+      "intent": "sports",
+      "timestamp": "2026-02-10T19:28:35.644400"
+    },
+    {
+      "query": "major hospitals",
+      "intent": "healthcare",
+      "timestamp": "2026-02-10T19:28:40.434273"
+    },
+    {
+      "query": "university in hyderabad",
+      "intent": "education",
+      "timestamp": "2026-02-10T19:28:44.971372"
+    },
+    {
+      "query": "government services in hyderabad",
+      "intent": "govt",
+      "timestamp": "2026-02-10T19:28:47.764145"
+    },
+    {
+      "query": "upcoming events in hyderabad",
+      "intent": "events",
+      "timestamp": "2026-02-10T19:28:49.720203"
+    },
+    {
+      "query": "show me food delivery offers",
+      "intent": "movies",
+      "timestamp": "2026-02-10T19:28:52.678155"
+    },
+    {
+      "query": "live deals",
+      "intent": "deals",
+      "timestamp": "2026-02-10T19:29:09.137307"
+    }
+  ],
+  "personalization_enabled": true,
+  "personalization_score": 0.7299999999999999
+}
