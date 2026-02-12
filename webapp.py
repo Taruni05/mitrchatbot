@@ -63,7 +63,7 @@ from services.logger import setup_logger
 from services.config import config
 import logging
 from services.security import validate_and_rate_limit, get_security_stats
-from services.cache_manager import cached_response, cache_response, get_cache, clear_cache
+from services.cache_manager import cached_response, cache_response, get_cache,clear_cache
 from services.input_validator import validate_and_sanitize
 from services.rate_limiter import is_rate_limited, get_rate_limit_info
 # Initialize main app logger
@@ -1798,6 +1798,38 @@ with st.sidebar:
         f"{color} **Requests:** {remaining}/{max_requests} remaining"
     )
 
+# ──────────────────────────────────────────────────────────
+# Cache Performance Stats
+# ──────────────────────────────────────────────────────────
+if config.app.ENABLE_RESPONSE_CACHE:
+    cache = get_cache()
+    stats = cache.get_stats()
+    
+    st.sidebar.markdown("---")
+    st.sidebar.markdown("### 📊 Performance")
+    
+    hit_rate = stats['hit_rate']
+    if hit_rate >= 50:
+        color = "🟢"  # Green - excellent
+    elif hit_rate >= 25:
+        color = "🟡"  # Yellow - good
+    else:
+        color = "🔴"  # Red - needs improvement
+    
+    st.sidebar.metric(f"{color} Cache Hit Rate", f"{hit_rate:.1f}%")
+    
+    if stats['hits'] > 0:
+        st.sidebar.caption(
+            f"💰 Saved {stats['hits']} API calls!\n"
+            f"📦 Cache size: {stats['cache_size']} entries"
+        )
+    
+    # Cache clear button
+    if st.sidebar.button("🗑️ Clear Cache", key="clear_cache_btn"):
+        clear_cache()
+        st.sidebar.success("✅ Cache cleared!")
+        st.rerun()
+
     # ── AI Preferences Dashboard ────────────────────────────────────────
     st.sidebar.subheader("🎯 Your Preferences")
     
@@ -1966,7 +1998,7 @@ if user_input:
     st.session_state.messages.append(
         {"role": "user", "content": user_input}
     )
-    ilogger.info(f"User query: {user_input[:100]}")
+    logger.info(f"User query: {user_input[:100]}")
     
     # === STEP 1: Validate & Sanitize Input ===
     is_valid, clean_input, error_msg = validate_and_sanitize(user_input)
@@ -1998,38 +2030,61 @@ if user_input:
     
 
     # 2️⃣ Show spinner OUTSIDE chat messages
-    with st.spinner("Thinking..."):
-        try:
-            # translate input to English if needed
-            normalized_input = (
-                translate_response(user_input, "en")
-                if language != "en"
-                else user_input
-            )
+    # Line ~1876
+with st.spinner("Thinking..."):
+    try:
+        # translate input to English if needed
+        normalized_input = (
+            translate_response(user_input, "en")
+            if language != "en"
+            else user_input
+        )
 
+        # === ✅ CHECK CACHE FIRST ===
+        current_language = st.session_state.get('language', 'en')
+        current_area = st.session_state.get('selected_area', '')
+        
+        cached = cached_response(normalized_input, current_language, current_area)
+        
+        if cached:
+            # ✅ Cache HIT - use cached response
+            logger.info(f"✅ Cache hit for: {normalized_input[:50]}")
+            response = cached
+            intent = "cached"
+            
+            # Show cache indicator to user
+            st.info("⚡ *Cached response (recently answered)*")
+        
+        else:
+            # ❌ Cache MISS - generate new response
+            logger.debug("Cache miss - generating new response")
+            
             # Run LangGraph
-            result   = app.invoke({
+            result = app.invoke({
                 "user_input": normalized_input,
                 "intent": "",
                 "response": ""
             })
             logger.debug(f"Detected intent: {result['intent']}")
 
-            intent   = result["intent"]
+            intent = result["intent"]
             response = result["response"]
+            
+            # === ✅ CACHE THE RESPONSE ===
+            cache_response(normalized_input, response, current_language, current_area)
+            logger.debug("Response cached for future queries")
 
-            # Learn + personalize
-            learn_from_query(normalized_input, intent)
-            response = apply_personalization_to_response(response)
-            response_time = (datetime.now() - start_time).total_seconds()
-            logger.info(f"Intent: {result['intent']}, Response time: {response_time:.2f}s")
+        # Learn + personalize (works for both cached and new)
+        learn_from_query(normalized_input, intent)
+        response = apply_personalization_to_response(response)
 
-            # translate output back if needed
-            if language != "en":
-                response = translate_response(response, language)
+        # translate output back if needed
+        if language != "en":
+            response = translate_response(response, language)
 
-        except Exception as e:
-            response = f"❌ Error: {str(e)}"
+    except Exception as e:
+        logger.error(f"Error processing query: {e}", exc_info=True)
+        response = f"❌ Error: {str(e)}"
 
     # 3️⃣ Render ASSISTANT message (NO spinner here)
     with st.chat_message(

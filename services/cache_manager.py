@@ -8,9 +8,9 @@ import time
 from datetime import datetime, timedelta
 from typing import Optional, Dict, Any, Tuple
 import streamlit as st
-from services.logger import get_logger
+from services.logger import setup_logger
 
-logger = get_logger(__name__)
+logger =setup_logger('cache_manager', 'cache_manager.log')
 
 
 # ============================================================================

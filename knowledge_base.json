@@ -1727,11 +1727,14 @@
             "Sunday": "11:00 AM - 11:00 PM"
           },
           "best_selling_dishes": [
-            "Signature Dish 1",
-            "Signature Dish 2",
-            "Signature Dish 3"
+            "Special Mutton Dum Biryani: Regarded by many as superior to commercial chains, this biryani features fragrant, non-greasy rice and extremely tender, generous portions of meat. The \"Special\" variant is often recommended for its higher quality meat-to-rice ratio.",
+            "Pakistani Chicken: A rich, creamy, and mildly spicy gravy dish that has gained a cult following as the best non-biryani option on the menu. It is ideally paired with their Rumali Roti.",
+            "Shadab Special Mutton Paya with Sheermal: A quintessential Hyderabadi breakfast staple. The slow-cooked trotters (Paya) are served in a spiced broth alongside Sheermal (saffron-infused bread) or Nihari."
           ],
-          "rating": null
+          "rating": {
+            "google": 4.0,
+            "zomato": 3.9
+          }
         },
         {
           "name": "Shah Ghouse Cafe & Restaurant",
@@ -1755,11 +1758,14 @@
             "Sunday": "11:00 AM - 11:00 PM"
           },
           "best_selling_dishes": [
-            "Signature Dish 1",
-            "Signature Dish 2",
-            "Signature Dish 3"
+            "Special Mutton Dum Biryani: Unlike the \"subtle\" versions found in fine dining, this is a masala-forward biryani. It is famous for its generous ghee, tender meat, and rice that is heavily soaked in aromatic spices.",
+            "Mutton Haleem (Seasonal/Signature): Widely considered a top-three contender in the city every year. It is prized for its thick, fibrous texture and the rich layer of pure ghee and fried onions that top it.",
+            "Tangadi Chicken Mandi: A massive platter of Arabian-style rice topped with smoky, roasted chicken drumsticks. It has become a modern favourite for groups looking for a communal dining experience outside of traditional biryani."
           ],
-          "rating": null
+          "rating": {
+            "google": 4.1,
+            "zomato": 4.0
+          }
         },
         {
           "name": "Bawarchi (RTC Cross Road)",
@@ -1783,11 +1789,14 @@
             "Sunday": "11:00 AM - 11:00 PM"
           },
           "best_selling_dishes": [
-            "Signature Dish 1",
-            "Signature Dish 2",
-            "Signature Dish 3"
+            "Mutton Dum Biryani: The ultimate flagship. It is praised for its non-greasy texture, long-grain basmati rice, and perfectly marinated \"melt-in-the-mouth\" mutton pieces.",
+            "Chicken 65: A quintessential Hyderabadi starter. Bawarchi’s version is known for being extra spicy, tempered with curry leaves and green chillies, and served bone-in or boneless.",
+            "Bawarchi Special Mutton Curry: A rich, masala-heavy gravy that is a favorite for those who want a side to their biryani or to pair with fresh Rumali Rotis."
           ],
-          "rating": null
+          "rating": {
+            "google": 4.2,
+            "zomato": 4.2
+          }
         },
         {
           "name": "Cafe Bahar",
@@ -1811,11 +1820,14 @@
             "Sunday": "11:00 AM - 11:00 PM"
           },
           "best_selling_dishes": [
-            "Signature Dish 1",
-            "Signature Dish 2",
-            "Signature Dish 3"
+            "Special Mutton Biryani (Double Masala): Cafe Bahar is famous for its \"Double Masala\" option, which adds an extra layer of spicy, moist masala to the rice, making it a favorite for spice-lovers.",
+            "Bheja Fry (Brain Fry): A legendary Hyderabadi delicacy. It is buttery, spicy, and considered one of the best preparations in the city, typically eaten as a starter or with Naan.",
+            "Irani Chai & Osmania Biscuits: The ground floor bakery is an icon in itself. Their Irani tea is exceptionally creamy and thick, serving as the perfect conclusion to a heavy meal."
           ],
-          "rating": null
+          "rating": {
+            "google": 4.2,
+            "zomato": 4.1
+          }
         },
         {
           "name": "Paradise Biryani",
@@ -1839,11 +1851,15 @@
             "Sunday": "11:00 AM - 11:00 PM"
           },
           "best_selling_dishes": [
-            "Signature Dish 1",
-            "Signature Dish 2",
-            "Signature Dish 3"
+            "Royal Mutton Biryani: Their signature dish, featuring premium long-grain basmati rice and tender meat with a refined, aromatic spice blend.",
+            "Chicken Garlic Kebab: A creamy, melt-in-the-mouth appetizer that is a staple for families and those who prefer non-spicy starters.",
+            "Double Ka Meetha: A classic Hyderabadi bread pudding topped with cream and nuts, consistently rated as the perfect sweet conclusion to their meal."
+
           ],
-          "rating": null
+          "rating": {
+            "google": 4.1,
+            "zomato": 3.7
+          }
         },
         {
           "name": "Meridian Biryani",
@@ -1867,11 +1883,14 @@
             "Sunday": "11:00 AM - 11:00 PM"
           },
           "best_selling_dishes": [
-            "Signature Dish 1",
-            "Signature Dish 2",
-            "Signature Dish 3"
+            "Mutton Dum Biryani: Known for its \"masala-heavy\" profile and tender meat; it is significantly spicier than the versions at Paradise or Bawarchi [5].",
+            "Meridian Special Mirchi Ka Salan: This gravy is legendary; many diners visit specifically for its creamy, tangy, and fiery consistency [4].",
+            "Chicken 65: A quintessential Hyderabadi starter prepared with a perfect crunch and vibrant tempering of curry leaves [5]."   
           ],
-          "rating": null
+          "rating": {
+            "google": 4.1,
+            "zomato": 4.2
+          }
         },
         {
           "name": "Grand Hotel",
@@ -1895,16 +1914,20 @@
             "Sunday": "11:00 AM - 11:00 PM"
           },
           "best_selling_dishes": [
-            "Signature Dish 1",
-            "Signature Dish 2",
-            "Signature Dish 3"
+            "Mutton Biryani (Double Masala): A favourite for those who prefer their rice moist and heavily coated in spice-mix.",
+            "Dilkhush / Dilpasand: A legendary sweet puff pastry stuffed with coconut and tutti-frutti, often bought in bulk from their bakery counter.",
+            "Irani Chai & Osmania Biscuits: The quintessential Abids experience; their tea is exceptionally thick and creamy, served in traditional saucers"
+
           ],
-          "rating": null
+          "rating": {
+            "google": 4.0,
+            "zomato": 3.8
+          }
         },
         {
           "name": "Mehfil Restaurant",
           "main_branch": {
-            "location": "Hyderabad",
+            "location": "Hyd  erabad",
             "google_maps_link": "https://www.google.com/maps/search/Mehfil+Restaurant+Hyderabad"
           },
           "other_branches": [],
@@ -1923,11 +1946,14 @@
             "Sunday": "11:00 AM - 11:00 PM"
           },
           "best_selling_dishes": [
-            "Signature Dish 1",
-            "Signature Dish 2",
-            "Signature Dish 3"
+            "Special Mutton Biryani: The restaurant's flagship dish, known for its well-balanced spice level and tender mutton pieces. The Jumbo Packs are a top seller for group gatherings.",
+            "Chicken 65: A quintessential Hyderabadi starter that is frequently cited as a \"must-order\" for its crispy texture and spicy tempering.",
+            "Apollo Fish: A popular spicy seafood appetizer featuring boneless fish tossed in a tangy masala, highly recommended by regular patrons."
           ],
-          "rating": null
+          "rating": {
+            "google": 4.1,
+            "zomato": 3.9
+          }
         },
         {
           "name": "Sarvi Restaurant",
@@ -1951,11 +1977,14 @@
             "Sunday": "11:00 AM - 11:00 PM"
           },
           "best_selling_dishes": [
-            "Signature Dish 1",
-            "Signature Dish 2",
-            "Signature Dish 3"
+            "Mutton Haleem (Seasonal/Signature): Even outside of the Ramzan season, Sarvi's Irani-style Haleem is considered a local brand, known for its smooth texture and high meat content.",
+            "Mutton Biryani: Noted for its \"melt-in-your-mouth\" mutton and aromatic rice that is generally less greasy than at other local spots.",
+            "Murgh Malai Kebab: A signature creamy chicken kebab praised for its soft, juicy texture and subtle spices."
           ],
-          "rating": null
+          "rating": {
+            "google": 4.0,
+            "zomato": 3.9
+          }
         },
         {
           "name": "Rayalaseema Ruchulu",
@@ -1979,11 +2008,15 @@
             "Sunday": "11:00 AM - 11:00 PM"
           },
           "best_selling_dishes": [
-            "Signature Dish 1",
-            "Signature Dish 2",
-            "Signature Dish 3"
+            "Ragi Sangati with Natu Kodi Pulusu: The restaurant's most legendary pairing. The Ragi Sangati (steamed finger millet balls) is served with Natu Kodi Pulusu (spicy country chicken curry), a dish that defines the rugged, fiery flavors of the Rayalaseema region.",
+"Raja Bhojanam Thali: A massive, \"royal\" traditional platter designed to give diners a full tour of Andhra and Rayalaseema flavors. It features an extensive array of veg and non-veg curries, dal, flavored rice, and authentic sweets like Bhakshalu or Apricot Pudding.",
+"Ulavacharu Chicken Pulao: A distinctively tangy and earthy dish made using horse gram soup (Ulavacharu). This pulao is a favorite for those seeking a break from traditional biryani, offering a unique flavor profile that is deeply rooted in Telugu culinary heritage."
+
           ],
-          "rating": null
+          "rating":{  
+            "google": 4.1,
+            "zomato": 3.9
+          }
         },
         {
           "name": "Ulavacharu",
@@ -2007,11 +2040,21 @@
             "Sunday": "11:00 AM - 11:00 PM"
           },
           "best_selling_dishes": [
-            "Signature Dish 1",
-            "Signature Dish 2",
-            "Signature Dish 3"
+            "Raju Gari Kodi Pulao: Their most famous signature dish. It is a unique, \"wet-style\" pulao that is less spicy than traditional biryani, featuring tender chicken and a rich, aromatic masala that has a stew-like consistency.",
+"Ulavacharu Kodi Pulao: The restaurant's namesake dish. It uses a base of Ulavacharu (horsegram soup) to cook the rice and chicken, resulting in a deep, earthy, and slightly tangy flavor that is considered highly authentic to the coastal Andhra region.",
+"Bangla Kodi: A top-rated starter consisting of succulent chicken pieces cooked in a flavorful, spicy green chilli and spice blend. It is frequently cited as the best appetizer to pair with their main course pulaos."
+
           ],
-          "rating": null
+          "rating": {
+            "google": {
+              "Kothapet": 4.4,
+              "Kukatpally": 4.6
+            },
+            "zomato": {
+              "Jubilee Hills": 3.9,
+              "Gachibowli": 3.4
+            }
+          }
         },
         {
           "name": "AnTeRa Kitchen & Bar",
@@ -2035,11 +2078,21 @@
             "Sunday": "11:00 AM - 11:00 PM"
           },
           "best_selling_dishes": [
-            "Signature Dish 1",
-            "Signature Dish 2",
-            "Signature Dish 3"
+            "Bangla Kodi: A quintessential AnTeRa starter featuring tender chicken pieces cooked in a spicy, flavorful gravy. It is frequently cited as one of the best-tasting dishes on the menu.",
+"Antera's Fry Piece Pulav: A signature main course where stir-fried chicken, spiced with green chillies and traditional masalas, is tossed with aromatic flavoured rice.",
+"Jaggery Ice Cream: This iconic dessert is the most famous way to end a meal here. It is widely loved for its creamy texture and authentic local sweetness, often serving as the perfect counterbalance to the spicy main courses. ",
+"Other Highly Rated Items: Paya Shorba (slow-cooked lamb trotter broth), Coriander Chicken, and the unique Gongura Paneer Pockets."
+
           ],
-          "rating": null
+          "rating": {
+            "google": {
+              "Jubilee Hills": 4.2
+            },
+            "zomato": {
+              "Jubilee Hills": 4.1,
+              "Kompally": 3.9
+            }
+          }
         },
         {
           "name": "Simply South",
@@ -2063,11 +2116,15 @@
             "Sunday": "11:00 AM - 11:00 PM"
           },
           "best_selling_dishes": [
-            "Signature Dish 1",
-            "Signature Dish 2",
-            "Signature Dish 3"
+            "Gongura Mamsam / Royyala Pulao: While the menu rotates slightly, any iteration of their Gongura (sorrel leaves) dishes—be it mutton (mamsam) or prawn (royyala) pulao—is a signature highlight, capturing the tangy, spicy essence of Andhra cuisine.",
+            "Mutton Pepper Fry / Chicken Chettinad: The restaurant excels at rich, aromatic gravies and dry preparations from Tamil Nadu and Kerala. The Mutton Pepper Fry is consistently praised for its robust flavor and tender meat, as is the fiery Chicken Chettinad.",
+            "Appam with Stew (Veg or Non-Veg): A favorite for those seeking Kerala cuisine. The light, fluffy, bowl-shaped Appams are perfectly paired with a delicately spiced coconut milk-based Vegetable Stew or Chicken Stew, offering a comforting contrast to the spicier dishes.",
+            "Other Highly Rated Items: Pesarattu Upma, Prawn Vepudu (fried prawns), and the traditional Elaneer Payasam (tender coconut kheer) for dessert."
           ],
-          "rating": null
+          "rating": {
+                      "google": 4.2,
+                      "zomato": 4.2
+                    }
         },
         {
           "name": "The Spicy Venue",
@@ -2091,11 +2148,15 @@
             "Sunday": "11:00 AM - 11:00 PM"
           },
           "best_selling_dishes": [
-            "Signature Dish 1",
-            "Signature Dish 2",
-            "Signature Dish 3"
+            "Apricot Delight: Often called the best dessert in Hyderabad, this is the restaurant's most iconic creation. It consists of a rich, creamy custard layered over soft, stewed apricots and topped with cake crumbs—so popular it is frequently ordered for takeaway alone .",
+"MLA Potlam Biryani: A unique, show-stopping dish where a mixture of prawns, mutton keema, and chicken biryani is wrapped inside a thin, seasoned egg omelette (potlam). It offers a massive variety of proteins in a single serving.",
+"Andhra Veg Thali: Renowned as one of the most authentic Andhra meals in the city, the thali features a rotating selection of spicy powders (podi), chutneys, sambar, rasam, and seasonal curries like Gutti Vankaya.",
+"Other Highly Rated Items: Kodi Chips, Ulavacharu Biryani, and Avakaya Chicken Biryani." 
           ],
-          "rating": null
+          "rating": {
+            "google": 4.1,
+            "zomato": 4.0
+          }
         },
         {
           "name": "Kritunga Restaurant",
@@ -2119,11 +2180,16 @@
             "Sunday": "11:00 AM - 11:00 PM"
           },
           "best_selling_dishes": [
-            "Signature Dish 1",
-            "Signature Dish 2",
-            "Signature Dish 3"
+            "Ragi Sangati with Natu Kodi Pulusu: This is the restaurant's definitive signature dish. The Ragi Sangati (steamed millet balls) is served with a generous amount of ghee and a fiery Natu Kodi Pulusu (country chicken curry).",
+"Mutton Keema Biryani: Unlike traditional Hyderabadi Dum Biryani, this version features flavorful, spiced minced meat. It is frequently cited as one of their best-prepared rice dishes with a high meat-to-rice ratio.",
+"Bamboo Chicken: A popular tribal-style appetizer where chicken is marinated in local spices and cooked inside a bamboo stalk. It is prized for its smoky aroma and tender texture.",
+"Other Highly Rated Items: Potlam Biryani, Jowar Roti, and Gutti Vankaya (stuffed brinjal curry)."
+
           ],
-          "rating": null
+          "rating": {
+            "google": 4.1,
+            "zomato": 4.2
+          }
         },
         {
           "name": "Palamuru Grill",
@@ -2147,40 +2213,52 @@
             "Sunday": "11:00 AM - 11:00 PM"
           },
           "best_selling_dishes": [
-            "Signature Dish 1",
-            "Signature Dish 2",
-            "Signature Dish 3"
+            "Raagi Sankati with Natukodi Pulusu: The restaurant's definitive regional delicacy. The Raagi Sankati (finger millet balls) is served with a rich, traditional Natukodi Pulusu (spicy country chicken curry), often cited as one of the best versions of this dish in the city.",
+"Live Kunda Dum Pulao: A signature preparation where the rice and meat are slow-cooked and served in a traditional clay pot (Kunda). It is known for its earthy aroma and deep infusion of Telangana spices, making it a favorite for those wanting an alternative to standard biryani.",
+"Stone Age Chicken Curry: This unique dish is both cooked and served in stoneware, which helps retain intense heat and flavors. It is a standout item for those looking for the \"Palamuru\" signature style of cooking. ",
+"Other Highly Rated Items: Palamuru Special Kebab Platter, Rabbit Fry (Kamju), and the Double Ka Meetha for dessert. "
+
           ],
-          "rating": null
+          "rating": { "Google": 4.2, "Zomato": 4.0 }
         },
-        {
-          "name": "Gismat Jail Mandi",
-          "main_branch": {
-            "location": "Hyderabad",
-            "google_maps_link": "https://www.google.com/maps/search/Gismat+Jail+Mandi+Hyderabad"
-          },
-          "other_branches": [],
-          "price_range": {
-            "min": 150,
-            "max": 600,
-            "currency": "INR"
-          },
-          "opening_hours": {
-            "Monday": "11:00 AM - 11:00 PM",
-            "Tuesday": "11:00 AM - 11:00 PM",
-            "Wednesday": "11:00 AM - 11:00 PM",
-            "Thursday": "11:00 AM - 11:00 PM",
-            "Friday": "11:00 AM - 11:30 PM",
-            "Saturday": "11:00 AM - 11:30 PM",
-            "Sunday": "11:00 AM - 11:00 PM"
-          },
-          "best_selling_dishes": [
-            "Signature Dish 1",
-            "Signature Dish 2",
-            "Signature Dish 3"
-          ],
-          "rating": null
-        },
+{
+  "name": "Gismat Jail Mandi",
+  "main_branch": {
+    "location": "Hyderabad",
+    "google_maps_link": "https://www.google.com/maps/search/Gismat+Jail+Mandi+Hyderabad"
+  },
+  "other_branches": [],
+  "price_range": {
+    "min": 150,
+    "max": 600,
+    "currency": "INR"
+  },
+  "opening_hours": {
+    "Monday": "11:00 AM - 11:00 PM",
+    "Tuesday": "11:00 AM - 11:00 PM",
+    "Wednesday": "11:00 AM - 11:00 PM",
+    "Thursday": "11:00 AM - 11:00 PM",
+    "Friday": "11:00 AM - 11:30 PM",
+    "Saturday": "11:00 AM - 11:30 PM",
+    "Sunday": "11:00 AM - 11:00 PM"
+  },
+  "best_selling_dishes": [
+    "Juicy Mutton Mandi: This is the most highly recommended main course. It features extremely tender, slow-cooked mutton served over a large platter of aromatic basmati rice, often garnished with dry fruits and fried onions.",
+    "Mixed Platter Mandi: A popular choice for large groups, this platter includes a combination of their best-selling meats, typically featuring Chicken China Gate, Arabian Special Fish, and Roasted Chicken pieces.",
+    "Chicken Punugulu: A unique fusion starter that has gained popularity as a crunchy appetizer. It is often praised for its crispy exterior and flavorful chicken filling, serving as a perfect transition into the heavier Mandi main courses.",
+    "Other Highly Rated Items: Arabian Special Fish, Chicken China Gate, and the traditional Apricot Delight for dessert."
+  ],
+  "rating": {
+    "Google": {
+      "Ameerpet": 4.2,
+      "Dilsukhnagar": 4.1
+    },
+    "Zomato": {
+      "Kondapur": 3.5,
+      "Suchitra": 3.4
+    }
+  }
+},
         {
           "name": "Mandi@36",
           "main_branch": {
@@ -2203,11 +2281,19 @@
             "Sunday": "11:00 AM - 11:00 PM"
           },
           "best_selling_dishes": [
-            "Signature Dish 1",
-            "Signature Dish 2",
-            "Signature Dish 3"
+            "Mutton Juicy Mandi: Often cited as their best dish, it features exceptionally tender, slow-cooked mutton that is described as "falling off the bone". The meat is served over a large platter of flavorful rice infused with mutton stock and garnished with dry fruits.",
+"Chicken Al Faham Mandi: A crowd favorite featuring perfectly grilled Arabian-style chicken. The chicken is known for its smoky flavor and juicy texture, making it one of the most ordered variants on the menu.",
+"Cheese Kunafa: This is the most famous dessert at Mandi@36, frequently described as \"heavenly\". It features a crispy, buttery exterior with a warm, melted cheese center, serving as the perfect sweet conclusion to a heavy meal.",
+"Other Highly Rated Items: Mutton Madfoon, Arabic Assorted Special Mandi (a platter of various meats), and M36 Special Grilled Chicken." 
+
           ],
-          "rating": null
+          "rating": {
+            "Google": 4.1,
+            "Zomato": {
+              "Jubilee Hills": 4.3,
+              "Banjara Hills": 3.1
+            }
+          }
         },
         {
           "name": "Girl Friend Mandi",
@@ -2231,11 +2317,12 @@
             "Sunday": "11:00 AM - 11:00 PM"
           },
           "best_selling_dishes": [
-            "Signature Dish 1",
-            "Signature Dish 2",
-            "Signature Dish 3"
+            "Mutton Juicy Ghee Roast Mandi: Widely regarded as their standout dish, featuring tender mutton cooked with rich ghee and served over aromatic rice. It is often described as having a \"flavour explosion\".",
+"Girl Friend Special Mandi: A massive platter designed for groups (serves 4-5), containing a variety of proteins including chicken, mutton, and sometimes seafood, making it the most popular choice for social gatherings.",
+"Chicken Faham Mandi (Grilled/Oil Fry): A crowd favorite where the chicken is marinated in Arabian spices and grilled or flash-fried to retain juiciness. It is a staple for those visiting during late-night hours. ", 
+"Other Highly Rated Items: Chicken Lollipop Mandi, Arabian Fish Mandi, and Cheese Kunafa for dessert."
           ],
-          "rating": null
+          "rating": {null}
         },
         {
           "name": "Dakshin",
