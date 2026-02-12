@@ -35,6 +35,31 @@ class APIConfig:
     GEMINI_MAX_RETRIES: int = 2
     GEMINI_TEMPERATURE: float = 0.7
     
+    # ========== ADDED: API KEY ROTATION ==========
+    # Multiple Gemini API keys for rotation (load from environment)
+    GEMINI_API_KEYS: list = field(default_factory=lambda: [
+        os.getenv("GEMINI_API_KEY"),
+        os.getenv("GEMINI_API_KEY_2"),
+        os.getenv("GEMINI_API_KEY_3"),
+    ])
+    
+    def __post_init__(self):
+        """Remove None values from API keys list after initialization"""
+        # Filter out None values
+        self.GEMINI_API_KEYS = [k for k in self.GEMINI_API_KEYS if k]
+        
+        # If no keys in env, try st.secrets
+        if not self.GEMINI_API_KEYS and hasattr(st, 'secrets'):
+            keys = []
+            if st.secrets.get("GEMINI_API_KEY"):
+                keys.append(st.secrets.get("GEMINI_API_KEY"))
+            if st.secrets.get("GEMINI_API_KEY_2"):
+                keys.append(st.secrets.get("GEMINI_API_KEY_2"))
+            if st.secrets.get("GEMINI_API_KEY_3"):
+                keys.append(st.secrets.get("GEMINI_API_KEY_3"))
+            self.GEMINI_API_KEYS = keys
+    # ============================================
+    
     # News API
     NEWS_MAX_ARTICLES: int = 15
     NEWS_DAYS_BACK: int = 7
@@ -50,9 +75,47 @@ class APIConfig:
     # Traffic API
     TRAFFIC_TIMEOUT: int = 5
     
+    # ========== MODIFIED: Legacy method (kept for backward compatibility) ==========
     def get_gemini_api_key(self) -> str:
-        """Get Gemini API key from secrets or environment"""
+        """Get Gemini API key (single key - legacy method)"""
+        if self.GEMINI_API_KEYS:
+            return self.GEMINI_API_KEYS[0]
         return st.secrets.get("GEMINI_API_KEY") or os.getenv("GEMINI_API_KEY", "")
+    
+    # ========== ADDED: Key rotation method ==========
+    @staticmethod
+    def _init_rotation():
+        """Initialize rotation counter in session state"""
+        if 'api_key_index' not in st.session_state:
+            st.session_state.api_key_index = 0
+    
+    def get_next_gemini_key(self) -> str:
+        """
+        Get next Gemini API key in rotation.
+        Falls back to single key if only one is configured.
+        
+        Returns:
+            Next API key in rotation sequence
+        """
+        self._init_rotation()
+        
+        # If no keys configured, return empty
+        if not self.GEMINI_API_KEYS:
+            return self.get_gemini_api_key()  # Fallback to legacy method
+        
+        # If only one key, no rotation needed
+        if len(self.GEMINI_API_KEYS) == 1:
+            return self.GEMINI_API_KEYS[0]
+        
+        # Get current key and increment for next time
+        current_index = st.session_state.api_key_index
+        key = self.GEMINI_API_KEYS[current_index]
+        
+        # Rotate to next key (wrap around at end)
+        st.session_state.api_key_index = (current_index + 1) % len(self.GEMINI_API_KEYS)
+        
+        return key
+    # ============================================
     
     def get_news_api_key(self) -> str:
         """Get News API key"""
@@ -250,6 +313,7 @@ class Config:
             "log_level": self.app.LOG_LEVEL,
             "rate_limit": f"{self.app.RATE_LIMIT_REQUESTS} requests / {self.app.RATE_LIMIT_WINDOW}s",
             "gemini_model": self.api.GEMINI_MODEL,
+            "gemini_keys_count": len(self.api.GEMINI_API_KEYS),  # ADDED
             "cache_news_ttl": f"{self.cache.NEWS}s",
             "features": {
                 "voice": self.app.ENABLE_VOICE,
@@ -319,3 +383,4 @@ if __name__ == "__main__":
     print(f"Max chat history: {config.ui.MAX_CHAT_HISTORY}")
     print(f"App name: {config.app.APP_NAME}")
     print(f"Environment: {config.environment}")
+    print(f"API Keys configured: {len(config.api.GEMINI_API_KEYS)}")  # ADDED

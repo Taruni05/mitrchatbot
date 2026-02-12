@@ -62,6 +62,6 @@ HYDERABAD_AREA_COORDS = {
     "charminar": (17.3616, 78.4747),
     "ameerpet": (17.4375, 78.4483),
     "begumpet": (17.4444, 78.4663),
-    "dilsukhnagar": (17.3686, 78.5247)
+    "dilsukhnagar": (17.3686, 78.5247),
 
 }

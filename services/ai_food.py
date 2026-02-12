@@ -15,7 +15,7 @@ from services.config import config
 logger = setup_logger('ai_food', 'ai_food.log')
 
 # Initialize Gemini client with config
-client = genai.Client(api_key=config.api.get_gemini_api_key())
+client = genai.Client(api_key=config.api.get_next_gemini_key())
 
 # Load restaurant knowledge base
 RESTAURANTS = load_restaurants()

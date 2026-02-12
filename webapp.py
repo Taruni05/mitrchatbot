@@ -62,7 +62,10 @@ from datetime import datetime
 from services.logger import setup_logger
 from services.config import config
 import logging
-
+from services.security import validate_and_rate_limit, get_security_stats
+from services.cache_manager import cached_response, cache_response, get_cache, clear_cache
+from services.input_validator import validate_and_sanitize
+from services.rate_limiter import is_rate_limited, get_rate_limit_info
 # Initialize main app logger
 logger = setup_logger(
     name="webapp",
@@ -72,9 +75,19 @@ logger = setup_logger(
     max_bytes=config.app.LOG_MAX_SIZE,
     backup_count=config.app.LOG_BACKUP_COUNT
 )
-
+def get_user_id() -> str:
+    """
+    Get or create a unique user ID for this session.
+    Used for rate limiting.
+    """
+    if "user_id" not in st.session_state:
+        import secrets
+        st.session_state.user_id = secrets.token_hex(16)
+        logger.info(f"New user session: {st.session_state.user_id}")
+    
+    return st.session_state.user_id
 import os
-os.environ["GEMINI_API_KEY"] = config.api.get_gemini_api_key()
+os.environ["GEMINI_API_KEY"] = config.api.get_next_gemini_key()
 
 
 # ========================================
@@ -1764,6 +1777,26 @@ with st.sidebar:
         st.success(f"✓ Responses in {lang_name}")
 
     st.sidebar.markdown("---")
+    # In sidebar, after language selector
+    st.sidebar.markdown("---")
+
+    # Rate limit status
+    user_id = get_user_id()
+    rate_info = get_rate_limit_info(user_id)
+    remaining = rate_info['remaining']
+    max_requests = rate_info['max_requests']
+
+    # Color code based on remaining
+    if remaining > max_requests * 0.5:
+        color = "🟢"  # Green - plenty left
+    elif remaining > max_requests * 0.2:
+        color = "🟡"  # Yellow - getting close
+    else:
+        color = "🔴"  # Red - almost out
+
+    st.sidebar.caption(
+        f"{color} **Requests:** {remaining}/{max_requests} remaining"
+    )
 
     # ── AI Preferences Dashboard ────────────────────────────────────────
     st.sidebar.subheader("🎯 Your Preferences")
@@ -1933,10 +1966,36 @@ if user_input:
     st.session_state.messages.append(
         {"role": "user", "content": user_input}
     )
-
-    with st.chat_message("user"):
-        st.markdown(user_input)
-    logger.info(f"User query received: {user_input}")
+    ilogger.info(f"User query: {user_input[:100]}")
+    
+    # === STEP 1: Validate & Sanitize Input ===
+    is_valid, clean_input, error_msg = validate_and_sanitize(user_input)
+    
+    if not is_valid:
+        logger.warning(f"Invalid input: {error_msg}")
+        st.error(f"❌ {error_msg}")
+        st.stop()
+    
+    # Use clean_input from now on
+    user_input = clean_input
+    
+    # === STEP 2: Check Rate Limit ===
+    user_id = get_user_id()
+    
+    if is_rate_limited(user_id):
+        rate_info = get_rate_limit_info(user_id)
+        retry_after = rate_info['retry_after']
+        
+        logger.warning(f"Rate limit hit for user {user_id}")
+        
+        st.error(
+            f"⏱️ **Too many requests!**\n\n"
+            f"Please wait **{retry_after} seconds** before trying again.\n\n"
+            f"Limit: {rate_info['max_requests']} requests per "
+            f"{rate_info['window_seconds']} seconds"
+        )
+        st.stop()
+    
 
     # 2️⃣ Show spinner OUTSIDE chat messages
     with st.spinner("Thinking..."):
@@ -1962,6 +2021,8 @@ if user_input:
             # Learn + personalize
             learn_from_query(normalized_input, intent)
             response = apply_personalization_to_response(response)
+            response_time = (datetime.now() - start_time).total_seconds()
+            logger.info(f"Intent: {result['intent']}, Response time: {response_time:.2f}s")
 
             # translate output back if needed
             if language != "en":

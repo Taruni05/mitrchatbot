@@ -33,7 +33,7 @@ logger = get_logger(__name__)
 # ─── Gemini client (same key the rest of the app uses) ───────────────────────
 def _get_client() -> genai.Client:
     """Return a Gemini client, reading the key from st.secrets or env."""
-    key = config.api.get_gemini_api_key()
+    key = config.api.get_next_gemini_key()
     return genai.Client(api_key=key)
 
 
