@@ -301,30 +301,7 @@ MOBILE OPTIMIZATION
     unsafe_allow_html=True,
 )
 st.markdown("""
-<div id="chat-anchor"></div>
 
-<style>
-.floating-chat-btn {
-    position: fixed;
-    bottom: 24px;
-    right: 24px;
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #6366F1, #4F46E5);
-    color: white;
-    font-size: 26px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    z-index: 9999;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.35);
-}
-.floating-chat-btn:hover {
-    transform: scale(1.05);
-}
-</style>
             
 <style>/* =====================================
 FINAL CHAT LAYOUT FIX (USE ONLY THIS)
@@ -351,12 +328,163 @@ FINAL CHAT LAYOUT FIX (USE ONLY THIS)
 }
 </style>
 
-<div class="floating-chat-btn"
-     onclick="document.getElementById('chat-anchor').scrollIntoView({behavior: 'smooth'});">
-💬
-</div>
+
+""", unsafe_allow_html=True)
+st.markdown("""
+<style>
+
+
+/* =====================================
+FORCE REMOVE DARK FOOTER STRIP
+===================================== */
+
+/* Main bottom container */
+section[data-testid="stChatInput"] {
+    background: transparent !important;
+    border-top: none !important;
+}
+
+/* Extra wrapper Streamlit adds */
+div[data-testid="stChatInput"] {
+    background: transparent !important;
+}
+
+/* Bottom block container */
+div[data-testid="stBottomBlockContainer"] {
+    background: transparent !important;
+}
+
+/* =====================================
+MAKE INPUT FULLY TRANSPARENT + ROUNDER
+===================================== */
+
+div[data-testid="stChatInput"] textarea {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border-radius: 50px !important;
+    border: 1px solid rgba(255,255,255,0.12) !important;
+    padding: 18px 24px !important;
+    font-size: 16px !important;
+    color: white !important;
+    backdrop-filter: blur(20px) !important;
+}
+
+/* Remove any parent box background */
+div[data-testid="stChatInput"] > div {
+    background: transparent !important;
+    border-radius: 50px !important;
+}
+
+/* Remove focus ring */
+div[data-testid="stChatInput"]:focus-within textarea {
+    box-shadow: 0 0 20px rgba(255,255,255,0.15) !important;
+}
+
+</style>
 """, unsafe_allow_html=True)
 
+st.markdown("""
+<style>
+
+/* ================================
+REMOVE BLACK BOTTOM BAR COMPLETELY
+================================ */
+
+/* The fixed bottom block */
+div[data-testid="stBottom"] {
+    background: transparent !important;
+}
+
+/* The block container inside it */
+div[data-testid="stBottomBlockContainer"] {
+    background: transparent !important;
+}
+
+/* Chat input section wrapper */
+section[data-testid="stChatInput"] {
+    background: transparent !important;
+}
+
+/* Remove any default shadow */
+div[data-testid="stBottom"] > div {
+    background: transparent !important;
+    box-shadow: none !important;
+}
+
+/* Extra nuclear option (covers newer versions) */
+div:has(> section[data-testid="stChatInput"]) {
+    background: transparent !important;
+}
+
+</style>
+""", unsafe_allow_html=True)
+
+st.markdown("""
+<style>
+
+/* =========================================
+STREAMLIT 1.53+ CHAT BACKGROUND FIX
+========================================= */
+
+/* Remove black background from entire chat input root */
+div[data-testid="stChatInputRoot"] {
+    background: transparent !important;
+    box-shadow: none !important;
+    border-top: none !important;
+}
+
+/* Remove background from internal wrapper */
+div[data-testid="stChatInputRoot"] > div {
+    background: transparent !important;
+}
+
+/* Keep only soft glass inside textarea */
+div[data-testid="stChatInput"] textarea {
+    background: rgba(255,255,255,0.05) !important;
+    border-radius: 50px !important;
+    border: 1px solid rgba(255,255,255,0.15) !important;
+    padding: 18px 24px !important;
+    color: white !important;
+}
+
+/* Remove send button dark background */
+div[data-testid="stChatInput"] button {
+    background: transparent !important;
+}
+
+</style>
+""", unsafe_allow_html=True)
+st.markdown("""
+<style>
+
+/* ======================================
+KILL CHAT INPUT DARK WRAPPER (1.53)
+====================================== */
+
+/* Remove background from inner wrapper */
+div[data-testid="stChatInput"] > div {
+    background-color: transparent !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    border: none !important;
+}
+
+/* Remove background from textarea container */
+div[data-testid="stChatInput"] textarea {
+    background: rgba(255,255,255,0.05) !important;
+    border-radius: 60px !important;
+    border: 1px solid rgba(255,255,255,0.15) !important;
+    padding: 18px 24px !important;
+    color: white !important;
+}
+
+/* Remove background from send button wrapper */
+div[data-testid="stChatInput"] button {
+    background: transparent !important;
+    box-shadow: none !important;
+}
+
+</style>
+""", unsafe_allow_html=True)
 
 
 # ========================================
@@ -1778,7 +1906,6 @@ with st.sidebar:
 
     st.sidebar.markdown("---")
     # In sidebar, after language selector
-    st.sidebar.markdown("---")
 
     # Rate limit status
     user_id = get_user_id()
@@ -1794,7 +1921,8 @@ with st.sidebar:
     else:
         color = "🔴"  # Red - almost out
 
-    st.sidebar.caption(
+    st.sidebar.subheader(
+        f"Rate limiting on usage\n"
         f"{color} **Requests:** {remaining}/{max_requests} remaining"
     )
 
@@ -2031,16 +2159,51 @@ if user_input:
 
     # 2️⃣ Show spinner OUTSIDE chat messages
     # Line ~1876
+# Line 1880
 with st.spinner("Thinking..."):
     try:
-        # translate input to English if needed
+        # === STEP 1: Validate & Sanitize Input ===
+        is_valid, clean_input, error_msg = validate_and_sanitize(user_input)
+        
+        if not is_valid:
+            logger.warning(f"Invalid input: {error_msg}")
+            st.error(f"❌ {error_msg}")
+            st.stop()
+        
+        # Use clean_input from now on
+        user_input = clean_input
+        
+        # === STEP 2: Check Rate Limit ===
+        user_id = get_user_id()
+        
+        if is_rate_limited(user_id):
+            rate_info = get_rate_limit_info(user_id)
+            retry_after = rate_info['retry_after']
+            
+            logger.warning(f"Rate limit hit for user {user_id}")
+            
+            st.error(
+                f"⏱️ **Too many requests!**\n\n"
+                f"Please wait **{retry_after} seconds** before trying again.\n\n"
+                f"Limit: {rate_info['max_requests']} requests per "
+                f"{rate_info['window_seconds']} seconds"
+            )
+            st.stop()
+        
+        # === STEP 3: Translate input to English if needed ===
         normalized_input = (
             translate_response(user_input, "en")
             if language != "en"
             else user_input
         )
-
-        # === ✅ CHECK CACHE FIRST ===
+        
+        # === STEP 4: Check if normalized_input is valid ===
+        if not normalized_input or not normalized_input.strip():
+            logger.error("Translation resulted in empty input")
+            st.error("❌ Could not process your input. Please try again.")
+            st.stop()
+        
+        # === STEP 5: CHECK CACHE FIRST ===
         current_language = st.session_state.get('language', 'en')
         current_area = st.session_state.get('selected_area', '')
         
@@ -2070,7 +2233,7 @@ with st.spinner("Thinking..."):
             intent = result["intent"]
             response = result["response"]
             
-            # === ✅ CACHE THE RESPONSE ===
+            # === CACHE THE RESPONSE ===
             cache_response(normalized_input, response, current_language, current_area)
             logger.debug("Response cached for future queries")
 
@@ -2084,29 +2247,7 @@ with st.spinner("Thinking..."):
 
     except Exception as e:
         logger.error(f"Error processing query: {e}", exc_info=True)
-        response = f"❌ Error: {str(e)}"
-
-    # 3️⃣ Render ASSISTANT message (NO spinner here)
-    with st.chat_message(
-        "assistant",
-        avatar="https://raw.githubusercontent.com/Taruni05/mitrchatbot/master/mitr_avatar.png"
-    ):
-        st.markdown(response)
-
-        # 🔊 voice output
-        if st.session_state.get("voice_enabled", False):
-            render_audio_output(
-                text=response,
-                language=language,
-                auto_play=st.session_state.get("auto_speak", False),
-            )
-
-    # 4️⃣ Save assistant message
-    st.session_state.messages.append(
-        {"role": "assistant", "content": response}
-    )
-
-
+        response = f"❌ Sorry, something went wrong. Please try again."
 
 # ========================================
 # FOOTER

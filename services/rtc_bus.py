@@ -247,32 +247,38 @@ def get_connecting_routes(from_area: str, to_area: str) -> List[Dict]:
         # Get routes for leg 2
         leg2_routes = get_bus_routes(hub, to_area)
         
+        # FIXED VERSION with defensive checks
         if not leg1_routes.empty and not leg2_routes.empty:
-            # Calculate total journey metrics
-            if leg1_routes.empty or leg2_routes.empty:
-
-                logger.warning(f"Empty routes found for hub {hub}")
-
-                continue
-
+            try:
+                # Verify required columns exist
+                required_cols = ['duration_mins', 'fare_min', 'fare_max']
+                if not all(col in leg1_routes.columns for col in required_cols):
+                    logger.warning(f"Missing columns in leg1_routes: {leg1_routes.columns}")
+                    continue
+                if not all(col in leg2_routes.columns for col in required_cols):
+                    logger.warning(f"Missing columns in leg2_routes: {leg2_routes.columns}")
+                    continue
+                leg1_time = leg1_routes.iloc[0]['duration_mins']
+                leg2_time = leg2_routes.iloc[0]['duration_mins']           
+                connection_time = 10 if hub in ['secunderabad', 'ameerpet'] else 5
             
+                total_time = leg1_time + leg2_time + connection_time
+                
+                # Calculate fare range
+                leg1_fare_min = leg1_routes.iloc[0]['fare_min']
+                leg1_fare_max = leg1_routes.iloc[0]['fare_max']
+                leg2_fare_min = leg2_routes.iloc[0]['fare_min']
+                leg2_fare_max = leg2_routes.iloc[0]['fare_max']
+                
+                total_fare_min = leg1_fare_min + leg2_fare_min
+                total_fare_max = leg1_fare_max + leg2_fare_max
 
-            leg1_time = leg1_routes.iloc[0]['duration_mins']
-            leg2_time = leg2_routes.iloc[0]['duration_mins']
+            except (KeyError, IndexError, TypeError) as e:
+                logger.error(f"Error processing route data: {e}")
+                continue  # Skip this hub, try next one
             
             # Add connection time (5-10 mins based on hub size)
-            connection_time = 10 if hub in ['secunderabad', 'ameerpet'] else 5
             
-            total_time = leg1_time + leg2_time + connection_time
-            
-            # Calculate fare range
-            leg1_fare_min = leg1_routes.iloc[0]['fare_min']
-            leg1_fare_max = leg1_routes.iloc[0]['fare_max']
-            leg2_fare_min = leg2_routes.iloc[0]['fare_min']
-            leg2_fare_max = leg2_routes.iloc[0]['fare_max']
-            
-            total_fare_min = leg1_fare_min + leg2_fare_min
-            total_fare_max = leg1_fare_max + leg2_fare_max
             
             connections.append({
                 'hub': hub,

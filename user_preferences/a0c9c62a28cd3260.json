@@ -1,0 +1,121 @@
+{
+  "user_id": "a0c9c62a28cd3260",
+  "created_at": "2026-02-13T09:19:34.372063",
+  "last_active": "2026-02-13T09:40:40.273697",
+  "total_interactions": 9,
+  "frequent_areas": [],
+  "home_area": null,
+  "work_area": null,
+  "interests": {
+    "food": 3,
+    "transport": 0,
+    "tourism": 0,
+    "shopping": 0,
+    "entertainment": 0,
+    "news": 0,
+    "weather": 0,
+    "utilities": 0,
+    "sports": 0,
+    "healthcare": 0
+  },
+  "food_preferences": {
+    "cuisines": [
+      "biryani"
+    ],
+    "price_range": "medium",
+    "dietary": []
+  },
+  "transport_preferences": {
+    "modes": [],
+    "frequent_routes": []
+  },
+  "tourism_preferences": {
+    "types": [],
+    "crowd_tolerance": "medium"
+  },
+  "language": "en",
+  "active_hours": {
+    "0": 0,
+    "1": 0,
+    "2": 0,
+    "3": 0,
+    "4": 0,
+    "5": 0,
+    "6": 0,
+    "7": 0,
+    "8": 0,
+    "9": 9,
+    "10": 0,
+    "11": 0,
+    "12": 0,
+    "13": 0,
+    "14": 0,
+    "15": 0,
+    "16": 0,
+    "17": 0,
+    "18": 0,
+    "19": 0,
+    "20": 0,
+    "21": 0,
+    "22": 0,
+    "23": 0
+  },
+  "active_days": {
+    "monday": 0,
+    "tuesday": 0,
+    "wednesday": 0,
+    "thursday": 0,
+    "friday": 9,
+    "saturday": 0,
+    "sunday": 0
+  },
+  "query_history": [
+    {
+      "query": "hello",
+      "intent": "greeting",
+      "timestamp": "2026-02-13T09:19:34.372095"
+    },
+    {
+      "query": "museums in hyderabad",
+      "intent": "museum",
+      "timestamp": "2026-02-13T09:19:45.471416"
+    },
+    {
+      "query": "museums in hyderabad",
+      "intent": "cached",
+      "timestamp": "2026-02-13T09:19:47.744751"
+    },
+    {
+      "query": "museums in hyderabad",
+      "intent": "cached",
+      "timestamp": "2026-02-13T09:19:52.907899"
+    },
+    {
+      "query": "famous temples",
+      "intent": "temple",
+      "timestamp": "2026-02-13T09:19:58.487697"
+    },
+    {
+      "query": "Explore famous biryani places",
+      "intent": "food",
+      "timestamp": "2026-02-13T09:31:58.178462"
+    },
+    {
+      "query": "Explore famous biryani places",
+      "intent": "cached",
+      "timestamp": "2026-02-13T09:32:53.601932"
+    },
+    {
+      "query": "best biryani places",
+      "intent": "food",
+      "timestamp": "2026-02-13T09:35:42.117269"
+    },
+    {
+      "query": "best biryani places",
+      "intent": "food",
+      "timestamp": "2026-02-13T09:40:40.273750"
+    }
+  ],
+  "personalization_enabled": true,
+  "personalization_score": 0.21000000000000002
+}

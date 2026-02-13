@@ -1,0 +1,310 @@
+2026-02-13 09:18:30 | webapp | [31mERROR[0m | <module>:2086 | Error processing query: 'NoneType' object has no attribute 'lower'
+Traceback (most recent call last):
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\webapp.py", line 2047, in <module>
+    cached = cached_response(normalized_input, current_language, current_area)
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\services\cache_manager.py", line 246, in cached_response
+    cache_key = generate_cache_key(query, language, location)
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\services\cache_manager.py", line 33, in generate_cache_key
+    normalized = query.lower().strip()
+                 ^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'lower'
+2026-02-13 09:31:24 | webapp | [33mWARNING[0m | <module>:2039 | Invalid input: Please enter a question.
+2026-02-13 09:38:28 | webapp | [31mERROR[0m | <module>:2085 | Error processing query: 'NoneType' object has no attribute 'lower'
+Traceback (most recent call last):
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\webapp.py", line 2062, in <module>
+    result = app.invoke({
+        "user_input": normalized_input,
+        "intent": "",
+        "response": ""
+    })
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\langgraph\pregel\main.py", line 3071, in invoke
+    for chunk in self.stream(
+                 ~~~~~~~~~~~^
+        input,
+        ^^^^^^
+    ...<10 lines>...
+        **kwargs,
+        ^^^^^^^^^
+    ):
+    ^
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\langgraph\pregel\main.py", line 2646, in stream
+    for _ in runner.tick(
+             ~~~~~~~~~~~^
+        [t for t in loop.tasks.values() if not t.writes],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+        schedule_task=loop.accept_push,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ):
+    ^
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\langgraph\pregel\_runner.py", line 167, in tick
+    run_with_retry(
+    ~~~~~~~~~~~~~~^
+        t,
+        ^^
+    ...<10 lines>...
+        },
+        ^^
+    )
+    ^
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\langgraph\pregel\_retry.py", line 42, in run_with_retry
+    return task.proc.invoke(task.input, config)
+           ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\langgraph\_internal\_runnable.py", line 656, in invoke
+    input = context.run(step.invoke, input, config, **kwargs)
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\langgraph\_internal\_runnable.py", line 400, in invoke
+    ret = self.func(*args, **kwargs)
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\webapp.py", line 569, in classify_intent
+    message = state["user_input"].lower()
+              ^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'lower'
+During task with name 'classifier' and id '33f115f3-7070-6909-fb14-001e93b1d9d2'
+2026-02-13 09:39:38 | webapp | [31mERROR[0m | <module>:2085 | Error processing query: 'NoneType' object has no attribute 'lower'
+Traceback (most recent call last):
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\webapp.py", line 2062, in <module>
+    result = app.invoke({
+        "user_input": normalized_input,
+        "intent": "",
+        "response": ""
+    })
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\langgraph\pregel\main.py", line 3071, in invoke
+    for chunk in self.stream(
+                 ~~~~~~~~~~~^
+        input,
+        ^^^^^^
+    ...<10 lines>...
+        **kwargs,
+        ^^^^^^^^^
+    ):
+    ^
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\langgraph\pregel\main.py", line 2646, in stream
+    for _ in runner.tick(
+             ~~~~~~~~~~~^
+        [t for t in loop.tasks.values() if not t.writes],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+        schedule_task=loop.accept_push,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ):
+    ^
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\langgraph\pregel\_runner.py", line 167, in tick
+    run_with_retry(
+    ~~~~~~~~~~~~~~^
+        t,
+        ^^
+    ...<10 lines>...
+        },
+        ^^
+    )
+    ^
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\langgraph\pregel\_retry.py", line 42, in run_with_retry
+    return task.proc.invoke(task.input, config)
+           ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\langgraph\_internal\_runnable.py", line 656, in invoke
+    input = context.run(step.invoke, input, config, **kwargs)
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\langgraph\_internal\_runnable.py", line 400, in invoke
+    ret = self.func(*args, **kwargs)
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\webapp.py", line 569, in classify_intent
+    message = state["user_input"].lower()
+              ^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'lower'
+During task with name 'classifier' and id '7c75007c-49d3-e4fb-c02f-d4fd3ae95002'
+2026-02-13 09:39:49 | webapp | [31mERROR[0m | <module>:2085 | Error processing query: 'NoneType' object has no attribute 'lower'
+Traceback (most recent call last):
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\webapp.py", line 2062, in <module>
+    result = app.invoke({
+        "user_input": normalized_input,
+        "intent": "",
+        "response": ""
+    })
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\langgraph\pregel\main.py", line 3071, in invoke
+    for chunk in self.stream(
+                 ~~~~~~~~~~~^
+        input,
+        ^^^^^^
+    ...<10 lines>...
+        **kwargs,
+        ^^^^^^^^^
+    ):
+    ^
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\langgraph\pregel\main.py", line 2646, in stream
+    for _ in runner.tick(
+             ~~~~~~~~~~~^
+        [t for t in loop.tasks.values() if not t.writes],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+        schedule_task=loop.accept_push,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ):
+    ^
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\langgraph\pregel\_runner.py", line 167, in tick
+    run_with_retry(
+    ~~~~~~~~~~~~~~^
+        t,
+        ^^
+    ...<10 lines>...
+        },
+        ^^
+    )
+    ^
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\langgraph\pregel\_retry.py", line 42, in run_with_retry
+    return task.proc.invoke(task.input, config)
+           ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\langgraph\_internal\_runnable.py", line 656, in invoke
+    input = context.run(step.invoke, input, config, **kwargs)
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\langgraph\_internal\_runnable.py", line 400, in invoke
+    ret = self.func(*args, **kwargs)
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\webapp.py", line 569, in classify_intent
+    message = state["user_input"].lower()
+              ^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'lower'
+During task with name 'classifier' and id '94242aae-0630-35d2-5965-23004c617a0a'
+2026-02-13 09:39:51 | webapp | [31mERROR[0m | <module>:2085 | Error processing query: 'NoneType' object has no attribute 'lower'
+Traceback (most recent call last):
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\webapp.py", line 2062, in <module>
+    result = app.invoke({
+        "user_input": normalized_input,
+        "intent": "",
+        "response": ""
+    })
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\langgraph\pregel\main.py", line 3071, in invoke
+    for chunk in self.stream(
+                 ~~~~~~~~~~~^
+        input,
+        ^^^^^^
+    ...<10 lines>...
+        **kwargs,
+        ^^^^^^^^^
+    ):
+    ^
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\langgraph\pregel\main.py", line 2646, in stream
+    for _ in runner.tick(
+             ~~~~~~~~~~~^
+        [t for t in loop.tasks.values() if not t.writes],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+        schedule_task=loop.accept_push,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ):
+    ^
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\langgraph\pregel\_runner.py", line 167, in tick
+    run_with_retry(
+    ~~~~~~~~~~~~~~^
+        t,
+        ^^
+    ...<10 lines>...
+        },
+        ^^
+    )
+    ^
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\langgraph\pregel\_retry.py", line 42, in run_with_retry
+    return task.proc.invoke(task.input, config)
+           ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\langgraph\_internal\_runnable.py", line 656, in invoke
+    input = context.run(step.invoke, input, config, **kwargs)
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\langgraph\_internal\_runnable.py", line 400, in invoke
+    ret = self.func(*args, **kwargs)
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\webapp.py", line 569, in classify_intent
+    message = state["user_input"].lower()
+              ^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'lower'
+During task with name 'classifier' and id 'ac27a98e-1943-bedd-d97a-e5254501a12b'
+2026-02-13 09:39:57 | webapp | [31mERROR[0m | <module>:2085 | Error processing query: 'NoneType' object has no attribute 'lower'
+Traceback (most recent call last):
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\webapp.py", line 2062, in <module>
+    result = app.invoke({
+        "user_input": normalized_input,
+        "intent": "",
+        "response": ""
+    })
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\langgraph\pregel\main.py", line 3071, in invoke
+    for chunk in self.stream(
+                 ~~~~~~~~~~~^
+        input,
+        ^^^^^^
+    ...<10 lines>...
+        **kwargs,
+        ^^^^^^^^^
+    ):
+    ^
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\langgraph\pregel\main.py", line 2646, in stream
+    for _ in runner.tick(
+             ~~~~~~~~~~~^
+        [t for t in loop.tasks.values() if not t.writes],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+        schedule_task=loop.accept_push,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ):
+    ^
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\langgraph\pregel\_runner.py", line 167, in tick
+    run_with_retry(
+    ~~~~~~~~~~~~~~^
+        t,
+        ^^
+    ...<10 lines>...
+        },
+        ^^
+    )
+    ^
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\langgraph\pregel\_retry.py", line 42, in run_with_retry
+    return task.proc.invoke(task.input, config)
+           ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\langgraph\_internal\_runnable.py", line 656, in invoke
+    input = context.run(step.invoke, input, config, **kwargs)
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\langgraph\_internal\_runnable.py", line 400, in invoke
+    ret = self.func(*args, **kwargs)
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\webapp.py", line 569, in classify_intent
+    message = state["user_input"].lower()
+              ^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'lower'
+During task with name 'classifier' and id 'e28ec243-ec38-bf13-9fdc-e31b0b4f8510'
+2026-02-13 09:41:08 | webapp | [33mWARNING[0m | <module>:2040 | Invalid input: Please enter a question.
+2026-02-13 09:52:47 | webapp | [33mWARNING[0m | <module>:2091 | Invalid input: Please enter a question.
+2026-02-13 09:53:13 | webapp | [33mWARNING[0m | <module>:2088 | Invalid input: Please enter a question.
+2026-02-13 09:55:31 | webapp | [33mWARNING[0m | <module>:2063 | Invalid input: Please enter a question.
+2026-02-13 09:55:33 | webapp | [33mWARNING[0m | <module>:2063 | Invalid input: Please enter a question.
+2026-02-13 09:57:18 | webapp | [33mWARNING[0m | <module>:2014 | Invalid input: Please enter a question.
+2026-02-13 10:00:32 | webapp | [33mWARNING[0m | <module>:2059 | Invalid input: Please enter a question.
+2026-02-13 10:02:45 | webapp | [33mWARNING[0m | <module>:2059 | Invalid input: Please enter a question.
+2026-02-13 10:02:48 | webapp | [33mWARNING[0m | <module>:2059 | Invalid input: Please enter a question.
+2026-02-13 10:02:59 | webapp | [33mWARNING[0m | <module>:2059 | Invalid input: Please enter a question.
+2026-02-13 10:03:01 | webapp | [33mWARNING[0m | <module>:2059 | Invalid input: Please enter a question.
+2026-02-13 10:03:03 | webapp | [33mWARNING[0m | <module>:2059 | Invalid input: Please enter a question.
+2026-02-13 10:03:04 | webapp | [33mWARNING[0m | <module>:2059 | Invalid input: Please enter a question.
+2026-02-13 10:03:06 | webapp | [33mWARNING[0m | <module>:2059 | Invalid input: Please enter a question.
+2026-02-13 10:03:11 | webapp | [33mWARNING[0m | <module>:2059 | Invalid input: Please enter a question.
+2026-02-13 10:03:17 | webapp | [33mWARNING[0m | <module>:2059 | Invalid input: Please enter a question.
+2026-02-13 10:03:19 | webapp | [33mWARNING[0m | <module>:2059 | Invalid input: Please enter a question.
+2026-02-13 10:03:28 | webapp | [33mWARNING[0m | <module>:2059 | Invalid input: Please enter a question.
+2026-02-13 10:03:30 | webapp | [33mWARNING[0m | <module>:2059 | Invalid input: Please enter a question.
+2026-02-13 10:03:32 | webapp | [33mWARNING[0m | <module>:2059 | Invalid input: Please enter a question.
+2026-02-13 10:03:36 | webapp | [33mWARNING[0m | <module>:2059 | Invalid input: Please enter a question.
+2026-02-13 10:03:43 | webapp | [33mWARNING[0m | <module>:2059 | Invalid input: Please enter a question.
+2026-02-13 10:03:45 | webapp | [33mWARNING[0m | <module>:2059 | Invalid input: Please enter a question.
+2026-02-13 10:03:52 | webapp | [33mWARNING[0m | <module>:2059 | Invalid input: Please enter a question.
+2026-02-13 10:05:25 | webapp | [33mWARNING[0m | <module>:2059 | Invalid input: Please enter a question.
+2026-02-13 10:12:12 | webapp | [33mWARNING[0m | <module>:2059 | Invalid input: Please enter a question.
+2026-02-13 10:12:22 | webapp | [33mWARNING[0m | <module>:2059 | Invalid input: Please enter a question.
+2026-02-13 10:13:55 | webapp | [33mWARNING[0m | <module>:2066 | Invalid input: Please enter a question.
+2026-02-13 10:15:00 | webapp | [33mWARNING[0m | <module>:2101 | Invalid input: Please enter a question.
+2026-02-13 10:18:06 | webapp | [33mWARNING[0m | <module>:2090 | Invalid input: Please enter a question.
+2026-02-13 10:19:02 | webapp | [33mWARNING[0m | <module>:2133 | Invalid input: Please enter a question.
+2026-02-13 10:19:26 | webapp | [33mWARNING[0m | <module>:2133 | Invalid input: Please enter a question.
+2026-02-13 10:19:28 | webapp | [33mWARNING[0m | <module>:2133 | Invalid input: Please enter a question.
+2026-02-13 10:19:31 | webapp | [33mWARNING[0m | <module>:2133 | Invalid input: Please enter a question.
+2026-02-13 10:19:35 | webapp | [33mWARNING[0m | <module>:2133 | Invalid input: Please enter a question.
+2026-02-13 10:19:44 | webapp | [33mWARNING[0m | <module>:2133 | Invalid input: Please enter a question.
+2026-02-13 10:19:49 | webapp | [33mWARNING[0m | <module>:2133 | Invalid input: Please enter a question.
+2026-02-13 10:20:14 | webapp | [33mWARNING[0m | <module>:2134 | Invalid input: Please enter a question.
+2026-02-13 10:20:29 | webapp | [33mWARNING[0m | <module>:2133 | Invalid input: Please enter a question.
+2026-02-13 10:20:59 | webapp | [33mWARNING[0m | <module>:2135 | Invalid input: Please enter a question.
+2026-02-13 10:34:44 | webapp | [33mWARNING[0m | <module>:2136 | Invalid input: Please enter a question.
+2026-02-13 10:35:03 | webapp | [33mWARNING[0m | <module>:2136 | Invalid input: Please enter a question.
+2026-02-13 10:36:10 | webapp | [33mWARNING[0m | <module>:2136 | Invalid input: Please enter a question.
+2026-02-13 10:36:26 | webapp | [33mWARNING[0m | <module>:2136 | Invalid input: Please enter a question.
+2026-02-13 10:36:57 | webapp | [33mWARNING[0m | <module>:2136 | Invalid input: Please enter a question.
+2026-02-13 10:38:42 | webapp | [33mWARNING[0m | <module>:2135 | Invalid input: Please enter a question.
+2026-02-13 10:38:45 | webapp | [33mWARNING[0m | <module>:2136 | Invalid input: Please enter a question.
+2026-02-13 10:39:49 | webapp | [33mWARNING[0m | <module>:2136 | Invalid input: Please enter a question.
+2026-02-13 10:42:24 | webapp | [33mWARNING[0m | <module>:2169 | Invalid input: Please enter a question.

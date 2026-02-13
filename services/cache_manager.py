@@ -8,9 +8,9 @@ import time
 from datetime import datetime, timedelta
 from typing import Optional, Dict, Any, Tuple
 import streamlit as st
-from services.logger import setup_logger
+from services.logger import get_logger
 
-logger =setup_logger('cache_manager', 'cache_manager.log')
+logger = get_logger(__name__)
 
 
 # ============================================================================
@@ -192,6 +192,14 @@ class ResponseCache:
     
     def get_stats(self) -> Dict[str, Any]:
         """Get cache statistics."""
+        # Initialize cache_stats if not present (safety check)
+        if 'cache_stats' not in st.session_state:
+            st.session_state.cache_stats = {
+                'hits': 0,
+                'misses': 0,
+                'total_queries': 0
+            }
+        
         stats = st.session_state.cache_stats.copy()
         stats['total_queries'] = stats['hits'] + stats['misses']
         stats['hit_rate'] = (
@@ -199,6 +207,11 @@ class ResponseCache:
             if stats['total_queries'] > 0
             else 0
         )
+        
+        # Also check response_cache exists
+        if 'response_cache' not in st.session_state:
+            st.session_state.response_cache = {}
+        
         stats['cache_size'] = len(st.session_state.response_cache)
         
         return stats

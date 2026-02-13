@@ -16,7 +16,7 @@ class CacheConfig:
     WEATHER: int = 600           # 10 minutes - weather changes frequently
     NEWS: int = 1800             # 30 minutes - news updates regularly
     FUEL: int = 86400            # 24 hours - fuel prices change daily
-    TRAFFIC: int = 300           # 5 minutes - traffic changes constantly
+    TRAFFIC: int = 150         # 5 minutes - traffic changes constantly
     KNOWLEDGE_BASE: int = 3600   # 1 hour - KB rarely changes
     ALERTS: int = 3600           # 1 hour - utility alerts
     RESTAURANTS: int = 3600      # 1 hour - restaurant data
@@ -31,7 +31,7 @@ class APIConfig:
     
     # Gemini AI
     GEMINI_MODEL: str = "gemini-2.5-flash-lite"
-    GEMINI_TIMEOUT: int = 30
+    GEMINI_TIMEOUT: int = 0
     GEMINI_MAX_RETRIES: int = 2
     GEMINI_TEMPERATURE: float = 0.7
     

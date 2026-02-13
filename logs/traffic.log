@@ -378,3 +378,719 @@ requests.exceptions.ConnectionError: HTTPSConnectionPool(host='api.tomtom.com', 
 2026-02-12 13:35:08 | traffic | [32mINFO[0m | get_traffic_flow:73 | Traffic status: moderate (current: 20 km/h, free flow: 28 km/h)
 2026-02-12 13:35:08 | traffic | [32mINFO[0m | get_traffic_flow:73 | Traffic status: moderate (current: 20 km/h, free flow: 28 km/h)
 2026-02-12 13:36:13 | traffic | [32mINFO[0m | get_traffic_flow:73 | Traffic status: smooth (current: 22 km/h, free flow: 27 km/h)
+2026-02-13 09:16:32 | traffic | [32mINFO[0m | get_traffic_flow:73 | Traffic status: smooth (current: 27 km/h, free flow: 27 km/h)
+2026-02-13 09:18:09 | traffic | [32mINFO[0m | get_traffic_flow:73 | Traffic status: smooth (current: 27 km/h, free flow: 27 km/h)
+2026-02-13 09:18:30 | traffic | [32mINFO[0m | get_traffic_flow:73 | Traffic status: smooth (current: 27 km/h, free flow: 27 km/h)
+2026-02-13 09:19:34 | traffic | [32mINFO[0m | get_traffic_flow:73 | Traffic status: smooth (current: 27 km/h, free flow: 27 km/h)
+2026-02-13 09:19:45 | traffic | [32mINFO[0m | get_traffic_flow:73 | Traffic status: smooth (current: 27 km/h, free flow: 27 km/h)
+2026-02-13 09:19:47 | traffic | [32mINFO[0m | get_traffic_flow:73 | Traffic status: smooth (current: 27 km/h, free flow: 27 km/h)
+2026-02-13 09:19:50 | traffic | [32mINFO[0m | get_traffic_flow:73 | Traffic status: smooth (current: 27 km/h, free flow: 27 km/h)
+2026-02-13 09:19:52 | traffic | [32mINFO[0m | get_traffic_flow:73 | Traffic status: smooth (current: 27 km/h, free flow: 27 km/h)
+2026-02-13 09:19:52 | traffic | [32mINFO[0m | get_traffic_flow:73 | Traffic status: smooth (current: 27 km/h, free flow: 27 km/h)
+2026-02-13 09:19:52 | traffic | [32mINFO[0m | get_traffic_flow:73 | Traffic status: smooth (current: 27 km/h, free flow: 27 km/h)
+2026-02-13 09:19:52 | traffic | [32mINFO[0m | get_traffic_flow:73 | Traffic status: smooth (current: 27 km/h, free flow: 27 km/h)
+2026-02-13 09:19:58 | traffic | [32mINFO[0m | get_traffic_flow:73 | Traffic status: smooth (current: 27 km/h, free flow: 27 km/h)
+2026-02-13 09:20:01 | traffic | [32mINFO[0m | get_traffic_flow:73 | Traffic status: smooth (current: 27 km/h, free flow: 27 km/h)
+2026-02-13 09:20:05 | traffic | [32mINFO[0m | get_traffic_flow:73 | Traffic status: smooth (current: 27 km/h, free flow: 27 km/h)
+2026-02-13 09:31:23 | traffic | [31mERROR[0m | get_traffic_flow:84 | Traffic fetch failed: HTTPSConnectionPool(host='api.tomtom.com', port=443): Max retries exceeded with url: /traffic/services/4/flowSegmentData/absolute/10/json?point=17.385,78.4867&key=Ri0LrJjjYgFqE3LToDzy2MAr8MCyYs9D (Caused by NameResolutionError("HTTPSConnection(host='api.tomtom.com', port=443): Failed to resolve 'api.tomtom.com' ([Errno 11001] getaddrinfo failed)"))
+Traceback (most recent call last):
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\urllib3\connection.py", line 204, in _new_conn
+    sock = connection.create_connection(
+        (self._dns_host, self.port),
+    ...<2 lines>...
+        socket_options=self.socket_options,
+    )
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\urllib3\util\connection.py", line 60, in create_connection
+    for res in socket.getaddrinfo(host, port, family, socket.SOCK_STREAM):
+               ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\chera\AppData\Local\Programs\Python\Python314\Lib\socket.py", line 983, in getaddrinfo
+    for res in _socket.getaddrinfo(host, port, family, type, proto, flags):
+               ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+socket.gaierror: [Errno 11001] getaddrinfo failed
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\urllib3\connectionpool.py", line 787, in urlopen
+    response = self._make_request(
+        conn,
+    ...<10 lines>...
+        **response_kw,
+    )
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\urllib3\connectionpool.py", line 488, in _make_request
+    raise new_e
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\urllib3\connectionpool.py", line 464, in _make_request
+    self._validate_conn(conn)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\urllib3\connectionpool.py", line 1093, in _validate_conn
+    conn.connect()
+    ~~~~~~~~~~~~^^
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\urllib3\connection.py", line 759, in connect
+    self.sock = sock = self._new_conn()
+                       ~~~~~~~~~~~~~~^^
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\urllib3\connection.py", line 211, in _new_conn
+    raise NameResolutionError(self.host, self, e) from e
+urllib3.exceptions.NameResolutionError: HTTPSConnection(host='api.tomtom.com', port=443): Failed to resolve 'api.tomtom.com' ([Errno 11001] getaddrinfo failed)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\requests\adapters.py", line 486, in send
+    resp = conn.urlopen(
+        method=request.method,
+    ...<9 lines>...
+        chunked=chunked,
+    )
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\urllib3\connectionpool.py", line 841, in urlopen
+    retries = retries.increment(
+        method, url, error=new_e, _pool=self, _stacktrace=sys.exc_info()[2]
+    )
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\urllib3\util\retry.py", line 535, in increment
+    raise MaxRetryError(_pool, url, reason) from reason  # type: ignore[arg-type]
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+urllib3.exceptions.MaxRetryError: HTTPSConnectionPool(host='api.tomtom.com', port=443): Max retries exceeded with url: /traffic/services/4/flowSegmentData/absolute/10/json?point=17.385,78.4867&key=Ri0LrJjjYgFqE3LToDzy2MAr8MCyYs9D (Caused by NameResolutionError("HTTPSConnection(host='api.tomtom.com', port=443): Failed to resolve 'api.tomtom.com' ([Errno 11001] getaddrinfo failed)"))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\services\traffic.py", line 61, in get_traffic_flow
+    response = requests.get(url, timeout=config.api.TRAFFIC_TIMEOUT)
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\requests\api.py", line 73, in get
+    return request("get", url, params=params, **kwargs)
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\requests\api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\requests\sessions.py", line 589, in request
+    resp = self.send(prep, **send_kwargs)
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\requests\sessions.py", line 703, in send
+    r = adapter.send(request, **kwargs)
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\requests\adapters.py", line 519, in send
+    raise ConnectionError(e, request=request)
+requests.exceptions.ConnectionError: HTTPSConnectionPool(host='api.tomtom.com', port=443): Max retries exceeded with url: /traffic/services/4/flowSegmentData/absolute/10/json?point=17.385,78.4867&key=Ri0LrJjjYgFqE3LToDzy2MAr8MCyYs9D (Caused by NameResolutionError("HTTPSConnection(host='api.tomtom.com', port=443): Failed to resolve 'api.tomtom.com' ([Errno 11001] getaddrinfo failed)"))
+2026-02-13 09:31:40 | traffic | [31mERROR[0m | get_traffic_flow:84 | Traffic fetch failed: HTTPSConnectionPool(host='api.tomtom.com', port=443): Max retries exceeded with url: /traffic/services/4/flowSegmentData/absolute/10/json?point=17.385,78.4867&key=Ri0LrJjjYgFqE3LToDzy2MAr8MCyYs9D (Caused by NameResolutionError("HTTPSConnection(host='api.tomtom.com', port=443): Failed to resolve 'api.tomtom.com' ([Errno 11001] getaddrinfo failed)"))
+Traceback (most recent call last):
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\urllib3\connection.py", line 204, in _new_conn
+    sock = connection.create_connection(
+        (self._dns_host, self.port),
+    ...<2 lines>...
+        socket_options=self.socket_options,
+    )
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\urllib3\util\connection.py", line 60, in create_connection
+    for res in socket.getaddrinfo(host, port, family, socket.SOCK_STREAM):
+               ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\chera\AppData\Local\Programs\Python\Python314\Lib\socket.py", line 983, in getaddrinfo
+    for res in _socket.getaddrinfo(host, port, family, type, proto, flags):
+               ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+socket.gaierror: [Errno 11001] getaddrinfo failed
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\urllib3\connectionpool.py", line 787, in urlopen
+    response = self._make_request(
+        conn,
+    ...<10 lines>...
+        **response_kw,
+    )
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\urllib3\connectionpool.py", line 488, in _make_request
+    raise new_e
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\urllib3\connectionpool.py", line 464, in _make_request
+    self._validate_conn(conn)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\urllib3\connectionpool.py", line 1093, in _validate_conn
+    conn.connect()
+    ~~~~~~~~~~~~^^
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\urllib3\connection.py", line 759, in connect
+    self.sock = sock = self._new_conn()
+                       ~~~~~~~~~~~~~~^^
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\urllib3\connection.py", line 211, in _new_conn
+    raise NameResolutionError(self.host, self, e) from e
+urllib3.exceptions.NameResolutionError: HTTPSConnection(host='api.tomtom.com', port=443): Failed to resolve 'api.tomtom.com' ([Errno 11001] getaddrinfo failed)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\requests\adapters.py", line 486, in send
+    resp = conn.urlopen(
+        method=request.method,
+    ...<9 lines>...
+        chunked=chunked,
+    )
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\urllib3\connectionpool.py", line 841, in urlopen
+    retries = retries.increment(
+        method, url, error=new_e, _pool=self, _stacktrace=sys.exc_info()[2]
+    )
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\urllib3\util\retry.py", line 535, in increment
+    raise MaxRetryError(_pool, url, reason) from reason  # type: ignore[arg-type]
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+urllib3.exceptions.MaxRetryError: HTTPSConnectionPool(host='api.tomtom.com', port=443): Max retries exceeded with url: /traffic/services/4/flowSegmentData/absolute/10/json?point=17.385,78.4867&key=Ri0LrJjjYgFqE3LToDzy2MAr8MCyYs9D (Caused by NameResolutionError("HTTPSConnection(host='api.tomtom.com', port=443): Failed to resolve 'api.tomtom.com' ([Errno 11001] getaddrinfo failed)"))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\services\traffic.py", line 61, in get_traffic_flow
+    response = requests.get(url, timeout=config.api.TRAFFIC_TIMEOUT)
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\requests\api.py", line 73, in get
+    return request("get", url, params=params, **kwargs)
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\requests\api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\requests\sessions.py", line 589, in request
+    resp = self.send(prep, **send_kwargs)
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\requests\sessions.py", line 703, in send
+    r = adapter.send(request, **kwargs)
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\requests\adapters.py", line 519, in send
+    raise ConnectionError(e, request=request)
+requests.exceptions.ConnectionError: HTTPSConnectionPool(host='api.tomtom.com', port=443): Max retries exceeded with url: /traffic/services/4/flowSegmentData/absolute/10/json?point=17.385,78.4867&key=Ri0LrJjjYgFqE3LToDzy2MAr8MCyYs9D (Caused by NameResolutionError("HTTPSConnection(host='api.tomtom.com', port=443): Failed to resolve 'api.tomtom.com' ([Errno 11001] getaddrinfo failed)"))
+2026-02-13 09:31:45 | traffic | [32mINFO[0m | get_traffic_flow:73 | Traffic status: smooth (current: 27 km/h, free flow: 27 km/h)
+2026-02-13 09:32:51 | traffic | [31mERROR[0m | get_traffic_flow:84 | Traffic fetch failed: HTTPSConnectionPool(host='api.tomtom.com', port=443): Max retries exceeded with url: /traffic/services/4/flowSegmentData/absolute/10/json?point=17.385,78.4867&key=Ri0LrJjjYgFqE3LToDzy2MAr8MCyYs9D (Caused by NameResolutionError("HTTPSConnection(host='api.tomtom.com', port=443): Failed to resolve 'api.tomtom.com' ([Errno 11001] getaddrinfo failed)"))
+Traceback (most recent call last):
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\urllib3\connection.py", line 204, in _new_conn
+    sock = connection.create_connection(
+        (self._dns_host, self.port),
+    ...<2 lines>...
+        socket_options=self.socket_options,
+    )
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\urllib3\util\connection.py", line 60, in create_connection
+    for res in socket.getaddrinfo(host, port, family, socket.SOCK_STREAM):
+               ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\chera\AppData\Local\Programs\Python\Python314\Lib\socket.py", line 983, in getaddrinfo
+    for res in _socket.getaddrinfo(host, port, family, type, proto, flags):
+               ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+socket.gaierror: [Errno 11001] getaddrinfo failed
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\urllib3\connectionpool.py", line 787, in urlopen
+    response = self._make_request(
+        conn,
+    ...<10 lines>...
+        **response_kw,
+    )
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\urllib3\connectionpool.py", line 488, in _make_request
+    raise new_e
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\urllib3\connectionpool.py", line 464, in _make_request
+    self._validate_conn(conn)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\urllib3\connectionpool.py", line 1093, in _validate_conn
+    conn.connect()
+    ~~~~~~~~~~~~^^
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\urllib3\connection.py", line 759, in connect
+    self.sock = sock = self._new_conn()
+                       ~~~~~~~~~~~~~~^^
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\urllib3\connection.py", line 211, in _new_conn
+    raise NameResolutionError(self.host, self, e) from e
+urllib3.exceptions.NameResolutionError: HTTPSConnection(host='api.tomtom.com', port=443): Failed to resolve 'api.tomtom.com' ([Errno 11001] getaddrinfo failed)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\requests\adapters.py", line 486, in send
+    resp = conn.urlopen(
+        method=request.method,
+    ...<9 lines>...
+        chunked=chunked,
+    )
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\urllib3\connectionpool.py", line 841, in urlopen
+    retries = retries.increment(
+        method, url, error=new_e, _pool=self, _stacktrace=sys.exc_info()[2]
+    )
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\urllib3\util\retry.py", line 535, in increment
+    raise MaxRetryError(_pool, url, reason) from reason  # type: ignore[arg-type]
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+urllib3.exceptions.MaxRetryError: HTTPSConnectionPool(host='api.tomtom.com', port=443): Max retries exceeded with url: /traffic/services/4/flowSegmentData/absolute/10/json?point=17.385,78.4867&key=Ri0LrJjjYgFqE3LToDzy2MAr8MCyYs9D (Caused by NameResolutionError("HTTPSConnection(host='api.tomtom.com', port=443): Failed to resolve 'api.tomtom.com' ([Errno 11001] getaddrinfo failed)"))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\services\traffic.py", line 61, in get_traffic_flow
+    response = requests.get(url, timeout=config.api.TRAFFIC_TIMEOUT)
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\requests\api.py", line 73, in get
+    return request("get", url, params=params, **kwargs)
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\requests\api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\requests\sessions.py", line 589, in request
+    resp = self.send(prep, **send_kwargs)
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\requests\sessions.py", line 703, in send
+    r = adapter.send(request, **kwargs)
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\requests\adapters.py", line 519, in send
+    raise ConnectionError(e, request=request)
+requests.exceptions.ConnectionError: HTTPSConnectionPool(host='api.tomtom.com', port=443): Max retries exceeded with url: /traffic/services/4/flowSegmentData/absolute/10/json?point=17.385,78.4867&key=Ri0LrJjjYgFqE3LToDzy2MAr8MCyYs9D (Caused by NameResolutionError("HTTPSConnection(host='api.tomtom.com', port=443): Failed to resolve 'api.tomtom.com' ([Errno 11001] getaddrinfo failed)"))
+2026-02-13 09:32:53 | traffic | [32mINFO[0m | get_traffic_flow:73 | Traffic status: smooth (current: 27 km/h, free flow: 27 km/h)
+2026-02-13 09:34:53 | traffic | [31mERROR[0m | get_traffic_flow:84 | Traffic fetch failed: HTTPSConnectionPool(host='api.tomtom.com', port=443): Max retries exceeded with url: /traffic/services/4/flowSegmentData/absolute/10/json?point=17.385,78.4867&key=Ri0LrJjjYgFqE3LToDzy2MAr8MCyYs9D (Caused by NameResolutionError("HTTPSConnection(host='api.tomtom.com', port=443): Failed to resolve 'api.tomtom.com' ([Errno 11001] getaddrinfo failed)"))
+Traceback (most recent call last):
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\urllib3\connection.py", line 204, in _new_conn
+    sock = connection.create_connection(
+        (self._dns_host, self.port),
+    ...<2 lines>...
+        socket_options=self.socket_options,
+    )
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\urllib3\util\connection.py", line 60, in create_connection
+    for res in socket.getaddrinfo(host, port, family, socket.SOCK_STREAM):
+               ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\chera\AppData\Local\Programs\Python\Python314\Lib\socket.py", line 983, in getaddrinfo
+    for res in _socket.getaddrinfo(host, port, family, type, proto, flags):
+               ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+socket.gaierror: [Errno 11001] getaddrinfo failed
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\urllib3\connectionpool.py", line 787, in urlopen
+    response = self._make_request(
+        conn,
+    ...<10 lines>...
+        **response_kw,
+    )
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\urllib3\connectionpool.py", line 488, in _make_request
+    raise new_e
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\urllib3\connectionpool.py", line 464, in _make_request
+    self._validate_conn(conn)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\urllib3\connectionpool.py", line 1093, in _validate_conn
+    conn.connect()
+    ~~~~~~~~~~~~^^
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\urllib3\connection.py", line 759, in connect
+    self.sock = sock = self._new_conn()
+                       ~~~~~~~~~~~~~~^^
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\urllib3\connection.py", line 211, in _new_conn
+    raise NameResolutionError(self.host, self, e) from e
+urllib3.exceptions.NameResolutionError: HTTPSConnection(host='api.tomtom.com', port=443): Failed to resolve 'api.tomtom.com' ([Errno 11001] getaddrinfo failed)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\requests\adapters.py", line 486, in send
+    resp = conn.urlopen(
+        method=request.method,
+    ...<9 lines>...
+        chunked=chunked,
+    )
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\urllib3\connectionpool.py", line 841, in urlopen
+    retries = retries.increment(
+        method, url, error=new_e, _pool=self, _stacktrace=sys.exc_info()[2]
+    )
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\urllib3\util\retry.py", line 535, in increment
+    raise MaxRetryError(_pool, url, reason) from reason  # type: ignore[arg-type]
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+urllib3.exceptions.MaxRetryError: HTTPSConnectionPool(host='api.tomtom.com', port=443): Max retries exceeded with url: /traffic/services/4/flowSegmentData/absolute/10/json?point=17.385,78.4867&key=Ri0LrJjjYgFqE3LToDzy2MAr8MCyYs9D (Caused by NameResolutionError("HTTPSConnection(host='api.tomtom.com', port=443): Failed to resolve 'api.tomtom.com' ([Errno 11001] getaddrinfo failed)"))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\services\traffic.py", line 61, in get_traffic_flow
+    response = requests.get(url, timeout=config.api.TRAFFIC_TIMEOUT)
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\requests\api.py", line 73, in get
+    return request("get", url, params=params, **kwargs)
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\requests\api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\requests\sessions.py", line 589, in request
+    resp = self.send(prep, **send_kwargs)
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\requests\sessions.py", line 703, in send
+    r = adapter.send(request, **kwargs)
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\requests\adapters.py", line 519, in send
+    raise ConnectionError(e, request=request)
+requests.exceptions.ConnectionError: HTTPSConnectionPool(host='api.tomtom.com', port=443): Max retries exceeded with url: /traffic/services/4/flowSegmentData/absolute/10/json?point=17.385,78.4867&key=Ri0LrJjjYgFqE3LToDzy2MAr8MCyYs9D (Caused by NameResolutionError("HTTPSConnection(host='api.tomtom.com', port=443): Failed to resolve 'api.tomtom.com' ([Errno 11001] getaddrinfo failed)"))
+2026-02-13 09:37:10 | traffic | [33mWARNING[0m | get_traffic_flow:78 | Traffic API timeout for (17.3850, 78.4867)
+2026-02-13 09:38:28 | traffic | [32mINFO[0m | get_traffic_flow:73 | Traffic status: moderate (current: 22 km/h, free flow: 28 km/h)
+2026-02-13 09:38:40 | traffic | [33mWARNING[0m | get_traffic_flow:78 | Traffic API timeout for (17.3850, 78.4867)
+2026-02-13 09:38:52 | traffic | [33mWARNING[0m | get_traffic_flow:78 | Traffic API timeout for (17.3850, 78.4867)
+2026-02-13 09:39:35 | traffic | [33mWARNING[0m | get_traffic_flow:78 | Traffic API timeout for (17.3850, 78.4867)
+2026-02-13 09:39:35 | traffic | [33mWARNING[0m | get_traffic_flow:78 | Traffic API timeout for (17.3850, 78.4867)
+2026-02-13 09:39:35 | traffic | [33mWARNING[0m | get_traffic_flow:78 | Traffic API timeout for (17.3850, 78.4867)
+2026-02-13 09:39:37 | traffic | [33mWARNING[0m | get_traffic_flow:78 | Traffic API timeout for (17.3850, 78.4867)
+2026-02-13 09:39:37 | traffic | [32mINFO[0m | get_traffic_flow:73 | Traffic status: smooth (current: 24 km/h, free flow: 27 km/h)
+2026-02-13 09:39:38 | traffic | [32mINFO[0m | get_traffic_flow:73 | Traffic status: smooth (current: 24 km/h, free flow: 27 km/h)
+2026-02-13 09:39:38 | traffic | [32mINFO[0m | get_traffic_flow:73 | Traffic status: smooth (current: 24 km/h, free flow: 27 km/h)
+2026-02-13 09:39:38 | traffic | [32mINFO[0m | get_traffic_flow:73 | Traffic status: smooth (current: 24 km/h, free flow: 27 km/h)
+2026-02-13 09:39:39 | traffic | [32mINFO[0m | get_traffic_flow:73 | Traffic status: smooth (current: 24 km/h, free flow: 27 km/h)
+2026-02-13 09:39:49 | traffic | [32mINFO[0m | get_traffic_flow:73 | Traffic status: smooth (current: 24 km/h, free flow: 27 km/h)
+2026-02-13 09:39:50 | traffic | [32mINFO[0m | get_traffic_flow:73 | Traffic status: smooth (current: 24 km/h, free flow: 27 km/h)
+2026-02-13 09:39:51 | traffic | [32mINFO[0m | get_traffic_flow:73 | Traffic status: smooth (current: 24 km/h, free flow: 27 km/h)
+2026-02-13 09:39:51 | traffic | [32mINFO[0m | get_traffic_flow:73 | Traffic status: smooth (current: 24 km/h, free flow: 27 km/h)
+2026-02-13 09:39:57 | traffic | [33mWARNING[0m | get_traffic_flow:78 | Traffic API timeout for (17.3850, 78.4867)
+2026-02-13 09:39:57 | traffic | [33mWARNING[0m | get_traffic_flow:78 | Traffic API timeout for (17.3850, 78.4867)
+2026-02-13 09:39:57 | traffic | [33mWARNING[0m | get_traffic_flow:78 | Traffic API timeout for (17.3850, 78.4867)
+2026-02-13 09:40:14 | traffic | [31mERROR[0m | get_traffic_flow:84 | Traffic fetch failed: HTTPSConnectionPool(host='api.tomtom.com', port=443): Max retries exceeded with url: /traffic/services/4/flowSegmentData/absolute/10/json?point=17.385,78.4867&key=Ri0LrJjjYgFqE3LToDzy2MAr8MCyYs9D (Caused by NameResolutionError("HTTPSConnection(host='api.tomtom.com', port=443): Failed to resolve 'api.tomtom.com' ([Errno 11001] getaddrinfo failed)"))
+Traceback (most recent call last):
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\urllib3\connection.py", line 204, in _new_conn
+    sock = connection.create_connection(
+        (self._dns_host, self.port),
+    ...<2 lines>...
+        socket_options=self.socket_options,
+    )
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\urllib3\util\connection.py", line 60, in create_connection
+    for res in socket.getaddrinfo(host, port, family, socket.SOCK_STREAM):
+               ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\chera\AppData\Local\Programs\Python\Python314\Lib\socket.py", line 983, in getaddrinfo
+    for res in _socket.getaddrinfo(host, port, family, type, proto, flags):
+               ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+socket.gaierror: [Errno 11001] getaddrinfo failed
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\urllib3\connectionpool.py", line 787, in urlopen
+    response = self._make_request(
+        conn,
+    ...<10 lines>...
+        **response_kw,
+    )
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\urllib3\connectionpool.py", line 488, in _make_request
+    raise new_e
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\urllib3\connectionpool.py", line 464, in _make_request
+    self._validate_conn(conn)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\urllib3\connectionpool.py", line 1093, in _validate_conn
+    conn.connect()
+    ~~~~~~~~~~~~^^
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\urllib3\connection.py", line 759, in connect
+    self.sock = sock = self._new_conn()
+                       ~~~~~~~~~~~~~~^^
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\urllib3\connection.py", line 211, in _new_conn
+    raise NameResolutionError(self.host, self, e) from e
+urllib3.exceptions.NameResolutionError: HTTPSConnection(host='api.tomtom.com', port=443): Failed to resolve 'api.tomtom.com' ([Errno 11001] getaddrinfo failed)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\requests\adapters.py", line 486, in send
+    resp = conn.urlopen(
+        method=request.method,
+    ...<9 lines>...
+        chunked=chunked,
+    )
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\urllib3\connectionpool.py", line 841, in urlopen
+    retries = retries.increment(
+        method, url, error=new_e, _pool=self, _stacktrace=sys.exc_info()[2]
+    )
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\urllib3\util\retry.py", line 535, in increment
+    raise MaxRetryError(_pool, url, reason) from reason  # type: ignore[arg-type]
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+urllib3.exceptions.MaxRetryError: HTTPSConnectionPool(host='api.tomtom.com', port=443): Max retries exceeded with url: /traffic/services/4/flowSegmentData/absolute/10/json?point=17.385,78.4867&key=Ri0LrJjjYgFqE3LToDzy2MAr8MCyYs9D (Caused by NameResolutionError("HTTPSConnection(host='api.tomtom.com', port=443): Failed to resolve 'api.tomtom.com' ([Errno 11001] getaddrinfo failed)"))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\services\traffic.py", line 61, in get_traffic_flow
+    response = requests.get(url, timeout=config.api.TRAFFIC_TIMEOUT)
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\requests\api.py", line 73, in get
+    return request("get", url, params=params, **kwargs)
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\requests\api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\requests\sessions.py", line 589, in request
+    resp = self.send(prep, **send_kwargs)
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\requests\sessions.py", line 703, in send
+    r = adapter.send(request, **kwargs)
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\requests\adapters.py", line 519, in send
+    raise ConnectionError(e, request=request)
+requests.exceptions.ConnectionError: HTTPSConnectionPool(host='api.tomtom.com', port=443): Max retries exceeded with url: /traffic/services/4/flowSegmentData/absolute/10/json?point=17.385,78.4867&key=Ri0LrJjjYgFqE3LToDzy2MAr8MCyYs9D (Caused by NameResolutionError("HTTPSConnection(host='api.tomtom.com', port=443): Failed to resolve 'api.tomtom.com' ([Errno 11001] getaddrinfo failed)"))
+2026-02-13 09:41:08 | traffic | [33mWARNING[0m | get_traffic_flow:78 | Traffic API timeout for (17.3850, 78.4867)
+2026-02-13 09:41:14 | traffic | [33mWARNING[0m | get_traffic_flow:78 | Traffic API timeout for (17.3850, 78.4867)
+2026-02-13 09:52:47 | traffic | [33mWARNING[0m | get_traffic_flow:78 | Traffic API timeout for (17.3850, 78.4867)
+2026-02-13 09:53:13 | traffic | [32mINFO[0m | get_traffic_flow:73 | Traffic status: smooth (current: 27 km/h, free flow: 27 km/h)
+2026-02-13 09:55:31 | traffic | [32mINFO[0m | get_traffic_flow:73 | Traffic status: smooth (current: 23 km/h, free flow: 28 km/h)
+2026-02-13 09:55:33 | traffic | [32mINFO[0m | get_traffic_flow:73 | Traffic status: smooth (current: 23 km/h, free flow: 28 km/h)
+2026-02-13 09:57:17 | traffic | [32mINFO[0m | get_traffic_flow:73 | Traffic status: moderate (current: 20 km/h, free flow: 28 km/h)
+2026-02-13 10:00:32 | traffic | [32mINFO[0m | get_traffic_flow:73 | Traffic status: smooth (current: 23 km/h, free flow: 28 km/h)
+2026-02-13 10:02:45 | traffic | [32mINFO[0m | get_traffic_flow:73 | Traffic status: smooth (current: 24 km/h, free flow: 27 km/h)
+2026-02-13 10:02:48 | traffic | [32mINFO[0m | get_traffic_flow:73 | Traffic status: smooth (current: 24 km/h, free flow: 27 km/h)
+2026-02-13 10:02:59 | traffic | [32mINFO[0m | get_traffic_flow:73 | Traffic status: smooth (current: 24 km/h, free flow: 27 km/h)
+2026-02-13 10:03:01 | traffic | [32mINFO[0m | get_traffic_flow:73 | Traffic status: smooth (current: 24 km/h, free flow: 27 km/h)
+2026-02-13 10:03:02 | traffic | [32mINFO[0m | get_traffic_flow:73 | Traffic status: smooth (current: 24 km/h, free flow: 27 km/h)
+2026-02-13 10:03:04 | traffic | [32mINFO[0m | get_traffic_flow:73 | Traffic status: smooth (current: 24 km/h, free flow: 27 km/h)
+2026-02-13 10:03:06 | traffic | [32mINFO[0m | get_traffic_flow:73 | Traffic status: smooth (current: 24 km/h, free flow: 27 km/h)
+2026-02-13 10:03:11 | traffic | [32mINFO[0m | get_traffic_flow:73 | Traffic status: smooth (current: 24 km/h, free flow: 27 km/h)
+2026-02-13 10:03:17 | traffic | [32mINFO[0m | get_traffic_flow:73 | Traffic status: smooth (current: 24 km/h, free flow: 27 km/h)
+2026-02-13 10:03:19 | traffic | [32mINFO[0m | get_traffic_flow:73 | Traffic status: smooth (current: 24 km/h, free flow: 27 km/h)
+2026-02-13 10:03:28 | traffic | [32mINFO[0m | get_traffic_flow:73 | Traffic status: smooth (current: 24 km/h, free flow: 27 km/h)
+2026-02-13 10:03:28 | traffic | [32mINFO[0m | get_traffic_flow:73 | Traffic status: smooth (current: 24 km/h, free flow: 27 km/h)
+2026-02-13 10:03:30 | traffic | [32mINFO[0m | get_traffic_flow:73 | Traffic status: smooth (current: 24 km/h, free flow: 27 km/h)
+2026-02-13 10:03:32 | traffic | [32mINFO[0m | get_traffic_flow:73 | Traffic status: smooth (current: 24 km/h, free flow: 28 km/h)
+2026-02-13 10:03:36 | traffic | [32mINFO[0m | get_traffic_flow:73 | Traffic status: smooth (current: 24 km/h, free flow: 28 km/h)
+2026-02-13 10:03:43 | traffic | [32mINFO[0m | get_traffic_flow:73 | Traffic status: smooth (current: 24 km/h, free flow: 28 km/h)
+2026-02-13 10:03:45 | traffic | [32mINFO[0m | get_traffic_flow:73 | Traffic status: smooth (current: 24 km/h, free flow: 28 km/h)
+2026-02-13 10:03:52 | traffic | [32mINFO[0m | get_traffic_flow:73 | Traffic status: smooth (current: 24 km/h, free flow: 28 km/h)
+2026-02-13 10:05:25 | traffic | [32mINFO[0m | get_traffic_flow:73 | Traffic status: smooth (current: 26 km/h, free flow: 28 km/h)
+2026-02-13 10:12:12 | traffic | [32mINFO[0m | get_traffic_flow:73 | Traffic status: smooth (current: 24 km/h, free flow: 28 km/h)
+2026-02-13 10:12:21 | traffic | [32mINFO[0m | get_traffic_flow:73 | Traffic status: smooth (current: 24 km/h, free flow: 28 km/h)
+2026-02-13 10:13:55 | traffic | [32mINFO[0m | get_traffic_flow:73 | Traffic status: smooth (current: 27 km/h, free flow: 27 km/h)
+2026-02-13 10:15:00 | traffic | [32mINFO[0m | get_traffic_flow:73 | Traffic status: smooth (current: 24 km/h, free flow: 27 km/h)
+2026-02-13 10:18:05 | traffic | [32mINFO[0m | get_traffic_flow:73 | Traffic status: smooth (current: 24 km/h, free flow: 27 km/h)
+2026-02-13 10:18:05 | traffic | [32mINFO[0m | get_traffic_flow:73 | Traffic status: smooth (current: 24 km/h, free flow: 27 km/h)
+2026-02-13 10:18:06 | traffic | [32mINFO[0m | get_traffic_flow:73 | Traffic status: smooth (current: 24 km/h, free flow: 27 km/h)
+2026-02-13 10:18:06 | traffic | [32mINFO[0m | get_traffic_flow:73 | Traffic status: smooth (current: 24 km/h, free flow: 27 km/h)
+2026-02-13 10:18:06 | traffic | [32mINFO[0m | get_traffic_flow:73 | Traffic status: smooth (current: 24 km/h, free flow: 27 km/h)
+2026-02-13 10:18:06 | traffic | [32mINFO[0m | get_traffic_flow:73 | Traffic status: smooth (current: 24 km/h, free flow: 27 km/h)
+2026-02-13 10:19:02 | traffic | [32mINFO[0m | get_traffic_flow:73 | Traffic status: smooth (current: 23 km/h, free flow: 28 km/h)
+2026-02-13 10:19:26 | traffic | [32mINFO[0m | get_traffic_flow:73 | Traffic status: moderate (current: 21 km/h, free flow: 27 km/h)
+2026-02-13 10:19:28 | traffic | [32mINFO[0m | get_traffic_flow:73 | Traffic status: moderate (current: 21 km/h, free flow: 27 km/h)
+2026-02-13 10:19:31 | traffic | [32mINFO[0m | get_traffic_flow:73 | Traffic status: moderate (current: 21 km/h, free flow: 27 km/h)
+2026-02-13 10:19:35 | traffic | [32mINFO[0m | get_traffic_flow:73 | Traffic status: smooth (current: 27 km/h, free flow: 27 km/h)
+2026-02-13 10:19:40 | traffic | [32mINFO[0m | get_traffic_flow:73 | Traffic status: smooth (current: 27 km/h, free flow: 27 km/h)
+2026-02-13 10:19:41 | traffic | [32mINFO[0m | get_traffic_flow:73 | Traffic status: smooth (current: 27 km/h, free flow: 27 km/h)
+2026-02-13 10:19:43 | traffic | [32mINFO[0m | get_traffic_flow:73 | Traffic status: smooth (current: 27 km/h, free flow: 27 km/h)
+2026-02-13 10:19:44 | traffic | [32mINFO[0m | get_traffic_flow:73 | Traffic status: smooth (current: 27 km/h, free flow: 27 km/h)
+2026-02-13 10:19:49 | traffic | [32mINFO[0m | get_traffic_flow:73 | Traffic status: smooth (current: 27 km/h, free flow: 27 km/h)
+2026-02-13 10:20:14 | traffic | [32mINFO[0m | get_traffic_flow:73 | Traffic status: smooth (current: 27 km/h, free flow: 27 km/h)
+2026-02-13 10:20:29 | traffic | [32mINFO[0m | get_traffic_flow:73 | Traffic status: smooth (current: 27 km/h, free flow: 27 km/h)
+2026-02-13 10:20:59 | traffic | [32mINFO[0m | get_traffic_flow:73 | Traffic status: smooth (current: 27 km/h, free flow: 27 km/h)
+2026-02-13 10:34:44 | traffic | [32mINFO[0m | get_traffic_flow:73 | Traffic status: smooth (current: 27 km/h, free flow: 27 km/h)
+2026-02-13 10:35:01 | traffic | [32mINFO[0m | get_traffic_flow:73 | Traffic status: smooth (current: 27 km/h, free flow: 27 km/h)
+2026-02-13 10:35:03 | traffic | [32mINFO[0m | get_traffic_flow:73 | Traffic status: smooth (current: 27 km/h, free flow: 27 km/h)
+2026-02-13 10:35:03 | traffic | [33mWARNING[0m | get_traffic_flow:78 | Traffic API timeout for (17.3850, 78.4867)
+2026-02-13 10:35:14 | traffic | [33mWARNING[0m | get_traffic_flow:78 | Traffic API timeout for (17.3850, 78.4867)
+2026-02-13 10:35:16 | traffic | [32mINFO[0m | get_traffic_flow:73 | Traffic status: moderate (current: 21 km/h, free flow: 27 km/h)
+2026-02-13 10:35:21 | traffic | [32mINFO[0m | get_traffic_flow:73 | Traffic status: moderate (current: 21 km/h, free flow: 27 km/h)
+2026-02-13 10:35:28 | traffic | [32mINFO[0m | get_traffic_flow:73 | Traffic status: moderate (current: 21 km/h, free flow: 27 km/h)
+2026-02-13 10:35:32 | traffic | [32mINFO[0m | get_traffic_flow:73 | Traffic status: moderate (current: 21 km/h, free flow: 27 km/h)
+2026-02-13 10:36:09 | traffic | [31mERROR[0m | get_traffic_flow:84 | Traffic fetch failed: HTTPSConnectionPool(host='api.tomtom.com', port=443): Max retries exceeded with url: /traffic/services/4/flowSegmentData/absolute/10/json?point=17.385,78.4867&key=Ri0LrJjjYgFqE3LToDzy2MAr8MCyYs9D (Caused by NameResolutionError("HTTPSConnection(host='api.tomtom.com', port=443): Failed to resolve 'api.tomtom.com' ([Errno 11001] getaddrinfo failed)"))
+Traceback (most recent call last):
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\urllib3\connection.py", line 204, in _new_conn
+    sock = connection.create_connection(
+        (self._dns_host, self.port),
+    ...<2 lines>...
+        socket_options=self.socket_options,
+    )
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\urllib3\util\connection.py", line 60, in create_connection
+    for res in socket.getaddrinfo(host, port, family, socket.SOCK_STREAM):
+               ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\chera\AppData\Local\Programs\Python\Python314\Lib\socket.py", line 983, in getaddrinfo
+    for res in _socket.getaddrinfo(host, port, family, type, proto, flags):
+               ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+socket.gaierror: [Errno 11001] getaddrinfo failed
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\urllib3\connectionpool.py", line 787, in urlopen
+    response = self._make_request(
+        conn,
+    ...<10 lines>...
+        **response_kw,
+    )
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\urllib3\connectionpool.py", line 488, in _make_request
+    raise new_e
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\urllib3\connectionpool.py", line 464, in _make_request
+    self._validate_conn(conn)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\urllib3\connectionpool.py", line 1093, in _validate_conn
+    conn.connect()
+    ~~~~~~~~~~~~^^
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\urllib3\connection.py", line 759, in connect
+    self.sock = sock = self._new_conn()
+                       ~~~~~~~~~~~~~~^^
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\urllib3\connection.py", line 211, in _new_conn
+    raise NameResolutionError(self.host, self, e) from e
+urllib3.exceptions.NameResolutionError: HTTPSConnection(host='api.tomtom.com', port=443): Failed to resolve 'api.tomtom.com' ([Errno 11001] getaddrinfo failed)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\requests\adapters.py", line 486, in send
+    resp = conn.urlopen(
+        method=request.method,
+    ...<9 lines>...
+        chunked=chunked,
+    )
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\urllib3\connectionpool.py", line 841, in urlopen
+    retries = retries.increment(
+        method, url, error=new_e, _pool=self, _stacktrace=sys.exc_info()[2]
+    )
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\urllib3\util\retry.py", line 535, in increment
+    raise MaxRetryError(_pool, url, reason) from reason  # type: ignore[arg-type]
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+urllib3.exceptions.MaxRetryError: HTTPSConnectionPool(host='api.tomtom.com', port=443): Max retries exceeded with url: /traffic/services/4/flowSegmentData/absolute/10/json?point=17.385,78.4867&key=Ri0LrJjjYgFqE3LToDzy2MAr8MCyYs9D (Caused by NameResolutionError("HTTPSConnection(host='api.tomtom.com', port=443): Failed to resolve 'api.tomtom.com' ([Errno 11001] getaddrinfo failed)"))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\services\traffic.py", line 61, in get_traffic_flow
+    response = requests.get(url, timeout=config.api.TRAFFIC_TIMEOUT)
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\requests\api.py", line 73, in get
+    return request("get", url, params=params, **kwargs)
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\requests\api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\requests\sessions.py", line 589, in request
+    resp = self.send(prep, **send_kwargs)
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\requests\sessions.py", line 703, in send
+    r = adapter.send(request, **kwargs)
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\requests\adapters.py", line 519, in send
+    raise ConnectionError(e, request=request)
+requests.exceptions.ConnectionError: HTTPSConnectionPool(host='api.tomtom.com', port=443): Max retries exceeded with url: /traffic/services/4/flowSegmentData/absolute/10/json?point=17.385,78.4867&key=Ri0LrJjjYgFqE3LToDzy2MAr8MCyYs9D (Caused by NameResolutionError("HTTPSConnection(host='api.tomtom.com', port=443): Failed to resolve 'api.tomtom.com' ([Errno 11001] getaddrinfo failed)"))
+2026-02-13 10:36:09 | traffic | [31mERROR[0m | get_traffic_flow:84 | Traffic fetch failed: HTTPSConnectionPool(host='api.tomtom.com', port=443): Max retries exceeded with url: /traffic/services/4/flowSegmentData/absolute/10/json?point=17.385,78.4867&key=Ri0LrJjjYgFqE3LToDzy2MAr8MCyYs9D (Caused by NameResolutionError("HTTPSConnection(host='api.tomtom.com', port=443): Failed to resolve 'api.tomtom.com' ([Errno 11001] getaddrinfo failed)"))
+Traceback (most recent call last):
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\urllib3\connection.py", line 204, in _new_conn
+    sock = connection.create_connection(
+        (self._dns_host, self.port),
+    ...<2 lines>...
+        socket_options=self.socket_options,
+    )
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\urllib3\util\connection.py", line 60, in create_connection
+    for res in socket.getaddrinfo(host, port, family, socket.SOCK_STREAM):
+               ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\chera\AppData\Local\Programs\Python\Python314\Lib\socket.py", line 983, in getaddrinfo
+    for res in _socket.getaddrinfo(host, port, family, type, proto, flags):
+               ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+socket.gaierror: [Errno 11001] getaddrinfo failed
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\urllib3\connectionpool.py", line 787, in urlopen
+    response = self._make_request(
+        conn,
+    ...<10 lines>...
+        **response_kw,
+    )
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\urllib3\connectionpool.py", line 488, in _make_request
+    raise new_e
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\urllib3\connectionpool.py", line 464, in _make_request
+    self._validate_conn(conn)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\urllib3\connectionpool.py", line 1093, in _validate_conn
+    conn.connect()
+    ~~~~~~~~~~~~^^
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\urllib3\connection.py", line 759, in connect
+    self.sock = sock = self._new_conn()
+                       ~~~~~~~~~~~~~~^^
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\urllib3\connection.py", line 211, in _new_conn
+    raise NameResolutionError(self.host, self, e) from e
+urllib3.exceptions.NameResolutionError: HTTPSConnection(host='api.tomtom.com', port=443): Failed to resolve 'api.tomtom.com' ([Errno 11001] getaddrinfo failed)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\requests\adapters.py", line 486, in send
+    resp = conn.urlopen(
+        method=request.method,
+    ...<9 lines>...
+        chunked=chunked,
+    )
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\urllib3\connectionpool.py", line 841, in urlopen
+    retries = retries.increment(
+        method, url, error=new_e, _pool=self, _stacktrace=sys.exc_info()[2]
+    )
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\urllib3\util\retry.py", line 535, in increment
+    raise MaxRetryError(_pool, url, reason) from reason  # type: ignore[arg-type]
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+urllib3.exceptions.MaxRetryError: HTTPSConnectionPool(host='api.tomtom.com', port=443): Max retries exceeded with url: /traffic/services/4/flowSegmentData/absolute/10/json?point=17.385,78.4867&key=Ri0LrJjjYgFqE3LToDzy2MAr8MCyYs9D (Caused by NameResolutionError("HTTPSConnection(host='api.tomtom.com', port=443): Failed to resolve 'api.tomtom.com' ([Errno 11001] getaddrinfo failed)"))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\services\traffic.py", line 61, in get_traffic_flow
+    response = requests.get(url, timeout=config.api.TRAFFIC_TIMEOUT)
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\requests\api.py", line 73, in get
+    return request("get", url, params=params, **kwargs)
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\requests\api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\requests\sessions.py", line 589, in request
+    resp = self.send(prep, **send_kwargs)
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\requests\sessions.py", line 703, in send
+    r = adapter.send(request, **kwargs)
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\requests\adapters.py", line 519, in send
+    raise ConnectionError(e, request=request)
+requests.exceptions.ConnectionError: HTTPSConnectionPool(host='api.tomtom.com', port=443): Max retries exceeded with url: /traffic/services/4/flowSegmentData/absolute/10/json?point=17.385,78.4867&key=Ri0LrJjjYgFqE3LToDzy2MAr8MCyYs9D (Caused by NameResolutionError("HTTPSConnection(host='api.tomtom.com', port=443): Failed to resolve 'api.tomtom.com' ([Errno 11001] getaddrinfo failed)"))
+2026-02-13 10:36:26 | traffic | [33mWARNING[0m | get_traffic_flow:78 | Traffic API timeout for (17.3850, 78.4867)
+2026-02-13 10:36:35 | traffic | [32mINFO[0m | get_traffic_flow:73 | Traffic status: moderate (current: 20 km/h, free flow: 26 km/h)
+2026-02-13 10:36:38 | traffic | [32mINFO[0m | get_traffic_flow:73 | Traffic status: moderate (current: 20 km/h, free flow: 26 km/h)
+2026-02-13 10:36:40 | traffic | [32mINFO[0m | get_traffic_flow:73 | Traffic status: moderate (current: 20 km/h, free flow: 26 km/h)
+2026-02-13 10:36:52 | traffic | [32mINFO[0m | get_traffic_flow:73 | Traffic status: moderate (current: 20 km/h, free flow: 26 km/h)
+2026-02-13 10:36:57 | traffic | [32mINFO[0m | get_traffic_flow:73 | Traffic status: moderate (current: 21 km/h, free flow: 27 km/h)
+2026-02-13 10:37:32 | traffic | [33mWARNING[0m | get_traffic_flow:78 | Traffic API timeout for (17.3850, 78.4867)
+2026-02-13 10:37:55 | traffic | [31mERROR[0m | get_traffic_flow:84 | Traffic fetch failed: HTTPSConnectionPool(host='api.tomtom.com', port=443): Max retries exceeded with url: /traffic/services/4/flowSegmentData/absolute/10/json?point=17.385,78.4867&key=Ri0LrJjjYgFqE3LToDzy2MAr8MCyYs9D (Caused by NameResolutionError("HTTPSConnection(host='api.tomtom.com', port=443): Failed to resolve 'api.tomtom.com' ([Errno 11001] getaddrinfo failed)"))
+Traceback (most recent call last):
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\urllib3\connection.py", line 204, in _new_conn
+    sock = connection.create_connection(
+        (self._dns_host, self.port),
+    ...<2 lines>...
+        socket_options=self.socket_options,
+    )
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\urllib3\util\connection.py", line 60, in create_connection
+    for res in socket.getaddrinfo(host, port, family, socket.SOCK_STREAM):
+               ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\chera\AppData\Local\Programs\Python\Python314\Lib\socket.py", line 983, in getaddrinfo
+    for res in _socket.getaddrinfo(host, port, family, type, proto, flags):
+               ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+socket.gaierror: [Errno 11001] getaddrinfo failed
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\urllib3\connectionpool.py", line 787, in urlopen
+    response = self._make_request(
+        conn,
+    ...<10 lines>...
+        **response_kw,
+    )
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\urllib3\connectionpool.py", line 488, in _make_request
+    raise new_e
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\urllib3\connectionpool.py", line 464, in _make_request
+    self._validate_conn(conn)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\urllib3\connectionpool.py", line 1093, in _validate_conn
+    conn.connect()
+    ~~~~~~~~~~~~^^
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\urllib3\connection.py", line 759, in connect
+    self.sock = sock = self._new_conn()
+                       ~~~~~~~~~~~~~~^^
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\urllib3\connection.py", line 211, in _new_conn
+    raise NameResolutionError(self.host, self, e) from e
+urllib3.exceptions.NameResolutionError: HTTPSConnection(host='api.tomtom.com', port=443): Failed to resolve 'api.tomtom.com' ([Errno 11001] getaddrinfo failed)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\requests\adapters.py", line 486, in send
+    resp = conn.urlopen(
+        method=request.method,
+    ...<9 lines>...
+        chunked=chunked,
+    )
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\urllib3\connectionpool.py", line 841, in urlopen
+    retries = retries.increment(
+        method, url, error=new_e, _pool=self, _stacktrace=sys.exc_info()[2]
+    )
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\urllib3\util\retry.py", line 535, in increment
+    raise MaxRetryError(_pool, url, reason) from reason  # type: ignore[arg-type]
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+urllib3.exceptions.MaxRetryError: HTTPSConnectionPool(host='api.tomtom.com', port=443): Max retries exceeded with url: /traffic/services/4/flowSegmentData/absolute/10/json?point=17.385,78.4867&key=Ri0LrJjjYgFqE3LToDzy2MAr8MCyYs9D (Caused by NameResolutionError("HTTPSConnection(host='api.tomtom.com', port=443): Failed to resolve 'api.tomtom.com' ([Errno 11001] getaddrinfo failed)"))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\services\traffic.py", line 61, in get_traffic_flow
+    response = requests.get(url, timeout=config.api.TRAFFIC_TIMEOUT)
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\requests\api.py", line 73, in get
+    return request("get", url, params=params, **kwargs)
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\requests\api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\requests\sessions.py", line 589, in request
+    resp = self.send(prep, **send_kwargs)
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\requests\sessions.py", line 703, in send
+    r = adapter.send(request, **kwargs)
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\venv\Lib\site-packages\requests\adapters.py", line 519, in send
+    raise ConnectionError(e, request=request)
+requests.exceptions.ConnectionError: HTTPSConnectionPool(host='api.tomtom.com', port=443): Max retries exceeded with url: /traffic/services/4/flowSegmentData/absolute/10/json?point=17.385,78.4867&key=Ri0LrJjjYgFqE3LToDzy2MAr8MCyYs9D (Caused by NameResolutionError("HTTPSConnection(host='api.tomtom.com', port=443): Failed to resolve 'api.tomtom.com' ([Errno 11001] getaddrinfo failed)"))
+2026-02-13 10:38:42 | traffic | [32mINFO[0m | get_traffic_flow:73 | Traffic status: smooth (current: 24 km/h, free flow: 27 km/h)
+2026-02-13 10:38:42 | traffic | [32mINFO[0m | get_traffic_flow:73 | Traffic status: smooth (current: 24 km/h, free flow: 27 km/h)
+2026-02-13 10:38:43 | traffic | [32mINFO[0m | get_traffic_flow:73 | Traffic status: smooth (current: 24 km/h, free flow: 27 km/h)
+2026-02-13 10:38:45 | traffic | [32mINFO[0m | get_traffic_flow:73 | Traffic status: smooth (current: 24 km/h, free flow: 27 km/h)
+2026-02-13 10:39:10 | traffic | [32mINFO[0m | get_traffic_flow:73 | Traffic status: smooth (current: 24 km/h, free flow: 28 km/h)
+2026-02-13 10:39:17 | traffic | [32mINFO[0m | get_traffic_flow:73 | Traffic status: smooth (current: 24 km/h, free flow: 28 km/h)
+2026-02-13 10:39:49 | traffic | [32mINFO[0m | get_traffic_flow:73 | Traffic status: smooth (current: 23 km/h, free flow: 27 km/h)
+2026-02-13 10:39:59 | traffic | [32mINFO[0m | get_traffic_flow:73 | Traffic status: smooth (current: 23 km/h, free flow: 27 km/h)
+2026-02-13 10:40:14 | traffic | [32mINFO[0m | get_traffic_flow:73 | Traffic status: smooth (current: 23 km/h, free flow: 27 km/h)
+2026-02-13 10:40:51 | traffic | [32mINFO[0m | get_traffic_flow:73 | Traffic status: smooth (current: 27 km/h, free flow: 27 km/h)
+2026-02-13 10:40:58 | traffic | [32mINFO[0m | get_traffic_flow:73 | Traffic status: smooth (current: 27 km/h, free flow: 27 km/h)
+2026-02-13 10:40:58 | traffic | [32mINFO[0m | get_traffic_flow:73 | Traffic status: smooth (current: 27 km/h, free flow: 27 km/h)
+2026-02-13 10:42:24 | traffic | [32mINFO[0m | get_traffic_flow:73 | Traffic status: smooth (current: 24 km/h, free flow: 28 km/h)
+2026-02-13 10:42:31 | traffic | [32mINFO[0m | get_traffic_flow:73 | Traffic status: smooth (current: 24 km/h, free flow: 28 km/h)
