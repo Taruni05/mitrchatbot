@@ -11,6 +11,7 @@ from collections import defaultdict, Counter
 import hashlib
 from services.logger import get_logger
 from services.config import config
+from services.user_store import load_user_preferences, save_preference,save_preferences
 
 logger = get_logger(__name__)
 
@@ -19,35 +20,14 @@ logger = get_logger(__name__)
 # ═══════════════════════════════════════════════════════════════════════════
 
 def get_user_id() -> str:
-    """
-    Generate a unique user ID for preference tracking.
-    Uses browser session info or creates a persistent cookie-based ID.
-    
-    Returns:
-        String user ID (hashed for privacy)
-    """
-    # Check if user ID exists in session state
-    if "user_id" in st.session_state:
-        return st.session_state["user_id"]
-    
-    # Try to get from query params (for returning users)
-    user_id = st.query_params.get("user_id")
-    
+    """Get user ID from auth system"""
+    from services.auth import get_current_user_id
+    user_id = get_current_user_id()
     if not user_id:
-        # Generate new user ID based on timestamp and random data
-        timestamp = datetime.now().isoformat()
-        random_data = str(hash(timestamp))
-        user_id = hashlib.sha256(f"{timestamp}{random_data}".encode()).hexdigest()[:16]
-    
-    # Store in session state
-    st.session_state["user_id"] = user_id
-    
-    # Update query params for persistent tracking
-    st.query_params["user_id"] = user_id
-    
+        # Fallback for non-logged-in users (shouldn't happen with auth gate)
+        import secrets
+        return secrets.token_hex(16)
     return user_id
-
-
 # ═══════════════════════════════════════════════════════════════════════════
 # PREFERENCE DATA STRUCTURE
 # ═══════════════════════════════════════════════════════════════════════════
@@ -133,63 +113,42 @@ def get_user_preferences_file(user_id: str) -> Path:
 
 
 def load_user_preferences(user_id: str = None) -> Dict:
-    """
-    Load user preferences from file.
+    """Load user preferences from database"""
+    prefs = load_user_preferences()  # From user_store
     
-    Args:
-        user_id: User ID (if None, uses current session user)
+    if not prefs:
+        # Return default preferences for new users
+        return DEFAULT_PREFERENCES.copy()
     
-    Returns:
-        Dict with user preferences (or default if not found)
-    """
-    if not user_id:
-        user_id = get_user_id()
-    
-    prefs_file = get_user_preferences_file(user_id)
-    
-    if prefs_file.exists():
-        try:
-            with open(prefs_file, "r", encoding="utf-8") as f:
-                prefs = json.load(f)
-            
-            # Update last active time
-            prefs["last_active"] = datetime.now().isoformat()
-            
-            return prefs
-        except Exception as e:
-            logger.error(f"Error loading preferences for user {user_id}: {e}", exc_info=True)
-    
-    # Return default preferences for new users
-    prefs = DEFAULT_PREFERENCES.copy()
-    prefs["user_id"] = user_id
-    prefs["created_at"] = datetime.now().isoformat()
-    prefs["last_active"] = datetime.now().isoformat()
-    
-    return prefs
-
-
-def save_user_preferences(preferences: Dict, user_id: str = None):
-    """
-    Save user preferences to file.
-    
-    Args:
-        preferences: Dict with user preferences
-        user_id: User ID (if None, uses current session user)
-    """
-    if not user_id:
-        user_id = get_user_id()
-    
-    prefs_file = get_user_preferences_file(user_id)
-    
+    # Convert stored string values back to proper types
+    # (since Supabase stores everything as strings)
     try:
-        with open(prefs_file, "w", encoding="utf-8") as f:
-            json.dump(preferences, f, indent=2, ensure_ascii=False)
+        import json
         
-        logger.info(f"Saved preferences for user {user_id}")
-
-    except Exception as e:
-        logger.error(f"Error saving preferences for user {user_id}: {e}", exc_info=True)
-
+        # Parse JSON strings back to objects
+        if "interests" in prefs:
+            prefs["interests"] = json.loads(prefs.get("interests", "{}"))
+        if "food_preferences" in prefs:
+            prefs["food_preferences"] = json.loads(prefs.get("food_preferences", "{}"))
+        if "frequent_areas" in prefs:
+            prefs["frequent_areas"] = json.loads(prefs.get("frequent_areas", "[]"))
+        
+        return prefs
+    except Exception:
+        return DEFAULT_PREFERENCES.copy()
+def save_user_preferences(preferences: Dict, user_id: str = None):
+    """Save user preferences to database"""
+    import json
+    
+    # Convert complex objects to JSON strings for storage
+    to_save = {}
+    for key, value in preferences.items():
+        if isinstance(value, (dict, list)):
+            to_save[key] = json.dumps(value)
+        else:
+            to_save[key] = str(value)
+    
+    save_preferences(to_save)  # 
 
 # ═══════════════════════════════════════════════════════════════════════════
 # PREFERENCE LEARNING FUNCTIONS

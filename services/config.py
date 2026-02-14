@@ -3,6 +3,7 @@ Centralized Configuration Management for Hyderabad Chatbot
 Single source of truth for all application settings
 """
 
+from asyncio.log import logger
 from dataclasses import dataclass, field
 from typing import Dict, Optional, Tuple
 import streamlit as st
@@ -49,15 +50,20 @@ class APIConfig:
         self.GEMINI_API_KEYS = [k for k in self.GEMINI_API_KEYS if k]
         
         # If no keys in env, try st.secrets
-        if not self.GEMINI_API_KEYS and hasattr(st, 'secrets'):
+        if not self.GEMINI_API_KEYS:
             keys = []
-            if st.secrets.get("GEMINI_API_KEY"):
-                keys.append(st.secrets.get("GEMINI_API_KEY"))
-            if st.secrets.get("GEMINI_API_KEY_2"):
-                keys.append(st.secrets.get("GEMINI_API_KEY_2"))
-            if st.secrets.get("GEMINI_API_KEY_3"):
-                keys.append(st.secrets.get("GEMINI_API_KEY_3"))
-            self.GEMINI_API_KEYS = keys
+            try:
+                if hasattr(st, 'secrets'):
+                    if st.secrets.get("GEMINI_API_KEY"):
+                        keys.append(st.secrets.get("GEMINI_API_KEY"))
+                    if st.secrets.get("GEMINI_API_KEY_2"):
+                        keys.append(st.secrets.get("GEMINI_API_KEY_2"))
+                    if st.secrets.get("GEMINI_API_KEY_3"):
+                        keys.append(st.secrets.get("GEMINI_API_KEY_3"))
+                    self.GEMINI_API_KEYS = keys
+            except Exception as e:
+                logger.warning(f"Could not load secrets: {e}")
+            
     # ============================================
     
     # News API

@@ -4768,11 +4768,11 @@
             "Sunday": "11:00 AM - 11:00 PM"
           },
           "best_selling_dishes": [
-            "Signature Dish 1",
-            "Signature Dish 2",
-            "Signature Dish 3"
+            "Chicken Piccata / Peri-Peri Pasta: The Creamy Chicken Piccata is praised for its nuanced flavor, while the Peri-Peri Pasta is a frequently recommended favorite.",
+"Shrimp Bisque: A highly rated, creamy soup choice.",
+"Pancakes & Desserts: Their pancakes and Fried Oreo are considered must-try items."
           ],
-          "rating": null
+          "rating": {"google": 4.1, "zomato": 3.9}
         },
         {
           "name": "The Coffee Cup",
@@ -4796,11 +4796,11 @@
             "Sunday": "11:00 AM - 11:00 PM"
           },
           "best_selling_dishes": [
-            "Signature Dish 1",
-            "Signature Dish 2",
-            "Signature Dish 3"
+            "Creamy Spinach Pasta: Frequently cited as a must-try for its rich flavor.",
+"Chocolate Shakes (Brownie/Ferrero): Highly praised for being thick and delicious.",
+"Big English Breakfast / Platters: Popular for hearty, large-portion morning or brunch meals."
           ],
-          "rating": null
+          "rating": {"google":4 ,"zomato":4.5}
         },
         {
           "name": "Heart Cup Coffee",
@@ -4824,11 +4824,11 @@
             "Sunday": "11:00 AM - 11:00 PM"
           },
           "best_selling_dishes": [
-            "Signature Dish 1",
-            "Signature Dish 2",
-            "Signature Dish 3"
+            "Dahi Ke Kebab: Frequently highlighted for its taste.",
+"Jerk Chicken / Chilli Chicken: Popular non-veg starter.",
+"Crispy Corn Kernels / Paneer 65: Top-rated vegetarian options."
           ],
-          "rating": null
+          "rating": {"google":4.5,"zomato":4.1}
         },
         {
           "name": "Zero40 Brewing",
@@ -4940,11 +4940,11 @@
             "Sunday": "11:00 AM - 11:00 PM"
           },
           "best_selling_dishes": [
-            "Signature Dish 1",
-            "Signature Dish 2",
-            "Signature Dish 3"
+            "Kasundi Jhinga (Mustang Prawns): Highly lauded for its succulent, marinated prawns.",
+            "Pork Ribs: A frequently mentioned, popular item on the menu.",
+            "Fat Special Chicken Pizza (Paleo Option): Praised for its thin crust, often made with almond flour, and generous toppings."
           ],
-          "rating": null
+          "rating": {"google":4.0,"zomato":4.5}
         },
         {
           "name": "Tiki Shack",
@@ -4968,11 +4968,11 @@
             "Sunday": "11:00 AM - 11:00 PM"
           },
           "best_selling_dishes": [
-            "Signature Dish 1",
-            "Signature Dish 2",
-            "Signature Dish 3"
+            "Pork Ribs (Sriracha or BBQ Sauce): Highly recommended and frequently highlighted as a \"must-have\".",
+            "Bacon Wrapped Prawns: A top-rated seafood option among their, and similar, prawn preparations.",
+            "Chicken Momos / Crispy Corn: Popular quick bites frequently cited by visitors."
           ],
-          "rating": null
+          "rating": {"google": 4.0, "zomato": 4.0}
         },
         {
           "name": "Brooklyn Brew and Grill",
@@ -4996,11 +4996,11 @@
             "Sunday": "11:00 AM - 11:00 PM"
           },
           "best_selling_dishes": [
-            "Signature Dish 1",
-            "Signature Dish 2",
-            "Signature Dish 3"
+"Brisket Sliders: Highlighted for being very tender and full of flavor.",
+"Pulled Pork: Described as succulent and highly recommended.",  
+"Mac and Cheese: Noted as a great side dish."
           ],
-          "rating": null
+          "rating":{"google":4.5,"zomato":null}
         },
         {
           "name": "Sound & Spirits",
@@ -5024,11 +5024,11 @@
             "Sunday": "11:00 AM - 11:00 PM"
           },
           "best_selling_dishes": [
-            "Signature Dish 1",
-            "Signature Dish 2",
-            "Signature Dish 3"
+            "Barbecue Wings: Frequently highlighted for their taste.",
+"Peri Chicken: A highly recommended, spicy option.",
+"Fried Rice/Noodles: A popular, reliable choice from the menu."
           ],
-          "rating": null
+          "rating": {"google": 4.0, "zomato": 3.9}
         },
         {
           "name": "Taberna",
@@ -5052,11 +5052,11 @@
             "Sunday": "11:00 AM - 11:00 PM"
           },
           "best_selling_dishes": [
-            "Signature Dish 1",
-            "Signature Dish 2",
-            "Signature Dish 3"
+            "Grilled Sea Bass: Noted for being fresh, tender, and perfectly cooked.",
+"Octopus and Cuttlefish: Highlighted for having a, \"buttery\" texture.",
+"Tuna Tataki: A popular, high-quality seafood option. "
           ],
-          "rating": null
+          "rating": {"google": 4.0, "zomato": null}
         },
         {
           "name": "Babylon",
@@ -5080,11 +5080,11 @@
             "Sunday": "11:00 AM - 11:00 PM"
           },
           "best_selling_dishes": [
-            "Signature Dish 1",
-            "Signature Dish 2",
-            "Signature Dish 3"
+            "Fresh Dim Sum (Veg/Non-Veg): Frequently highlighted for being perfectly prepared and flavorful.",
+"Thin-Crust Pizzas: Recommended for their quality and taste.",
+"Wild Mushroom Thecha Wedges: Mentioned as a \"must-try\" specialty dish. "
           ],
-          "rating": null
+          "rating": {"google": 4.3, "zomato": 4.1}
         },
         {
           "name": "Amnesia Lounge Bar",
@@ -5108,11 +5108,11 @@
             "Sunday": "11:00 AM - 11:00 PM"
           },
           "best_selling_dishes": [
-            "Signature Dish 1",
-            "Signature Dish 2",
-            "Signature Dish 3"
+            "Tandoori Veg Platter: Frequently highlighted for its quality and taste.",
+            "Chicken Popcorn / Bbq Chicken Pizza: Popular non-veg options, particularly with the pub food, or \"bar snacks\" vibe.",
+            "Whiskey Cocktails / Nirvana LIT: The bar's signature drinks are a highlight for visitors."
           ],
-          "rating": null
+          "rating": {"google": 4.0, "zomato": 4.1}
         },
         {
           "name": "One8 Commune",
@@ -5136,11 +5136,11 @@
             "Sunday": "11:00 AM - 11:00 PM"
           },
           "best_selling_dishes": [
-            "Signature Dish 1",
-            "Signature Dish 2",
-            "Signature Dish 3"
+            "Mushroom Googly Dim Sum: A popular, highly-rated, melt-in-the-mouth appetizer.",
+            "Tandoori Commune : A top-rated choice for lovers of Indian, smoky, and charred flavors.",
+            "Hot Basil Chicken/Chicken Keema Ghotala : Known for rich, savory flavors. "
           ],
-          "rating": null
+          "rating": {"google": 4.0, "zomato": 4.3}
         },
         {
           "name": "The Hoppery",
@@ -5192,11 +5192,11 @@
             "Sunday": "11:00 AM - 11:00 PM"
           },
           "best_selling_dishes": [
-            "Signature Dish 1",
-            "Signature Dish 2",
-            "Signature Dish 3"
+            "Mamsam Ghee Roast: A flavour-packed, authentic mutton dish.",
+            "Special Pot Natu Kodi Pulav: A highly-rated, fragrant rice dish cooked to perfection.",
+            "Kaju Chicken Pakoda: A crunchy, popular starter. "
           ],
-          "rating": null
+          "rating": {"google": 4.8, "zomato": 4.3}
         },
         {
           "name": "Prost Brew Pub",
@@ -5248,11 +5248,11 @@
             "Sunday": "11:00 AM - 11:00 PM"
           },
           "best_selling_dishes": [
-            "Signature Dish 1",
-            "Signature Dish 2",
-            "Signature Dish 3"
+            "Puff Pizza: Known for a light, airy base.",
+            "Pepper Calamari: A frequently recommended starter.",
+            "Apple Cider Beer: Highlighted as a standout beverage. "
           ],
-          "rating": null
+          "rating": {"google": 4.2, "zomato": 4.2}
         },
         {
           "name": "10 Downing Street",
@@ -5276,11 +5276,11 @@
             "Sunday": "11:00 AM - 11:00 PM"
           },
           "best_selling_dishes": [
-            "Signature Dish 1",
-            "Signature Dish 2",
-            "Signature Dish 3"
+            "Bang Bang Prawns/Fried Prawns: Crispy, flavorful, and a popular starter.",
+            "Chilli Coriander Chicken: A favored, spicy dish.",
+            "Chicken Tikka Masala: A consistent, well-regarded main course. "
           ],
-          "rating": null
+          "rating": {"google": 4.0, "zomato": 4.3}
         },
         {
           "name": "Mustang Terrace Lounge",

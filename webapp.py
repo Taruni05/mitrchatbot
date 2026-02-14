@@ -56,6 +56,21 @@ from services.ai_preferences import (
 )
 from services.festivals_traffic_alerts import handle_festival_traffic_query,get_active_festivals,get_festival_alerts_for_saved_areas
 from services.live_deals import handle_deals_query,get_all_food_deals,get_all_ecommerce_deals,get_personalized_deals
+# Add after existing imports (around line 30)
+from services.auth import (
+    is_logged_in, 
+    show_login_page, 
+    sign_out, 
+    get_current_user_email,
+    get_current_user_id
+)
+from services.user_store import (
+    save_chat_message, 
+    load_preferences as load_user_preferences,
+    save_preference,
+    load_chat_history,
+    get_user_stats
+)
 
 import base64
 from datetime import datetime
@@ -1873,6 +1888,10 @@ def create_workflow():
 with st.spinner("Starting assistant…"):
     app = create_workflow()
 
+if not is_logged_in():
+    show_login_page()
+    st.stop()  
+
 
 # ========================================
 # SIDEBAR
@@ -1906,6 +1925,23 @@ with st.sidebar:
 
     st.sidebar.markdown("---")
     # In sidebar, after language selector
+    st.sidebar.markdown("---")
+    st.sidebar.subheader("👤 Account")
+
+    user_email = get_current_user_email()
+    if user_email:
+        st.sidebar.caption(f"Logged in as: **{user_email}**")
+        
+        # Show user stats
+        stats = get_user_stats()
+        if stats:
+            st.sidebar.metric("Total Chats", stats.get("total_messages", 0))
+        
+        # Logout button
+        if st.sidebar.button("🚪 Logout", use_container_width=True):
+            sign_out()
+            st.rerun()
+    st.sidebar.markdown("---")
 
     # Rate limit status
     user_id = get_user_id()
@@ -2078,10 +2114,28 @@ if config.app.ENABLE_RESPONSE_CACHE:
 # CHAT
 # ========================================
 if "messages" not in st.session_state:
-    st.session_state.messages = []
-    st.session_state.messages.append(
-        {"role": "assistant", "content": "👋 Welcome to MITR! I am your personal assistant for exploring Hyderabad. How can I help you today?"}
-    )
+    # Try to load from database
+    history = load_chat_history(limit=20)
+    
+    if history:
+        # Convert database format to session state format
+        st.session_state.messages = []
+        for msg in history:
+            st.session_state.messages.append({
+                "role": "user",
+                "content": msg["user_message"]
+            })
+            st.session_state.messages.append({
+                "role": "assistant",
+                "content": msg["bot_response"]
+            })
+    else:
+        # No history, show welcome message
+        st.session_state.messages = []
+        st.session_state.messages.append({
+            "role": "assistant",
+            "content": "👋 Welcome to MITR! I am your personal assistant for exploring Hyderabad. How can I help you today?"
+        })
 
 for message in st.session_state.messages:
     if message["role"] == "assistant":
@@ -2192,9 +2246,7 @@ with st.spinner("Thinking..."):
         
         # === STEP 3: Translate input to English if needed ===
         normalized_input = (
-            translate_response(user_input, "en")
-            if language != "en"
-            else user_input
+            translate_response(user_input, "en") if language != "en" else user_input
         )
         
         # === STEP 4: Check if normalized_input is valid ===
@@ -2232,6 +2284,11 @@ with st.spinner("Thinking..."):
 
             intent = result["intent"]
             response = result["response"]
+            save_chat_message(
+    user_message=normalized_input,
+    bot_response=response,
+    intent=intent
+)
             
             # === CACHE THE RESPONSE ===
             cache_response(normalized_input, response, current_language, current_area)

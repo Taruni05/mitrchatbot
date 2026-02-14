@@ -67,6 +67,9 @@ def transcribe(audio_bytes: bytes, language: str = "en") -> str:
             ]
         )
 
+        if not response or not hasattr(response, 'text'):
+            logger.error("No text in transcription response")
+            return ""
         return response.text.strip().strip('"').strip("'")
 
     except Exception as e:
