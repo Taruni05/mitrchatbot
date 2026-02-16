@@ -5304,11 +5304,11 @@
             "Sunday": "11:00 AM - 11:00 PM"
           },
           "best_selling_dishes": [
-            "Signature Dish 1",
-            "Signature Dish 2",
-            "Signature Dish 3"
+            "Mutton Galouti Kebab : Melt-in-the-mouth, finely minced mutton kebabs packed with rich, aromatic spices.",
+            "Fish Rava Sticks : Crispy, semolina-crusted fried fish fingers that offer a perfect texture contrast.",
+            "Chicken Tikka Pizza : A signature, thin-crust pizza loaded with smoky chicken tikka pieces."
           ],
-          "rating": null
+          "rating": {"google": 4.2, "zomato": 4.1}
         },
         {
           "name": "Skyhy",
@@ -5332,11 +5332,11 @@
             "Sunday": "11:00 AM - 11:00 PM"
           },
           "best_selling_dishes": [
-            "Signature Dish 1",
-            "Signature Dish 2",
-            "Signature Dish 3"
+            "Chicken Wings: Crispy, flavorful chicken wings frequently highlighted by patrons.",
+"Variety of Pizza: Thin-crust or classic pizzas offering a popular, shareable pub option.",
+"Cocktails: A range of signature beverages designed to complement the rooftop atmosphere. "
           ],
-          "rating": null
+          "rating": {"google":3.9,"zomato":4.1}
         },
         {
           "name": "Casbah",
@@ -5360,11 +5360,11 @@
             "Sunday": "11:00 AM - 11:00 PM"
           },
           "best_selling_dishes": [
-            "Signature Dish 1",
-            "Signature Dish 2",
-            "Signature Dish 3"
+            "Hummus: Creamy, authentic chickpea dip paired with fresh, warm pita bread.",
+            "Samak Hara: Delicate grilled fish served in a flavorful, aromatic tomato, garlic, and pepper sauce.",
+            "Mutton Rogan Josh: A rich, tender, slow-cooked North Indian curry specialty."
           ],
-          "rating": null
+          "rating": {"google": 4.0, "zomato": 4.0}
         },
         {
           "name": "Over The Moon",
@@ -5388,11 +5388,11 @@
             "Sunday": "11:00 AM - 11:00 PM"
           },
           "best_selling_dishes": [
-            "Signature Dish 1",
-            "Signature Dish 2",
-            "Signature Dish 3"
+            "Murgh Angara: Tender chicken pieces flambéed with rum, offering a smoky and rich flavour profile magicpin.",
+            "Crispy Lotus Stem: Crunchy lotus stems tossed in OTM's signature honey chilli sauce with sesame seeds.",
+            "Butter Garlic Prawns: A classic, popular dish featuring prawns cooked in a rich, flavorful butter garlic sauce. "
           ],
-          "rating": null
+          "rating": {"google": 4.1, "zomato": null}
         },
         {
           "name": "Fuel Cafe",
@@ -5416,11 +5416,11 @@
             "Sunday": "11:00 AM - 11:00 PM"
           },
           "best_selling_dishes": [
-            "Signature Dish 1",
-            "Signature Dish 2",
-            "Signature Dish 3"
+            "Chicken Biryani: A fragrant rice dish cooked with aromatic spices and tender chicken.",
+            "Chilli Chicken: A popular Chinese-style appetizer featuring crispy chicken tossed in a spicy, savory sauce.",
+            "Butter Naan with Curry: A soft, thick, leavened flatbread paired perfectly with a rich North Indian curry. "
           ],
-          "rating": null
+          "rating": {"google": 4.1, "zomato": 4.1}
         },
         {
           "name": "Daak Coffee House",
@@ -5444,11 +5444,11 @@
             "Sunday": "11:00 AM - 11:00 PM"
           },
           "best_selling_dishes": [
-            "Signature Dish 1",
-            "Signature Dish 2",
-            "Signature Dish 3"
+            "Tissue Bread: A highly popular, flaky, and buttery bread pastry.",
+            "Coffee Fuel Pump: A signature, strong, and creamy coffee specialty.",
+            "Shakshuka: A flavorful, North African-inspired dish featuring eggs poached in a tomato-based sauce."
           ],
-          "rating": null
+          "rating": {"google": 3.8, "zomato": 4.0}
         },
         {
           "name": "Kavanah",
@@ -5472,11 +5472,11 @@
             "Sunday": "11:00 AM - 11:00 PM"
           },
           "best_selling_dishes": [
-            "Signature Dish 1",
-            "Signature Dish 2",
-            "Signature Dish 3"
+            "Rainbow Pastry: A visually striking and moist multi-layered cake.",
+            "White Chocolate Pastry: A rich, sweet pastry favored for its creamy texture.",
+            "Pasta/Noodles: Generally well-regarded savory options for a cafe setting. "
           ],
-          "rating": null
+          "rating": {"google": 3.9, "zomato": 4.0}
         },
         {
           "name": "Vanaha",
@@ -5500,11 +5500,11 @@
             "Sunday": "11:00 AM - 11:00 PM"
           },
           "best_selling_dishes": [
-            "Signature Dish 1",
-            "Signature Dish 2",
-            "Signature Dish 3"
+            "Hyderabadi Biryani : Aromatic, long-grain basmati rice slow-cooked with marinated meat, spices, and saffron.",
+            "Skewer Kebabs : Tender, charcoal-grilled chunks of meat marinated in traditional spices and yogurt.",
+            "Haleem : A slow-cooked, rich stew of meat, lentils, and wheat, blended into a porridge-like consistency."
           ],
-          "rating": null
+          "rating": {"google": 4.4, "zomato": null}
         },
         {
           "name": "Mairu Bistro",
@@ -5528,11 +5528,11 @@
             "Sunday": "11:00 AM - 11:00 PM"
           },
           "best_selling_dishes": [
-            "Signature Dish 1",
-            "Signature Dish 2",
-            "Signature Dish 3"
+            "Mairu Special Phyllo Cups : Delicate, crispy pastry cups filled with a savory mixture of paneer, corn, and sprouts.",
+            "Wok Tossed Lollipop : Classic chicken lollipops tossed in a signature, flavorful Asian sauce.",
+            "Gun Powder Paneer : Soft paneer cubes coated in a spicy and aromatic South Indian dry gunpowder masala. "
           ],
-          "rating": null
+          "rating": {"google": 3.0, "zomato": 4.1}
         },
         {
           "name": "Bel Posto",
@@ -5556,11 +5556,11 @@
             "Sunday": "11:00 AM - 11:00 PM"
           },
           "best_selling_dishes": [
-            "Signature Dish 1",
-            "Signature Dish 2",
-            "Signature Dish 3"
+            "Guntur Chicken Pizza : A popular, spicy fusion pizza featuring local Guntur chili flavors.",
+            "Chicken Creamy Pomodoro Pasta : A rich pasta dish in a creamy tomato sauce with tender chicken chunks.",
+            "Chicken 65 : A well-regarded classic Indian appetizer that is a staple favorite at the restaurant. "
           ],
-          "rating": null
+          "rating": {"google": 4.4, "zomato": 4.1}
         },
         {
           "name": "Blue Fox",
@@ -5584,11 +5584,11 @@
             "Sunday": "11:00 AM - 11:00 PM"
           },
           "best_selling_dishes": [
-            "Signature Dish 1",
-            "Signature Dish 2",
-            "Signature Dish 3"
+            "Mutton Biryani : Tender pieces of meat cooked with aromatic basmati rice in traditional Hyderabadi style.",
+            "Butter Chicken : A creamy, rich tomato-based curry featuring tender chicken, often considered a comfort classic.",
+            "Pepper Fish : Stir-fried, succulent basa fillets tossed in a fragrant, spicy black pepper sauce. "
           ],
-          "rating": null
+          "rating": {"google": 4.0, "zomato": 4.1 }
         },
         {
           "name": "Minerva Coffee Shop",
@@ -5696,11 +5696,11 @@
             "Sunday": "11:00 AM - 11:00 PM"
           },
           "best_selling_dishes": [
-            "Signature Dish 1",
-            "Signature Dish 2",
-            "Signature Dish 3"
+            "Pizza in a Jar: A unique, layered blend of pizza sauce, mozzarella cheese, nachos, and veggies, served in a jar.",
+            "Peri Peri Cheesy Fries : Crispy potato wedges smothered in spicy peri-peri seasoning, mayo, and molten cheddar cheese, served in a jar.",
+            "Red Velvet Freak Shake : An indulgent, thick milkshake topped with a generous slice of red velvet cake and whipped cream. "
           ],
-          "rating": null
+          "rating": {"google":4.5,"zomato":3.9}
         },
         {
           "name": "Tim Hortons",
@@ -5724,11 +5724,11 @@
             "Sunday": "11:00 AM - 11:00 PM"
           },
           "best_selling_dishes": [
-            "Signature Dish 1",
-            "Signature Dish 2",
-            "Signature Dish 3"
+            "Double Double : A staple Canadian coffee brewed with two creams and two sugars.",
+            "Iced Capp : A sweet, creamy, blended iced coffee beverage.",
+            "Apple Fritter : A popular, glazed cinnamon-apple donut. "
           ],
-          "rating": null
+          "rating": {"google": 4.0, "zomato": 4.5 }
         },
         {
           "name": "Starbucks Jubilee Hills",
@@ -5780,11 +5780,11 @@
             "Sunday": "11:00 AM - 11:00 PM"
           },
           "best_selling_dishes": [
-            "Signature Dish 1",
-            "Signature Dish 2",
-            "Signature Dish 3"
+            "Butterscotch Frappe : A sweet, creamy, and flavorful blended coffee drink.",
+            "Double Chocolate Cake : A rich, moist, and indulgent pastry often paired with coffee.",
+            "Specialty Single Origin Coffee : Expertly roasted, high-quality coffee highlighting distinctive regional flavors. "
           ],
-          "rating": null
+          "rating": {"google":4.0, "zomato": 3.3}
         },
         {
           "name": "Blue Tokai Coffee",
@@ -5808,11 +5808,11 @@
             "Sunday": "11:00 AM - 11:00 PM"
           },
           "best_selling_dishes": [
-            "Signature Dish 1",
-            "Signature Dish 2",
-            "Signature Dish 3"
+            "Attikan Estate Coffee: A signature, dark-roast coffee with a robust, nutty flavor profile.",
+            "Almond Croissant: A buttery, flaky pastry with a sweet, toasted almond filling.",
+            "Ragi Flatbread: A nutritious and flavorful savory dish, offering a healthy alternative. "
           ],
-          "rating": null
+          "rating": {"google": 4.3, "zomato": null}
         },
         {
           "name": "Theory Cafe",
@@ -5864,11 +5864,11 @@
             "Sunday": "11:00 AM - 11:00 PM"
           },
           "best_selling_dishes": [
-            "Signature Dish 1",
-            "Signature Dish 2",
-            "Signature Dish 3"
+            "Signature Espresso Based Coffee (4.5/5): Expertly crafted, intense coffee featuring high-quality beans.",
+            "Matcha Latte (4.5/5): Widely praised as some of the best, authentic matcha in the city.",
+            "Grilled Protein with Pesto & Mash (4.2/5): A savory, healthy, and satisfying plated meal option. "
           ],
-          "rating": null
+          "rating": {"google": 4.3, "zomato": 4.3}
         },
         {
           "name": "Last House Coffee",
@@ -5892,11 +5892,11 @@
             "Sunday": "11:00 AM - 11:00 PM"
           },
           "best_selling_dishes": [
-            "Signature Dish 1",
-            "Signature Dish 2",
-            "Signature Dish 3"
+            "Caramel Popcorn Coffee: A unique, slightly sweet, and aromatic signature coffee beverage.",
+            "Mushroom Cheese Sandwich: A hearty, indulgent sandwich packed with mushrooms and a generous amount of cheese.",
+            "Green Buddha Bowl: A healthy, fresh bowl loaded with greens, paneer, asparagus, and pista. "
           ],
-          "rating": null
+          "rating": {"google": 3.6, "zomato": 4.5}
         },
         {
           "name": "Beyond Coffee",
@@ -5920,11 +5920,12 @@
             "Sunday": "11:00 AM - 11:00 PM"
           },
           "best_selling_dishes": [
-            "Signature Dish 1",
-            "Signature Dish 2",
-            "Signature Dish 3"
+            "Ginger Honey Tea: A comforting, highly recommended, and soothing blend perfect for a relaxing time.",
+            "Pasta (Various Types): Fresh, flavorful Italian-style pasta dishes that were a staple for many diners.",
+            "Club Sandwich: A substantial, classic, and fresh cafe staple popular for a quick bite. "
+
           ],
-          "rating": null
+          "rating": {"google": 4.0, "zomato": null}
         },
         {
           "name": "Comic Con Cafe",
@@ -5948,11 +5949,11 @@
             "Sunday": "11:00 AM - 11:00 PM"
           },
           "best_selling_dishes": [
-            "Signature Dish 1",
-            "Signature Dish 2",
-            "Signature Dish 3"
+            "Superhero Loaded Nachos: Crispy tortilla chips smothered in queso, jalapeños, and spiced beans for a crunchy kick.",
+            "The Hulk Smash Burger: A thick, juicy beef patty topped with cheddar, lettuce, and secret sauce on a toasted green bun.",
+            "Kryptonite Mint Shake: A thick, refreshing chocolate-mint milkshake that’s glowing with vibrant flavor"
           ],
-          "rating": null
+          "rating": {"google": 4.2, "zomato": 3.8}
         },
         {
           "name": "Humming Bird Cafe",
@@ -5976,11 +5977,11 @@
             "Sunday": "11:00 AM - 11:00 PM"
           },
           "best_selling_dishes": [
-            "Signature Dish 1",
-            "Signature Dish 2",
-            "Signature Dish 3"
+            "Broccoli Pizza: A unique, healthier pizza variant featuring a broccoli-based crust and fresh toppings.",
+            "Thai Chicken Satay: Tender, marinated chicken skewers grilled to perfection, served with a flavorful peanut sauce.",
+            "Hazelnut Frappe: A creamy, blended cold coffee drink with a strong hazelnut flavor, ideal for a refreshing break. "
           ],
-          "rating": null
+          "rating": {"google": 3.7, "zomato": 3.7}
         },
         {
           "name": "Dr. Bubbles",
@@ -6004,11 +6005,12 @@
             "Sunday": "11:00 AM - 11:00 PM"
           },
           "best_selling_dishes": [
-            "Signature Dish 1",
-            "Signature Dish 2",
-            "Signature Dish 3"
+            "Green Apple Bubble Tea with Strawberry Popping Boba: A refreshing, fruity tea pairing tart green apple with bursting strawberry pearls.",
+            "Classic Chocolate Waffles: Crispy, golden-brown waffles loaded with chocolate sauce and toppings.",
+            "Signature Milk Tea with Tapioca Pearls: The traditional, creamy milk tea choice featuring chewy boba pearls. "
+
           ],
-          "rating": null
+          "rating": {"google": 3.5, "zomato": 3.7}
         },
         {
           "name": "The Joint",
@@ -6032,17 +6034,18 @@
             "Sunday": "11:00 AM - 11:00 PM"
           },
           "best_selling_dishes": [
-            "Signature Dish 1",
-            "Signature Dish 2",
-            "Signature Dish 3"
+            "Signature Beef Burger: A juicy, flame-grilled patty topped with melted cheddar, crisp lettuce, and secret sauce on a toasted brioche bun.",
+            "Crispy Loaded Fries: Golden-fried, thick-cut potatoes smothered in queso, bacon bits, and jalapenos.",
+            "House Smoked Wings: Slow-smoked chicken wings tossed in a tangy buffalo or hickory BBQ sauce. "
+
           ],
-          "rating": null
+          "rating": {"google": 4.5, "zomato": null}
         },
         {
-          "name": "Komasa",
+          "name": "Koma 2.0",
           "main_branch": {
             "location": "Hyderabad",
-            "google_maps_link": "https://www.google.com/maps/search/Komasa+Hyderabad"
+            "google_maps_link": "https://www.google.com/maps/search/Koma+2.0+Hyderabad"
           },
           "other_branches": [],
           "price_range": {
@@ -6060,11 +6063,11 @@
             "Sunday": "11:00 AM - 11:00 PM"
           },
           "best_selling_dishes": [
-            "Signature Dish 1",
-            "Signature Dish 2",
-            "Signature Dish 3"
+            "Dragon Prawns: A top-rated, crispy seafood appetizer frequently highlighted for its flavor.",
+            "Complete Koma (Signature Shot Set): Known as a unique, high-energy 5-shot drink experience.",
+            "Sushi & Signature Cocktails (e.g., Kiwi Kiss): Consistently praised for quality alongside their curated bar menu "
           ],
-          "rating": null
+          "rating": {"google": 4.0, "zomato": 4.3}
         },
         {
           "name": "Red Rhino",
@@ -6088,11 +6091,11 @@
             "Sunday": "11:00 AM - 11:00 PM"
           },
           "best_selling_dishes": [
-            "Signature Dish 1",
-            "Signature Dish 2",
-            "Signature Dish 3"
+            "Craft Beer : A diverse, freshly brewed selection that is highly regarded and a must-try.",
+            "Sushi : Freshly prepared, well-received dishes featuring options like the popular Asparagus Maki.",
+            "Neapolitan Pizzas : Authentic, wood-fired pizzas with a great crust. "
           ],
-          "rating": null
+          "rating": {"google": 4.5, "zomato": 4.5}
         }
       ],
       "Street_Bakeries_QuickBites": [
@@ -6147,11 +6150,12 @@
             "Sunday": "11:00 AM - 11:00 PM"
           },
           "best_selling_dishes": [
-            "Signature Dish 1",
-            "Signature Dish 2",
-            "Signature Dish 3"
+            "Pav Bhaaji: A spicy, flavorful mashed vegetable curry served with buttery, toasted bread rolls.",
+            "Dahi Puri: Crispy shells filled with tangy chutneys, potatoes, and topped with generous amounts of cool yogurt and sev.",
+            "Samosa Ragda: A savory, fried pastry filled with spiced potatoes, broken down and covered in a hearty chickpea curry. "
+
           ],
-          "rating": null
+          "rating": {"google": 4.2, "zomato": 3.7}
         },
         {
           "name": "Ram Ki Bandi",
@@ -6203,11 +6207,12 @@
             "Sunday": "11:00 AM - 11:00 PM"
           },
           "best_selling_dishes": [
-            "Signature Dish 1",
-            "Signature Dish 2",
-            "Signature Dish 3"
+            "Tandoori Momos (Momo Delight): Succulent dumplings marinated in spices and charred in a tandoor, offering a smokey twist on a classic.",
+            "Thunderstorm Burger (GD’s): A loaded, crispy, and spicy burger known for its fiery flavor profile.",
+            "Ghee Karam Dosa (Varalakshmi Tiffins): A crispy South Indian crepe topped with spicy podi and generous ghee. "
+
           ],
-          "rating": null
+          "rating": {"google": 4.3, "zomato": null}
         },
         {
           "name": "Govind's Bandi",
@@ -6231,11 +6236,11 @@
             "Sunday": "11:00 AM - 11:00 PM"
           },
           "best_selling_dishes": [
-            "Signature Dish 1",
-            "Signature Dish 2",
-            "Signature Dish 3"
+            "Tava Idli: Soft idlis pan-fried with generous amounts of butter and special spices.",
+            "Butter Dosa: A crisp, thin dosa drenched in butter, offering a rich flavor.",
+            "Butter Wada: Crispy, deep-fried fritters that are often served with a generous dollop of butter. "
           ],
-          "rating": null
+          "rating": {"google": 4.5, "zomato": null}
         },
         {
           "name": "Pragathi Tiffin Centre",
@@ -6259,11 +6264,11 @@
             "Sunday": "11:00 AM - 11:00 PM"
           },
           "best_selling_dishes": [
-            "Signature Dish 1",
-            "Signature Dish 2",
-            "Signature Dish 3"
+            "Butter Paneer Masala Dosa: A highly popular, indulgent, and crispy dosa filled with fresh paneer and topped with rich, white butter.",
+            "Idli: Exceptionally soft and fluffy steamed rice cakes that melt in the mouth, often cited as among the best in the city.",
+            "Ganga Jamuna (Upma & Idli Mix): A signature, comforting combination of soft idli and savory upma served together with their signature chutneys. "
           ],
-          "rating": null
+          "rating": {"google": 4.0, "zomato": 3.9}
         },
         {
           "name": "Taaza Kitchen",
@@ -6399,11 +6404,11 @@
             "Sunday": "11:00 AM - 11:00 PM"
           },
           "best_selling_dishes": [
-            "Signature Dish 1",
-            "Signature Dish 2",
-            "Signature Dish 3"
+            "Signature Tiramisu: A delicate, classic Italian coffee-flavored dessert featuring mascarpone cream and espresso-soaked sponge.",
+            "Macarons: Exceptionally light, airy French almond meringue cookies available in diverse, authentic flavors.",
+            "Mushroom Cream Tortellini: A rich, savory pasta dish featuring delicate pasta pockets filled with earthy mushrooms and decadent cream sauce."
           ],
-          "rating": null
+          "rating": {"google": 4.6, "zomato": null}
         },
         {
           "name": "Theobroma",
@@ -6427,11 +6432,11 @@
             "Sunday": "11:00 AM - 11:00 PM"
           },
           "best_selling_dishes": [
-            "Signature Dish 1",
-            "Signature Dish 2",
-            "Signature Dish 3"
+            "Overload Brownie : A signature, thick, and intensely chocolatey brownie that established the bakery's reputation.",
+            "Dense Loaf Cake : An incredibly rich, moist, and fudgy chocolate cake perfect for chocolate lovers.",
+            "Baked Vada Pao : A delicious, flaky, and savory pastry-style twist on the Mumbai classic. "
           ],
-          "rating": null
+          "rating": {"google": 4.5, "zomato": 4.2}
         },
         {
           "name": "Van Lavino",
@@ -6455,11 +6460,11 @@
             "Sunday": "11:00 AM - 11:00 PM"
           },
           "best_selling_dishes": [
-            "Signature Dish 1",
-            "Signature Dish 2",
-            "Signature Dish 3"
+            "Russian Medovik Cake: A highly-rated, decadent layered honey cake with cream.",
+            "Lotus Biscoff Cake: A signature, rich cake featuring the popular caramelized biscuit flavor.",
+            "Mexican Rice Bowl: A flavourful, filling savory option often praised in reviews. "
           ],
-          "rating": null
+          "rating": {"google": 4.5, "zomato": 4.6}
         },
         {
           "name": "Magnolia Bakery",
@@ -6483,11 +6488,11 @@
             "Sunday": "11:00 AM - 11:00 PM"
           },
           "best_selling_dishes": [
-            "Signature Dish 1",
-            "Signature Dish 2",
-            "Signature Dish 3"
+            "Banana Pudding: Creamy, layered dessert with fresh bananas, vanilla wafers, and pudding.",
+            "Tres Leches: A soft, indulgent, and moist milk-soaked cake.",
+            "Classic Cupcakes: Light, moist cakes topped with signature, rich buttercream frosting. "
           ],
-          "rating": null
+          "rating": {"google": 3.9, "zomato": 3.6}
         },
         {
           "name": "Churrolto",
@@ -6511,11 +6516,11 @@
             "Sunday": "11:00 AM - 11:00 PM"
           },
           "best_selling_dishes": [
-            "Signature Dish 1",
-            "Signature Dish 2",
-            "Signature Dish 3"
+            "Classic Churros: Crispy, golden dough sticks served with rich, melted chocolate dipping sauce.",
+            "Buttermilk Fried Chicken (BFC): Secret recipe, crispy, and juicy fried chicken that is highly rated.",
+            "Truffle Parmesan Fries: Thin, crispy fries drizzled with aromatic truffle oil and sprinkled with parmesan cheese. "
           ],
-          "rating": null
+          "rating": {"google": 4.0, "zomato": 4.6}
         },
         {
           "name": "Dadu's Mithai Vatika",
@@ -6539,11 +6544,11 @@
             "Sunday": "11:00 AM - 11:00 PM"
           },
           "best_selling_dishes": [
-            "Signature Dish 1",
-            "Signature Dish 2",
-            "Signature Dish 3"
+            "Rasmalai : Frequently cited as the best in the city, known for being rich, creamy, and having the right sweetness.",
+            "Jalebi/Rabdi : Hot, crispy Jalebis, especially when paired with their thick, creamy Rabdi.",
+            "Motichoor/Annamayya Laddu : Known for being soft and having a traditional, authentic taste. "
           ],
-          "rating": null
+          "rating": {"google": 4.3, "zomato": 4.3}
         },
         {
           "name": "G Pulla Reddy Sweets",
@@ -6567,11 +6572,11 @@
             "Sunday": "11:00 AM - 11:00 PM"
           },
           "best_selling_dishes": [
-            "Signature Dish 1",
-            "Signature Dish 2",
-            "Signature Dish 3"
+            "Putharekulu (Paper Sweets): Highly acclaimed for being paper-thin and authentic.",
+            "Kaju Barfi/Sweet Kaju: A top-rated, consistent favorite.",
+            "Bandar Halwa: Famed for its rich, traditional taste. "
           ],
-          "rating": null
+          "rating": {"google": 4.3, "zomato": 4.3}
         },
         {
           "name": "Hameedi Confectioners",
@@ -6595,11 +6600,11 @@
             "Sunday": "11:00 AM - 11:00 PM"
           },
           "best_selling_dishes": [
-            "Signature Dish 1",
-            "Signature Dish 2",
-            "Signature Dish 3"
+            "Jouzi Halwa : A signature, rich, ghee-laden dish with nutmeg, often described as \"out of this world\".",
+            "Badam Ashrafi : A royal, almond-based, coin-shaped sweet, often highly praised.",
+            "Kaju ki Jali : A delicate, cashew-based treat favored for its unique taste. "
           ],
-          "rating": null
+          "rating": {"google": 4.3, "zomato": 4.3}
         },
         {
           "name": "Nimrah Cafe",
@@ -6680,11 +6685,11 @@
             "Sunday": "11:00 AM - 11:00 PM"
           },
           "best_selling_dishes": [
-            "Signature Dish 1",
-            "Signature Dish 2",
-            "Signature Dish 3"
+            "Matka Kulfi: Noted for being rich, creamy, and authentic.",
+            "Hot Chocolate Fudge (HCF): A staple favorite featuring two scoops of vanilla, hot fudge, and nuts.",
+            "Malai Falooda: A nostalgic, sweet, and creamy offering. "
           ],
-          "rating": null
+          "rating": {"google": 4.4, "zomato": 3.3}
         },
         {
           "name": "99 Pancakes",
@@ -6708,11 +6713,11 @@
             "Sunday": "11:00 AM - 11:00 PM"
           },
           "best_selling_dishes": [
-            "Signature Dish 1",
-            "Signature Dish 2",
-            "Signature Dish 3"
+            "Chocolate Lovely Pancakes: A highly recommended, top-selling mini pancake option loaded with rich chocolate.",
+            "Red Velvet Pancakes: A popular, visually appealing choice in their signature mini pancake lineup.",
+            "French Crepes: A well-regarded option, offering a thinner, delicate alternative to their thick pancakes. "
           ],
-          "rating": null
+          "rating": {"google": 4.2, "zomato": 3.9}
         },
         {
           "name": "Cravery",
@@ -6736,11 +6741,11 @@
             "Sunday": "11:00 AM - 11:00 PM"
           },
           "best_selling_dishes": [
-            "Signature Dish 1",
-            "Signature Dish 2",
-            "Signature Dish 3"
+            "Mac and Cheese: Consistently praised as a top, comforting specialty.",
+            "Pulled Cheese Garlic Bread: Known for its rich, stringy cheese pull and herb butter.",
+            "Belgian Hot Chocolate: Described as a must-try, indulgent beverage. "
           ],
-          "rating": null
+          "rating": {"google": 4.0, "zomato": 4.5}
         },
         {
           "name": "Dadu's Jalebi",
@@ -6764,11 +6769,11 @@
             "Sunday": "11:00 AM - 11:00 PM"
           },
           "best_selling_dishes": [
-            "Signature Dish 1",
-            "Signature Dish 2",
-            "Signature Dish 3"
+            "Hot Jalebis: Renowned for being freshly made and delicious, although some reviews suggest they can be quite thick.",
+            "Rasmalai (incl. Butterscotch): Consistently rated high  for being creamy and perfectly sweet.",
+            "Bengali Sweets/Malai Laddu: A crowd favorite, with many praising the milk-based sweets for their quality and texture."
           ],
-          "rating": null
+          "rating": {"google": 4.2, "zomato": 3.8}
         },
         {
           "name": "Famous Ice Cream",
@@ -6799,60 +6804,72 @@
           "rating": {"google":4.1, "zomato":null}
         },
         {
-          "name": "Absolute Samosa",
-          "main_branch": {
-            "location": "Hyderabad",
-            "google_maps_link": "https://www.google.com/maps/search/Absolute+Samosa+Hyderabad"
-          },
-          "other_branches": [],
-          "price_range": {
-            "min": 150,
-            "max": 600,
-            "currency": "INR"
-          },
-          "opening_hours": {
-            "Monday": "11:00 AM - 11:00 PM",
-            "Tuesday": "11:00 AM - 11:00 PM",
-            "Wednesday": "11:00 AM - 11:00 PM",
-            "Thursday": "11:00 AM - 11:00 PM",
-            "Friday": "11:00 AM - 11:30 PM",
-            "Saturday": "11:00 AM - 11:30 PM",
-            "Sunday": "11:00 AM - 11:00 PM"
-          },
-          "best_selling_dishes": [
-            "Signature Dish 1",
-            "Signature Dish 2",
-            "Signature Dish 3"
-          ],
-          "rating": null
+          "name": "Samosa Party",
+  "main_branch": {
+    "location": "Dilsukhnagar, Hyderabad",
+    "google_maps_link": "https://maps.google.com/?q=Samosa+Party+Dilsukhnagar"
+  },
+  "other_branches": [
+    "Madhapur",
+    "Kondapur",
+    "Banjara Hills"
+  ],
+  "price_range": {
+    "min": 100,
+    "max": 400,
+    "currency": "INR"
+  },
+  "opening_hours": {
+    "Monday": "09:00 AM - 11:00 PM",
+    "Tuesday": "09:00 AM - 11:00 PM",
+    "Wednesday": "09:00 AM - 11:00 PM",
+    "Thursday": "09:00 AM - 11:00 PM",
+    "Friday": "09:00 AM - 12:00 AM",
+    "Saturday": "09:00 AM - 12:00 AM",
+    "Sunday": "09:00 AM - 11:00 PM"
+  },
+  "best_selling_dishes": [
+    "Corn & Cheese Samosa: A modern twist on the classic, featuring a gooey melted cheese and sweet corn filling that is a hit with all age groups.",
+    "Aloo Panner Samosa: A hearty, protein-packed version of the traditional aloo samosa, known for its spiced paneer cubes and crispy outer crust.",
+    "Peri Peri Fries & Chai: Often ordered as a combo; the spicy fries perfectly complement their signature ginger or cardamom cutting chai."
+  ],
+  "rating": {
+    "google": 4.2,
+    "zomato": 4.0
+  }
         },
         {
-          "name": "Swaaddesh",
-          "main_branch": {
-            "location": "Hyderabad",
-            "google_maps_link": "https://www.google.com/maps/search/Swaaddesh+Hyderabad"
-          },
-          "other_branches": [],
-          "price_range": {
-            "min": 150,
-            "max": 600,
-            "currency": "INR"
-          },
-          "opening_hours": {
-            "Monday": "11:00 AM - 11:00 PM",
-            "Tuesday": "11:00 AM - 11:00 PM",
-            "Wednesday": "11:00 AM - 11:00 PM",
-            "Thursday": "11:00 AM - 11:00 PM",
-            "Friday": "11:00 AM - 11:30 PM",
-            "Saturday": "11:00 AM - 11:30 PM",
-            "Sunday": "11:00 AM - 11:00 PM"
-          },
-          "best_selling_dishes": [
-            "Signature Dish 1",
-            "Signature Dish 2",
-            "Signature Dish 3"
-          ],
-          "rating": null
+          
+  "name": "Swaadhish Family Restaurant",
+  "main_branch": {
+    "location": "Indraprastha Colony, Nagole, Hyderabad",
+    "google_maps_link": "https://maps.google.com/?q=Swaadhish+Family+Restaurant+Nagole"
+  },
+  "other_branches": [],
+  "price_range": {
+    "min": 200,
+    "max": 800,
+    "currency": "INR"
+  },
+  "opening_hours": {
+    "Monday": "12:30 PM - 11:00 PM",
+    "Tuesday": "12:30 PM - 11:00 PM",
+    "Wednesday": "12:30 PM - 11:00 PM",
+    "Thursday": "12:30 PM - 11:00 PM",
+    "Friday": "12:30 PM - 11:00 PM",
+    "Saturday": "12:30 PM - 11:00 PM",
+    "Sunday": "12:30 PM - 11:00 PM"
+  },
+  "best_selling_dishes": [
+    "Swaadhish Special Chicken Biryani: A flavorful, aromatic biryani that is a signature of the house, known for its perfectly spiced masala and succulent chicken pieces.",
+    "Loose Prawns: A highly rated starter featuring crispy, deep-fried prawns tossed in a tangy and spicy tempering, perfect for seafood lovers.",
+    "Butter Kulcha with Paneer Butter Masala: A classic North Indian pairing where the soft, buttery bread complements the rich, creamy tomato-based paneer gravy."
+  ],
+  "rating": {
+    "google": 3.9,
+    "zomato": 4.3
+  }
+
         },
         {
           "name": "Pizza Zone",
@@ -6876,11 +6893,11 @@
             "Sunday": "11:00 AM - 11:00 PM"
           },
           "best_selling_dishes": [
-            "Signature Dish 1",
-            "Signature Dish 2",
-            "Signature Dish 3"
+            "Cheese Burst Pizza: Often cited as a favorite for its cheesy, indulgent nature.",
+            "Cheese Garlic Bread: Frequently highlighted for being delicious and buttery.",
+            "White Sauce Pasta: Popular for its creamy texture, featured in their buffet. "
           ],
-          "rating": null
+          "rating": {"google": 4.2, "zomato": 4.2}
         },
         {
           "name": "La Pino'z Pizza",
@@ -6904,11 +6921,11 @@
             "Sunday": "11:00 AM - 11:00 PM"
           },
           "best_selling_dishes": [
-            "Signature Dish 1",
-            "Signature Dish 2",
-            "Signature Dish 3"
+            "Giant/Monster Pizza: Known for its enormous size (up to 24 inches), this is a signature item frequently praised for offering great value and taste.",
+            "Cheese7 Pizza: A favorite for cheese lovers, featuring a rich, seven-cheese blend.",
+            "Paneer Tikka Butter Masala Pizza: A top choice for those looking for an Indian twist on a pizza. "
           ],
-          "rating": null
+          "rating": {"google": 3.7, "zomato": 3.35}
         },
         {
           "name": "Tibbs Frankie",
@@ -6932,11 +6949,11 @@
             "Sunday": "11:00 AM - 11:00 PM"
           },
           "best_selling_dishes": [
-            "Signature Dish 1",
-            "Signature Dish 2",
-            "Signature Dish 3"
+            "Chicken Tikka Frankie: Features succulent chicken pieces, tangy sauce, and crunchy onions in a grilled wrap.",
+            "Classic Veg Aloo Frankie: A popular, flavorful option filled with a spiced vegetable patty.",
+            "Chettinad Chicken/Paneer Frankie: Known for its authentic, spicy South Indian flavors. "
           ],
-          "rating": null
+          "rating": {"google": 4.0, "zomato": 4.0}
         },
         {
           "name": "Wow! Momo",
@@ -6960,11 +6977,11 @@
             "Sunday": "11:00 AM - 11:00 PM"
           },
           "best_selling_dishes": [
-            "Signature Dish 1",
-            "Signature Dish 2",
-            "Signature Dish 3"
+            "Chicken Cheese Fried Momo: A highly popular, crispy, and cheesy favorite.",
+            "Pan Fried Momos (Schezwan/Hot Garlic): Crispy, tossed in spicy sauces.",
+            "Momo Burgers: A unique, signature twist on fast food. "
           ],
-          "rating": null
+          "rating": {"google": 3.8, "zomato": 3.9}
         },
         {
           "name": "Burger King",
@@ -6988,11 +7005,11 @@
             "Sunday": "11:00 AM - 11:00 PM"
           },
           "best_selling_dishes": [
-            "Signature Dish 1",
-            "Signature Dish 2",
-            "Signature Dish 3"
+            "Whopper (Chicken/Mutton/Veg): The signature 5-inch flame-grilled burger is highly praised for its smoky flavor and generous size.",
+            "Bacon King: Noted for its density and high-quality bacon and cheese combination.",
+            "Chicken Fries/Cheesy Fries: A popular side item often highlighted for being flavorful. "
           ],
-          "rating": null
+          "rating": {"google": 3.7, "zomato": 3.8}
         },
         {
           "name": "KFC",
@@ -7016,96 +7033,122 @@
             "Sunday": "11:00 AM - 11:00 PM"
           },
           "best_selling_dishes": [
-            "Signature Dish 1",
-            "Signature Dish 2",
-            "Signature Dish 3"
+            "Original Recipe Fried Chicken: The quintessential, tender bone-in chicken with the secret 11 herbs and spices.",
+            "Zinger Burger: A thick, crispy chicken fillet topped with mayo and lettuce, often cited as a favorite.",
+            "Hot Wings / Popcorn Chicken: Popular, spicy, and crunchy bite-sized snacks. "
           ],
-          "rating": null
+          "rating": {"google": 3.8, "zomato": 4.1}
         },
         {
-          "name": "McDonald's",
-          "main_branch": {
-            "location": "Hyderabad",
-            "google_maps_link": "https://www.google.com/maps/search/McDonald's+Hyderabad"
-          },
-          "other_branches": [],
-          "price_range": {
-            "min": 150,
-            "max": 600,
-            "currency": "INR"
-          },
-          "opening_hours": {
-            "Monday": "11:00 AM - 11:00 PM",
-            "Tuesday": "11:00 AM - 11:00 PM",
-            "Wednesday": "11:00 AM - 11:00 PM",
-            "Thursday": "11:00 AM - 11:00 PM",
-            "Friday": "11:00 AM - 11:30 PM",
-            "Saturday": "11:00 AM - 11:30 PM",
-            "Sunday": "11:00 AM - 11:00 PM"
-          },
-          "best_selling_dishes": [
-            "Signature Dish 1",
-            "Signature Dish 2",
-            "Signature Dish 3"
-          ],
-          "rating": null
-        },
+  "name": "McDonald's",
+  "main_branch": {
+    "location": "Multiple Locations, Hyderabad",
+    "google_maps_link": "https://www.google.com/maps/search/McDonald's+Hyderabad"
+  },
+  "other_branches": [
+    "Dilsukhnagar (PVR Next)",
+    "Himagiri",
+    "Banjara Hills",
+    "Inorbit Mall"
+  ],
+  "price_range": {
+    "min": 100,
+    "max": 500,
+    "currency": "INR"
+  },
+  "opening_hours": {
+    "Monday": "07:00 AM - 01:00 AM",
+    "Tuesday": "07:00 AM - 01:00 AM",
+    "Wednesday": "07:00 AM - 01:00 AM",
+    "Thursday": "07:00 AM - 01:00 AM",
+    "Friday": "07:00 AM - 03:00 AM",
+    "Saturday": "07:00 AM - 03:00 AM",
+    "Sunday": "07:00 AM - 01:00 AM"
+  },
+  "best_selling_dishes": [
+    "McSpicy Chicken Burger: A spicy, crispy chicken patty topped with lettuce and creamy mayo; the city's go-to spicy burger.",
+    "McAloo Tikki Burger: The iconic budget-friendly potato and peas patty burger served with tomato mayo.",
+    "Peri Peri Fries: World-famous crispy fries served with a signature spicy seasoning shake-bag."
+  ],
+  "rating": {
+    "google": 4.1,
+    "zomato": 4.0
+  }
+},
         {
-          "name": "Subway",
-          "main_branch": {
-            "location": "Hyderabad",
-            "google_maps_link": "https://www.google.com/maps/search/Subway+Hyderabad"
-          },
-          "other_branches": [],
-          "price_range": {
-            "min": 150,
-            "max": 600,
-            "currency": "INR"
-          },
-          "opening_hours": {
-            "Monday": "11:00 AM - 11:00 PM",
-            "Tuesday": "11:00 AM - 11:00 PM",
-            "Wednesday": "11:00 AM - 11:00 PM",
-            "Thursday": "11:00 AM - 11:00 PM",
-            "Friday": "11:00 AM - 11:30 PM",
-            "Saturday": "11:00 AM - 11:30 PM",
-            "Sunday": "11:00 AM - 11:00 PM"
-          },
-          "best_selling_dishes": [
-            "Signature Dish 1",
-            "Signature Dish 2",
-            "Signature Dish 3"
-          ],
-          "rating": null
-        },
+  "name": "Subway",
+  "main_branch": {
+    "location": "Multiple Locations, Hyderabad",
+    "google_maps_link": "http://googleusercontent.com/maps.google.com/7"
+  },
+  "other_branches": [
+    "Kothapet (Ace Pearl)",
+    "Malakpet (Opp. TV Tower)",
+    "HSR Nagar",
+    "Jubilee Hills",
+    "Hitech City (Knowledge City)"
+  ],
+  "price_range": {
+    "min": 200,
+    "max": 600,
+    "currency": "INR"
+  },
+  "opening_hours": {
+    "Monday": "08:00 AM - 11:00 PM",
+    "Tuesday": "08:00 AM - 11:00 PM",
+    "Wednesday": "08:00 AM - 11:00 PM",
+    "Thursday": "08:00 AM - 11:00 PM",
+    "Friday": "08:00 AM - 12:00 AM",
+    "Saturday": "08:00 AM - 12:00 AM",
+    "Sunday": "08:00 AM - 11:00 PM"
+  },
+  "best_selling_dishes": [
+    "Paneer Tikka Sub: A popular Indian classic featuring marinated paneer cubes grilled to perfection and served with fresh veggies and mint mayo.",
+    "Chicken Teriyaki Sub: Tender chicken strips glazed in a sweet and savory teriyaki sauce, best paired with sweet onion dressing.",
+    "Veggie Delite: A light and crunchy favorite loaded with fresh lettuce, tomatoes, cucumbers, peppers, and your choice of signature sauces."
+  ],
+  "rating": {
+    "google": 4.0,
+    "zomato": 3.9
+  }
+},
         {
-          "name": "Domino's",
-          "main_branch": {
-            "location": "Hyderabad",
-            "google_maps_link": "https://www.google.com/maps/search/Domino's+Hyderabad"
-          },
-          "other_branches": [],
-          "price_range": {
-            "min": 150,
-            "max": 600,
-            "currency": "INR"
-          },
-          "opening_hours": {
-            "Monday": "11:00 AM - 11:00 PM",
-            "Tuesday": "11:00 AM - 11:00 PM",
-            "Wednesday": "11:00 AM - 11:00 PM",
-            "Thursday": "11:00 AM - 11:00 PM",
-            "Friday": "11:00 AM - 11:30 PM",
-            "Saturday": "11:00 AM - 11:30 PM",
-            "Sunday": "11:00 AM - 11:00 PM"
-          },
-          "best_selling_dishes": [
-            "Signature Dish 1",
-            "Signature Dish 2",
-            "Signature Dish 3"
-          ],
-          "rating": null
-        },
+  "name": "Domino's Pizza",
+  "main_branch": {
+    "location": "Multiple Locations, Hyderabad",
+    "google_maps_link": "http://googleusercontent.com/maps.google.com/8"
+  },
+  "other_branches": [
+    "Dilsukhnagar (Main Road)",
+    "Kothapet",
+    "Malakpet",
+    "L.B. Nagar",
+    "Saroornagar"
+  ],
+  "price_range": {
+    "min": 150,
+    "max": 900,
+    "currency": "INR"
+  },
+  "opening_hours": {
+    "Monday": "10:30 AM - 11:00 PM",
+    "Tuesday": "10:30 AM - 11:00 PM",
+    "Wednesday": "10:30 AM - 11:00 PM",
+    "Thursday": "10:30 AM - 11:00 PM",
+    "Friday": "10:30 AM - 12:00 AM",
+    "Saturday": "10:30 AM - 12:00 AM",
+    "Sunday": "10:30 AM - 11:00 PM"
+  },
+  "best_selling_dishes": [
+    "Farmhouse Pizza: A colorful vegetarian favorite loaded with grilled mushrooms, crunchy capsicum, succulent paneer, and fresh tomatoes.",
+    "Chicken Golden Delight: A crowd-pleaser featuring barbeque chicken, golden corn, and extra cheese for a sweet and savory balance.",
+    "Stuffed Garlic Bread: The ultimate side dish, filled with melted cheese, sweet corn, and jalapeños, seasoned with oregano."
+  ],
+  "rating": {
+    "google": 4.1,
+    "zomato": 4.2
+  }
+},
         {
           "name": "Ohri's Eatmor",
           "main_branch": {
@@ -7128,11 +7171,14 @@
             "Sunday": "11:00 AM - 11:00 PM"
           },
           "best_selling_dishes": [
-            "Signature Dish 1",
-            "Signature Dish 2",
-            "Signature Dish 3"
+            "Sizzling Brownie: A signature, highly recommended dessert.",
+            "Cold Stone Brownie Fudge: Often cited as a top choice.",
+            "Chola Bhatura: A popular, reliable savory option." 
           ],
-          "rating": null
+          "rating": {
+            "google": 3.7,
+            "zomato": 4.2
+          }
         },
         {
           "name": "Shahji Ka Dhaba",
@@ -7156,11 +7202,11 @@
             "Sunday": "11:00 AM - 11:00 PM"
           },
           "best_selling_dishes": [
-            "Signature Dish 1",
-            "Signature Dish 2",
-            "Signature Dish 3"
+            "Butter Chicken: Frequently cited as the best, offering a rich, creamy, and authentic flavor.",
+            "Mutton Rogan Josh: A top-recommended, tender, and flavorful signature dish.",
+            "Kebabs/Tandoori Items: Specifically, the Tangadi Khabab and Nawabi Chicken Tikka are top choices."
           ],
-          "rating": null
+          "rating": {"google": 4.2, "zomato": 4.1}
         },
         {
           "name": "Sardarji's Dhaba",
@@ -7184,9 +7230,9 @@
             "Sunday": "11:00 AM - 11:00 PM"
           },
           "best_selling_dishes": [
-            "Signature Dish 1",
-            "Signature Dish 2",
-            "Signature Dish 3"
+            "Butter Chicken: Tender, succulent chicken cooked in a rich, creamy, and mildly spiced tomato-based gravy .",
+            "Tandoori Momos: A fusion specialty, dumplings marinated in tandoori spices and grilled to smoky perfection.",
+            "Chole Bhature: Classic street food featuring spicy chickpeas served with fluffy, deep-fried bread."
           ],
           "rating": null
         },
@@ -7212,11 +7258,11 @@
             "Sunday": "11:00 AM - 11:00 PM"
           },
           "best_selling_dishes": [
-            "Signature Dish 1",
-            "Signature Dish 2",
-            "Signature Dish 3"
+            "Paneer Butter Masala: Rich, creamy gravy with soft, melt-in-the-mouth paneer cubes, frequently cited as their signature dish.",
+            "Veg Biryani: A highly popular, aromatic Hyderabadi-style rice dish packed with spices and vegetables.",
+            "Dal Tadka/Fry: A comforting, well-spiced, and hearty lentil preparation that pairs perfectly with their buttery rotis. "
           ],
-          "rating": null
+          "rating": {"google": 3.9, "zomato": 4.3}
         },
         {
           "name": "Rangoli",
@@ -7240,11 +7286,11 @@
             "Sunday": "11:00 AM - 11:00 PM"
           },
           "best_selling_dishes": [
-            "Signature Dish 1",
-            "Signature Dish 2",
-            "Signature Dish 3"
+            "Tikka Masala Chicken: Creamy tomato-based curry with roasted marinated chicken.",
+            "Naughty Naan: Traditional fluffy Indian flatbread, often stuffed or topped with savory ingredients.",
+            "Exploding Samosas: Crispy, deep-fried pastry filled with spiced potatoes and peas. "
           ],
-          "rating": null
+          "rating": {"google": 4.0, "zomato": null}
         },
         {
           "name": "Bikanervala",
@@ -7268,11 +7314,11 @@
             "Sunday": "11:00 AM - 11:00 PM"
           },
           "best_selling_dishes": [
-            "Signature Dish 1",
-            "Signature Dish 2",
-            "Signature Dish 3"
+            "Raj Kachori: A large, crispy pastry shell filled with potatoes, sprouts, yogurt, and chutneys.",
+            "Chole Bhature: Fluffy, deep-fried bread served with a rich, spicy chickpea curry.",
+            "Rasmalai: Soft, spongy paneer discs soaked in thickened, sweetened milk. "
           ],
-          "rating": null
+          "rating": {"google": 4.0, "zomato": 4.3}
         },
         {
           "name": "Trupthi Tiffins",
@@ -7296,11 +7342,11 @@
             "Sunday": "11:00 AM - 11:00 PM"
           },
           "best_selling_dishes": [
-            "Signature Dish 1",
-            "Signature Dish 2",
-            "Signature Dish 3"
+            "Ghee Karam Chitti Idly: Small, bite-sized steamed rice cakes tossed in aromatic ghee and spicy podi.",
+            "Paneer Dosa: A crispy, thin rice crepe filled with a savory, spiced paneer mixture.",
+            "Wheat Puri: A healthier, lighter alternative to regular maida puris, often served with chutney. "
           ],
-          "rating": null
+          "rating": {"google": 4.0, "zomato": 4.0}
         },
         {
           "name": "Babai Hotel",
@@ -7352,11 +7398,11 @@
             "Sunday": "11:00 AM - 11:00 PM"
           },
           "best_selling_dishes": [
-            "Signature Dish 1",
-            "Signature Dish 2",
-            "Signature Dish 3"
+            "Moringa Ghee Podi Rice Bowl: Wholesome, nutrient-rich rice tossed with moringa leaves, ghee, and spicy podi.",
+            "Millet Idli with Paneer Burji: A soft, healthy millet-based idli served with flavorful, shredded paneer scramble.",
+            "Mini Tiffin with Idli: A classic South Indian platter offering a variety of breakfast favorites like soft idli, pongal, and upma."
           ],
-          "rating": null
+          "rating": {"google": 4.0, "zomato": 4.0}
         },
         {
           "name": "Vantillu",
@@ -7380,11 +7426,11 @@
             "Sunday": "11:00 AM - 11:00 PM"
           },
           "best_selling_dishes": [
-            "Signature Dish 1",
-            "Signature Dish 2",
-            "Signature Dish 3"
+            "Kaju Paneer: A rich, creamy, and flavorful curry made with succulent paneer and cashews.",
+            "Chicken Dum Biryani: Fragrant, long-grain basmati rice slow-cooked with tender marinated chicken and spices .",
+            "Kodi Vepudu Pulao: A fragrant rice dish paired with spicy and crispy Andhra-style roasted chicken . "
           ],
-          "rating": null
+          "rating": {"google": 4.3, "zomato": 3.6}
         },
         {
           "name": "Maa Bhagwati Dosa Stall",
@@ -7464,11 +7510,11 @@
             "Sunday": "11:00 AM - 11:00 PM"
           },
           "best_selling_dishes": [
-            "Signature Dish 1",
-            "Signature Dish 2",
-            "Signature Dish 3"
+            "Samosa Chaat: Crispy, spiced potato-filled samosas crushed and topped with yogurt, tangy chutneys, and fine sev.",
+            "Cheese Pav Bhaji: A rich, buttery mashed vegetable curry topped with generous cheese, served with soft buttered bread rolls.",
+            "Papdi Chaat: A crunchy, savory blend of crispy wafers (papdi), potatoes, yogurt, and vibrant chutneys. "
           ],
-          "rating": null
+          "rating": {"google": 4.5, "zomato": 4.1}  
         },
         {
           "name": "Mumbaichee Chaat",

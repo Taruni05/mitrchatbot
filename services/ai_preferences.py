@@ -11,7 +11,7 @@ from collections import defaultdict, Counter
 import hashlib
 from services.logger import get_logger
 from services.config import config
-from services.user_store import load_user_preferences, save_preference,save_preferences
+from services.user_store import load_preferences, save_preference,save_preferences
 
 logger = get_logger(__name__)
 
@@ -114,41 +114,26 @@ def get_user_preferences_file(user_id: str) -> Path:
 
 def load_user_preferences(user_id: str = None) -> Dict:
     """Load user preferences from database"""
-    prefs = load_user_preferences()  # From user_store
+    from services.user_store import load_preferences as load_prefs_from_db
+    
+    prefs = load_prefs_from_db()
     
     if not prefs:
         # Return default preferences for new users
         return DEFAULT_PREFERENCES.copy()
     
-    # Convert stored string values back to proper types
-    # (since Supabase stores everything as strings)
-    try:
-        import json
-        
-        # Parse JSON strings back to objects
-        if "interests" in prefs:
-            prefs["interests"] = json.loads(prefs.get("interests", "{}"))
-        if "food_preferences" in prefs:
-            prefs["food_preferences"] = json.loads(prefs.get("food_preferences", "{}"))
-        if "frequent_areas" in prefs:
-            prefs["frequent_areas"] = json.loads(prefs.get("frequent_areas", "[]"))
-        
-        return prefs
-    except Exception:
-        return DEFAULT_PREFERENCES.copy()
+    # Merge with defaults to ensure all keys exist
+    merged = DEFAULT_PREFERENCES.copy()
+    merged.update(prefs)
+    return merged
+
+
+
 def save_user_preferences(preferences: Dict, user_id: str = None):
     """Save user preferences to database"""
-    import json
-    
-    # Convert complex objects to JSON strings for storage
-    to_save = {}
-    for key, value in preferences.items():
-        if isinstance(value, (dict, list)):
-            to_save[key] = json.dumps(value)
-        else:
-            to_save[key] = str(value)
-    
-    save_preferences(to_save)  # 
+    from services.user_store import save_preferences as save_prefs_to_db
+    save_prefs_to_db(preferences)
+
 
 # ═══════════════════════════════════════════════════════════════════════════
 # PREFERENCE LEARNING FUNCTIONS

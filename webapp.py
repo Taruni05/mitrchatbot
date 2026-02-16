@@ -16,7 +16,7 @@ from services.weatherapi import (
 )
 from services.ai_food import generate_food_recommendation
 from services.fuel_prices import get_fuel_prices_hyderabad, format_fuel_prices
-
+from services.proactive_assistant import get_proactive_suggestions
 from services.rtc_bus import (
     extract_locations_from_query,
     get_bus_routes,
@@ -42,7 +42,7 @@ from services.shopping import get_mall_info
 from services.movies import get_movie_info
 from services.itineary import generate_itinerary
 from services.traffic import get_traffic_flow, format_traffic
-from services.translator import translate_response, get_language_name
+from services.translator import translate_response, get_language_name, get_ui_text
 from services.metro_rail import(extract_stations_from_query,find_metro_route,format_metro_route,get_general_metro_info,format_metro_station_list)
 from services.voice_service import render_audio_input, render_audio_output
 from services.crowd import get_crowd_info
@@ -56,40 +56,31 @@ from services.ai_preferences import (
 )
 from services.festivals_traffic_alerts import handle_festival_traffic_query,get_active_festivals,get_festival_alerts_for_saved_areas
 from services.live_deals import handle_deals_query,get_all_food_deals,get_all_ecommerce_deals,get_personalized_deals
-# Add after existing imports (around line 30)
+from services.proactive_assistant import get_proactive_suggestions
+
 from services.auth import (
-    is_logged_in, 
-    show_login_page, 
+    is_logged_in,  
     sign_out, 
-    get_current_user_email,
     get_current_user_id
 )
 from services.user_store import (
-    save_chat_message, 
-    load_preferences as load_user_preferences,
-    save_preference,
-    load_chat_history,
-    get_user_stats
+    save_chat_message, load_chat_history, get_user_stats
 )
-
+from services.conversation_memory import (
+    get_conversation_memory, 
+    extract_entities
+)
 import base64
 from datetime import datetime
-from services.logger import setup_logger
+from services.logger import get_logger
 from services.config import config
 import logging
 from services.security import validate_and_rate_limit, get_security_stats
-from services.cache_manager import cached_response, cache_response, get_cache,clear_cache
+from services.cache_manager import cached_response, cache_response, get_cache_stats
 from services.input_validator import validate_and_sanitize
-from services.rate_limiter import is_rate_limited, get_rate_limit_info
+from services.rate_limiter import is_rate_limited, get_rate_limit_info,get_user_id
 # Initialize main app logger
-logger = setup_logger(
-    name="webapp",
-    log_file="webapp.log",
-    level=getattr(logging, config.app.LOG_LEVEL),
-    console_output=True,
-    max_bytes=config.app.LOG_MAX_SIZE,
-    backup_count=config.app.LOG_BACKUP_COUNT
-)
+logger = get_logger(__name__)
 def get_user_id() -> str:
     """
     Get or create a unique user ID for this session.
@@ -114,6 +105,21 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="expanded",
 )
+if not is_logged_in() and not st.session_state.get("guest_mode", False):
+    st.warning("🔐 Please log in to access the full chat experience")
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        if st.button("🔑 Go to Login Page", use_container_width=True, type="primary"):
+            st.switch_page("pages/login.py")
+    
+    with col2:
+        if st.button("👤 Continue as Guest", use_container_width=True):
+            st.session_state.guest_mode = True
+            st.rerun()
+    
+    st.stop()
 initialize_preferences()
 # Header
 st.title(" MITR - Your Friend")
@@ -1896,154 +1902,153 @@ if not is_logged_in():
 # ========================================
 # SIDEBAR
 # ========================================
-with st.sidebar:
-    st.subheader("🌐 Language / భాష / زبان / भाषा")
+# ========================================
+# SIDEBAR
+# ========================================
+st.sidebar.title("🏙️ MITR")
 
-    languages = {
-        "English 🇬🇧": "en",
-        "తెలుగు 🇮🇳": "te",
-        "اردو 🇵🇰": "ur",
-        "हिंदी 🇮🇳": "hi"
-    }
+# ──────────────────────────────────────
+# USER ACCOUNT SECTION
+# ──────────────────────────────────────
+st.sidebar.markdown("---")
+st.sidebar.subheader("👤 Account")
 
-    selected_language = st.selectbox(
-        "Select Language:",
-        options=list(languages.keys()),
-        index=0
-    )
-    language_code = languages[selected_language]
-
-    if 'language' not in st.session_state:
-        st.session_state.language = "en"
-    if st.session_state.language != language_code:
-        st.session_state.language = language_code
-        st.rerun()
-
-    if language_code != "en":
-        lang_name = selected_language.split()[0]
-        st.success(f"✓ Responses in {lang_name}")
-
-    st.sidebar.markdown("---")
-    # In sidebar, after language selector
-    st.sidebar.markdown("---")
-    st.sidebar.subheader("👤 Account")
-
-    user_email = get_current_user_email()
-    if user_email:
-        st.sidebar.caption(f"Logged in as: **{user_email}**")
-        
-        # Show user stats
-        stats = get_user_stats()
-        if stats:
-            st.sidebar.metric("Total Chats", stats.get("total_messages", 0))
-        
-        # Logout button
+if is_logged_in():
+    user_email = st.session_state.get("user_email", "User")
+    st.sidebar.markdown(f"**Logged in as:**  \n{user_email}")
+    
+    col1, col2 = st.sidebar.columns(2)
+    
+    with col1:
+        if st.sidebar.button("📊 Analytics", use_container_width=True):
+            st.switch_page("pages/analytics.py")
+    
+    with col2:
         if st.sidebar.button("🚪 Logout", use_container_width=True):
             sign_out()
             st.rerun()
-    st.sidebar.markdown("---")
+    
+    # Quick stats
+    try:
+        stats = get_user_stats()
+        total_msgs = stats.get("total_messages", 0)
+        if total_msgs > 0:
+            st.sidebar.caption(f"📊 Total Chats: {total_msgs}")
+    except Exception as e:
+        logger.debug(f"Stats error: {e}")
 
-    # Rate limit status
-    user_id = get_user_id()
-    rate_info = get_rate_limit_info(user_id)
-    remaining = rate_info['remaining']
-    max_requests = rate_info['max_requests']
+elif st.session_state.get("guest_mode", False):
+    st.sidebar.info("👤 **Guest Mode**")
+    st.sidebar.caption("Limited features")
+    
+    if st.sidebar.button("🔑 Login for Full Access", use_container_width=True):
+        st.session_state.guest_mode = False
+        st.switch_page("pages/login.py")
+else:
+    if st.sidebar.button("🔑 Login / Sign Up", use_container_width=True, type="primary"):
+        st.switch_page("pages/login.py")
 
-    # Color code based on remaining
-    if remaining > max_requests * 0.5:
-        color = "🟢"  # Green - plenty left
-    elif remaining > max_requests * 0.2:
-        color = "🟡"  # Yellow - getting close
-    else:
-        color = "🔴"  # Red - almost out
+# ──────────────────────────────────────
+# LANGUAGE SELECTOR (Keep existing code)
+# ──────────────────────────────────────
+st.sidebar.markdown("---")
+st.sidebar.subheader("🌐 Language / భాష / زبان / भाषा")
 
-    st.sidebar.subheader(
-        f"Rate limiting on usage\n"
-        f"{color} **Requests:** {remaining}/{max_requests} remaining"
-    )
+languages = {
+    "English 🇬🇧": "en",
+    "తెలుగు 🇮🇳": "te",
+    "اردو 🇵🇰": "ur",
+    "हिंदी 🇮🇳": "hi"
+}
 
-# ──────────────────────────────────────────────────────────
-# Cache Performance Stats
-# ──────────────────────────────────────────────────────────
-if config.app.ENABLE_RESPONSE_CACHE:
-    cache = get_cache()
-    stats = cache.get_stats()
-    
-    st.sidebar.markdown("---")
-    st.sidebar.markdown("### 📊 Performance")
-    
-    hit_rate = stats['hit_rate']
-    if hit_rate >= 50:
-        color = "🟢"  # Green - excellent
-    elif hit_rate >= 25:
-        color = "🟡"  # Yellow - good
-    else:
-        color = "🔴"  # Red - needs improvement
-    
-    st.sidebar.metric(f"{color} Cache Hit Rate", f"{hit_rate:.1f}%")
-    
-    if stats['hits'] > 0:
-        st.sidebar.caption(
-            f"💰 Saved {stats['hits']} API calls!\n"
-            f"📦 Cache size: {stats['cache_size']} entries"
-        )
-    
-    # Cache clear button
-    if st.sidebar.button("🗑️ Clear Cache", key="clear_cache_btn"):
-        clear_cache()
-        st.sidebar.success("✅ Cache cleared!")
-        st.rerun()
+selected_language = st.sidebar.selectbox(
+    "Select Language:",
+    options=list(languages.keys()),
+    index=0
+)
+language_code = languages[selected_language]
 
-    # ── AI Preferences Dashboard ────────────────────────────────────────
-    st.sidebar.subheader("🎯 Your Preferences")
+if 'language' not in st.session_state:
+    st.session_state.language = "en"
+if st.session_state.language != language_code:
+    st.session_state.language = language_code
+    st.rerun()
+
+# ──────────────────────────────────────
+# ✅ NEW: PROACTIVE SUGGESTIONS
+# ──────────────────────────────────────
+st.sidebar.markdown("---")
+st.sidebar.subheader("💡 Suggested for You")
+
+try:
+    suggestions = get_proactive_suggestions(max_suggestions=3)
     
-    with st.sidebar.expander("📊 View My Data", expanded=False):
-        prefs = get_current_preferences()
-        
-        # Show stats
-        st.metric("Total Interactions", prefs["total_interactions"])
-        st.metric("Personalization Level", f"{int(prefs['personalization_score']*100)}%")
-        
-        # Show top interests
-        if prefs["total_interactions"] > 0:
-            st.markdown("**Your Top Interests:**")
-            top_interests = sorted(
-                prefs["interests"].items(),
-                key=lambda x: x[1],
-                reverse=True
-            )[:5]
+    if suggestions:
+        for i, suggestion in enumerate(suggestions):
+            button_key = f"suggest_{i}_{hash(suggestion['text'])}"
             
-            for interest, count in top_interests:
-                if count > 0:
-                    st.progress(min(count/20, 1.0), text=f"{interest.title()}: {count}")
-        
-        # Show frequent areas
-        if prefs.get("frequent_areas"):
-            st.markdown("**Your Frequent Areas:**")
-            for area in prefs["frequent_areas"][:5]:
-                st.markdown(f"• {area}")
-        
-        # Privacy controls
-        st.markdown("---")
-        st.markdown("**🔒 Privacy Controls**")
-        
-        col_a, col_b = st.columns(2)
-        with col_a:
-            if st.button("📄 View Privacy", key="view_privacy"):
-                from services.ai_preferences import get_privacy_summary
-                st.info(get_privacy_summary(prefs))
-        
-        with col_b:
-            if st.button("🗑️ Clear Data", key="clear_data"):
-                from services.ai_preferences import clear_user_data
-                clear_user_data()
-                st.success("✅ All data cleared!")
+            if st.sidebar.button(
+                suggestion["text"],
+                key=button_key,
+                use_container_width=True
+            ):
+                st.session_state.last_query = suggestion["query"]
                 st.rerun()
+    else:
+        st.sidebar.caption("🤔 No suggestions right now")
 
-    # ── voice settings ──────────────────────────────────────────────────
-    st.sidebar.subheader("🎙️ Voice Settings")
-    voice_enabled = st.sidebar.toggle("Enable voice input",  key="voice_enabled",  value=False)
-    auto_speak    = st.sidebar.toggle("Auto-play responses", key="auto_speak",     value=False)
+except Exception as e:
+    logger.warning(f"Could not load suggestions: {e}")
+    st.sidebar.caption("💭 Suggestions loading...")
+
+# ──────────────────────────────────────
+# ✅ NEW: CONVERSATION CONTROLS
+# ──────────────────────────────────────
+st.sidebar.markdown("---")
+st.sidebar.subheader("💬 Conversation")
+
+memory = get_conversation_memory()
+history_count = len(st.session_state.get("conversation_history", []))
+st.sidebar.caption(f"📚 Context: {history_count} turns in memory")
+
+if st.sidebar.button("🔄 Start Fresh Topic", use_container_width=True):
+    memory.clear_history()
+    st.sidebar.success("✅ Cleared conversation history!")
+    st.rerun()
+
+# ──────────────────────────────────────
+# AREA SELECTOR (Keep existing code)
+# ──────────────────────────────────────
+st.sidebar.markdown("---")
+st.sidebar.subheader("📍 Select Your Area")
+
+area_names = list(HYDERABAD_AREA_COORDS.keys())
+selected_area = st.sidebar.selectbox(
+    "Choose your area:",
+    options=area_names,
+    index=area_names.index("hitech city") if "hitech city" in area_names else 0
+)
+
+if 'selected_area' not in st.session_state:
+    st.session_state.selected_area = selected_area
+if st.session_state.selected_area != selected_area:
+    st.session_state.selected_area = selected_area
+    st.rerun()
+
+# ──────────────────────────────────────
+# ✅ NEW: VOICE SETTINGS
+# ──────────────────────────────────────
+if st.session_state.get("voice_enabled", False):
+    render_voice_settings()
+
+# ──────────────────────────────────────
+# ✅ NEW: CACHE STATS (Optional - for debugging)
+# ──────────────────────────────────────
+if st.sidebar.checkbox("🔧 Show Cache Stats", value=False):
+    st.sidebar.markdown("---")
+    cache_stats = get_cache_stats()
+    st.sidebar.metric("Hit Rate", f"{cache_stats.get('hit_rate', 0):.0f}%")
+    st.sidebar.metric("Cache Size", cache_stats.get('cache_size', 0))
 
     # ── quick links ─────────────────────────────────────────────────────
     st.sidebar.header("🎯 Quick Links")
@@ -2108,34 +2113,58 @@ if config.app.ENABLE_RESPONSE_CACHE:
 
     st.markdown("---")
     st.markdown("**💡 Tip:** Type your question in the chat below!")
+# ========================================
+# TOP SUGGESTION BANNER
+# ========================================
 
-
+if st.session_state.get("show_suggestion_banner", True):
+    try:
+        top_suggestions = get_proactive_suggestions(max_suggestions=2)
+        
+        if top_suggestions:
+            cols = st.columns(len(top_suggestions))
+            
+            for i, suggestion in enumerate(top_suggestions):
+                with cols[i]:
+                    if st.button(
+                        suggestion["text"],
+                        key=f"banner_suggest_{i}",
+                        use_container_width=True
+                    ):
+                        st.session_state.last_query = suggestion["query"]
+                        st.rerun()
+    except Exception as e:
+        logger.debug(f"Banner suggestions failed: {e}")
 # ========================================
 # CHAT
 # ========================================
 if "messages" not in st.session_state:
-    # Try to load from database
-    history = load_chat_history(limit=20)
+    st.session_state.messages = []
     
-    if history:
-        # Convert database format to session state format
-        st.session_state.messages = []
-        for msg in history:
-            st.session_state.messages.append({
-                "role": "user",
-                "content": msg["user_message"]
-            })
-            st.session_state.messages.append({
-                "role": "assistant",
-                "content": msg["bot_response"]
-            })
-    else:
-        # No history, show welcome message
-        st.session_state.messages = []
+    # Try to load from database if logged in
+    try:
+        if is_logged_in():
+            history = load_chat_history(limit=20)
+            if history:
+                for msg in history:
+                    st.session_state.messages.append({
+                        "role": "user",
+                        "content": msg["user_message"]
+                    })
+                    st.session_state.messages.append({
+                        "role": "assistant",
+                        "content": msg["bot_response"]
+                    })
+    except Exception as e:
+        logger.warning(f"Failed to load history (non-critical): {e}")
+    
+    # If no history or not logged in, show welcome
+    if not st.session_state.messages:
         st.session_state.messages.append({
             "role": "assistant",
             "content": "👋 Welcome to MITR! I am your personal assistant for exploring Hyderabad. How can I help you today?"
         })
+
 
 for message in st.session_state.messages:
     if message["role"] == "assistant":
@@ -2144,6 +2173,11 @@ for message in st.session_state.messages:
             avatar="https://raw.githubusercontent.com/Taruni05/mitrchatbot/master/mitr_avatar.png"
         ):
             st.markdown(message["content"])
+            
+            # ✅ NEW: Add voice output option
+            if st.session_state.get("voice_enabled", False):
+                current_language = st.session_state.get('language', 'en')
+                render_audio_output(message["content"], language=current_language)
     else:
         with st.chat_message("user"):
             st.markdown(message["content"])
@@ -2176,24 +2210,29 @@ if "last_query" in st.session_state:
 
 # ── process ─────────────────────────────────────────────────────────────────
 if user_input:
-    # 1️⃣ Save + render USER message
+    # ✅ Initialize conversation memory
+    memory = get_conversation_memory()
+    
+    # 1️⃣ Add user message to chat
     st.session_state.messages.append(
         {"role": "user", "content": user_input}
     )
     logger.info(f"User query: {user_input[:100]}")
     
-    # === STEP 1: Validate & Sanitize Input ===
+    # 2️⃣ Validate & Sanitize (BEFORE spinner)
     is_valid, clean_input, error_msg = validate_and_sanitize(user_input)
     
     if not is_valid:
         logger.warning(f"Invalid input: {error_msg}")
-        st.error(f"❌ {error_msg}")
-        st.stop()
+        st.session_state.messages.append({
+            "role": "assistant",
+            "content": f"❌ {error_msg}"
+        })
+        st.rerun()
     
-    # Use clean_input from now on
     user_input = clean_input
     
-    # === STEP 2: Check Rate Limit ===
+    # 3️⃣ Check Rate Limit (BEFORE spinner)
     user_id = get_user_id()
     
     if is_rate_limited(user_id):
@@ -2202,110 +2241,116 @@ if user_input:
         
         logger.warning(f"Rate limit hit for user {user_id}")
         
-        st.error(
-            f"⏱️ **Too many requests!**\n\n"
-            f"Please wait **{retry_after} seconds** before trying again.\n\n"
-            f"Limit: {rate_info['max_requests']} requests per "
-            f"{rate_info['window_seconds']} seconds"
-        )
-        st.stop()
-    
-
-    # 2️⃣ Show spinner OUTSIDE chat messages
-    # Line ~1876
-# Line 1880
-with st.spinner("Thinking..."):
-    try:
-        # === STEP 1: Validate & Sanitize Input ===
-        is_valid, clean_input, error_msg = validate_and_sanitize(user_input)
-        
-        if not is_valid:
-            logger.warning(f"Invalid input: {error_msg}")
-            st.error(f"❌ {error_msg}")
-            st.stop()
-        
-        # Use clean_input from now on
-        user_input = clean_input
-        
-        # === STEP 2: Check Rate Limit ===
-        user_id = get_user_id()
-        
-        if is_rate_limited(user_id):
-            rate_info = get_rate_limit_info(user_id)
-            retry_after = rate_info['retry_after']
-            
-            logger.warning(f"Rate limit hit for user {user_id}")
-            
-            st.error(
+        st.session_state.messages.append({
+            "role": "assistant",
+            "content": (
                 f"⏱️ **Too many requests!**\n\n"
                 f"Please wait **{retry_after} seconds** before trying again.\n\n"
                 f"Limit: {rate_info['max_requests']} requests per "
                 f"{rate_info['window_seconds']} seconds"
             )
-            st.stop()
-        
-        # === STEP 3: Translate input to English if needed ===
-        normalized_input = (
-            translate_response(user_input, "en") if language != "en" else user_input
-        )
-        
-        # === STEP 4: Check if normalized_input is valid ===
-        if not normalized_input or not normalized_input.strip():
-            logger.error("Translation resulted in empty input")
-            st.error("❌ Could not process your input. Please try again.")
-            st.stop()
-        
-        # === STEP 5: CHECK CACHE FIRST ===
-        current_language = st.session_state.get('language', 'en')
-        current_area = st.session_state.get('selected_area', '')
-        
-        cached = cached_response(normalized_input, current_language, current_area)
-        
-        if cached:
-            # ✅ Cache HIT - use cached response
-            logger.info(f"✅ Cache hit for: {normalized_input[:50]}")
-            response = cached
-            intent = "cached"
+        })
+        st.rerun()
+    
+    # 4️⃣ ✅ NEW: Conversation Memory - Resolve references
+    resolved_input = memory.resolve_references(user_input)
+    if resolved_input != user_input:
+        logger.info(f"✨ Resolved reference: '{user_input}' -> '{resolved_input}'")
+        st.info(f"💭 I understood: *{resolved_input}*")
+    
+    # 5️⃣ Generate response (with spinner)
+    with st.spinner("Thinking..."):
+        try:
+            # Translate input to English if needed
+            current_language = st.session_state.get('language', 'en')
+            normalized_input = (
+                translate_response(resolved_input, "en") 
+                if current_language != "en" 
+                else resolved_input
+            )
             
-            # Show cache indicator to user
-            st.info("⚡ *Cached response (recently answered)*")
+            # Check if translation worked
+            if not normalized_input or not normalized_input.strip():
+                logger.error("Translation resulted in empty input")
+                response = "❌ Could not process your input. Please try again."
+                intent = "error"
+            else:
+                # ✅ NEW: Build context-aware prompt
+                context_prompt = memory.get_context_prompt(normalized_input)
+                
+                # ✅ NEW: Check cache WITH INTENT
+                current_area = st.session_state.get('selected_area', '')
+                cached = cached_response(normalized_input, current_language, current_area, intent="")
+                
+                if cached:
+                    # Cache HIT
+                    logger.info(f"✅ Cache hit for: {normalized_input[:50]}")
+                    response = cached
+                    intent = "cached"
+                else:
+                    # Cache MISS - generate new
+                    logger.debug("Cache miss - generating new response")
+                    
+                    # ✅ Run LangGraph with context
+                    result = app.invoke({
+                        "user_input": context_prompt,  # Use context-aware prompt
+                        "intent": "",
+                        "response": ""
+                    })
+                    
+                    intent = result["intent"]
+                    response = result["response"]
+                    
+                    logger.debug(f"Detected intent: {intent}")
+                    
+                    # ✅ NEW: Cache WITH INTENT for smart TTL
+                    cache_response(normalized_input, response, current_language, current_area, intent)
+                    
+                    # ✅ NEW: Save to database (non-blocking)
+                    try:
+                        if is_logged_in():
+                            save_chat_message(
+                                user_message=normalized_input,
+                                bot_response=response,
+                                intent=intent
+                            )
+                    except Exception as e:
+                        logger.warning(f"DB save failed (non-critical): {e}")
+                
+                # ✅ NEW: Extract entities for memory
+                entities = extract_entities(normalized_input, intent)
+                
+                # ✅ NEW: Add to conversation memory
+                memory.add_turn(
+                    user_input=normalized_input,
+                    bot_response=response,
+                    intent=intent,
+                    entities=entities
+                )
+                
+                # Personalization (non-blocking)
+                try:
+                    learn_from_query(normalized_input, intent)
+                    response = apply_personalization_to_response(response)
+                except Exception as e:
+                    logger.warning(f"Personalization failed (non-critical): {e}")
+                
+                # Translate response back if needed
+                if current_language != "en":
+                    response = translate_response(response, current_language)
         
-        else:
-            # ❌ Cache MISS - generate new response
-            logger.debug("Cache miss - generating new response")
-            
-            # Run LangGraph
-            result = app.invoke({
-                "user_input": normalized_input,
-                "intent": "",
-                "response": ""
-            })
-            logger.debug(f"Detected intent: {result['intent']}")
-
-            intent = result["intent"]
-            response = result["response"]
-            save_chat_message(
-    user_message=normalized_input,
-    bot_response=response,
-    intent=intent
-)
-            
-            # === CACHE THE RESPONSE ===
-            cache_response(normalized_input, response, current_language, current_area)
-            logger.debug("Response cached for future queries")
-
-        # Learn + personalize (works for both cached and new)
-        learn_from_query(normalized_input, intent)
-        response = apply_personalization_to_response(response)
-
-        # translate output back if needed
-        if language != "en":
-            response = translate_response(response, language)
-
-    except Exception as e:
-        logger.error(f"Error processing query: {e}", exc_info=True)
-        response = f"❌ Sorry, something went wrong. Please try again."
-
+        except Exception as e:
+            logger.error(f"Error processing query: {e}", exc_info=True)
+            response = "❌ Sorry, something went wrong. Please try again."
+            intent = "error"
+    
+    # 6️⃣ Add assistant response to chat
+    st.session_state.messages.append(
+        {"role": "assistant", "content": response}
+    )
+    
+    # 7️⃣ ✅ CRITICAL: Force rerun to display new messages
+    st.rerun()
 # ========================================
 # FOOTER
 # ========================================

@@ -1,360 +1,351 @@
 """
-Enhanced Translation Service with Context Preservation
-Handles Hyderabad-specific terms and maintains meaning accuracy
-
-NOTE: This file uses googletrans which is unmaintained. Consider migrating to:
-- deep_translator (recommended)
-- google.cloud.translate_v2 (official, requires API key)
+Translation Service v2.0 for Mitr - Hyderabad City Guide
+Replaces unmaintained googletrans with deep_translator.
+Preserves place names, food, formatting, emojis, numbers, and URLs.
 """
 
-import streamlit as st
-from googletrans import Translator
 import re
+import streamlit as st
+from typing import Dict, Tuple
 
-# Import logger and config
 from services.logger import setup_logger
 from services.config import config
 
-# Set up logger
-logger = setup_logger('translator', 'translator.log')
+logger = setup_logger("translator_v2", "translator.log")
 
 
-# ========================================
-# HYDERABAD-SPECIFIC TERMS (Keep in English)
-# ========================================
-PRESERVE_TERMS = {
-    # Places
-    "Charminar", "Golconda Fort", "Hussain Sagar", "HITEC City", 
-    "Gachibowli", "Jubilee Hills", "Banjara Hills", "Secunderabad",
-    "Ameerpet", "Kukatpally", "Dilsukhnagar", "LB Nagar",
-    "Begumpet", "Madhapur", "Miyapur", "Uppal",
-    
-    # Transportation
-    "Metro", "MMTS", "RTC", "TSRTC", "Uber", "Ola",
-    
-    # Food items
-    "Biryani", "Haleem", "Irani Chai", "Osmania Biscuit",
-    "Paradise", "Bawarchi", "Shah Ghouse",
-    
-    # Malls & Markets
-    "Inorbit", "GVK One", "IKEA", "Forum", "AMB",
-    "Laad Bazaar", "Begum Bazaar",
-    
-    # Institutions
-    "IIT", "JNTU", "Osmania University", "Apollo", "Yashoda",
-    
-    # Common terms
-    "Google Maps", "BookMyShow", "WhatsApp",
+# ══════════════════════════════════════════════════════════════════════════════
+# TERMS TO NEVER TRANSLATE
+# ══════════════════════════════════════════════════════════════════════════════
+
+PRESERVE_PLACES = {
+    # Landmarks
+    "Charminar", "Golconda Fort", "Golconda", "Hussain Sagar", "Tank Bund",
+    "Qutb Shahi Tombs", "Ramoji Film City", "Birla Mandir", "Salar Jung Museum",
+    "Nizam Museum", "Chowmahalla Palace", "Falaknuma Palace", "Purani Haveli",
+    "Mecca Masjid", "Makkah Masjid", "Chilkur Balaji", "KBR National Park",
+    "Nehru Zoological Park", "Lumbini Park", "Shilparamam", "Snow World",
+    # Areas
+    "Gachibowli", "HITEC City", "Madhapur", "Kondapur", "Jubilee Hills",
+    "Banjara Hills", "Secunderabad", "Ameerpet", "Kukatpally", "Dilsukhnagar",
+    "LB Nagar", "Begumpet", "Somajiguda", "Mehdipatnam", "Tolichowki",
+    "Miyapur", "Kompally", "Bachupally", "SR Nagar", "Yousufguda",
+    "Manikonda", "Narsingi", "Financial District", "Nanakramguda", "Raidurg",
+    "Kokapet", "Tellapur", "Patancheru", "BHEL", "ECIL", "Malkajgiri",
+    "Tarnaka", "Habsiguda", "Nagole", "Vanasthalipuram", "Hayathnagar",
+    "Shamshabad", "Laad Bazaar", "Begum Bazaar", "Abids", "Koti",
+    "Nampally", "Khairatabad", "Lakdikapul", "Malakpet", "Saidabad",
+    "Uppal", "Necklace Road", "Old City",
+    # Transport
+    "MGBS", "JBS", "Rajiv Gandhi International Airport", "RGIA",
 }
 
-
-# ========================================
-# TECHNICAL TERMS (Keep in English)
-# ========================================
-TECHNICAL_TERMS = {
-    "AC", "IMAX", "4DX", "WiFi", "ATM", "GPS",
-    "COVID", "AQI", "PM2.5", "km/h", "°C",
+PRESERVE_FOOD = {
+    "Biryani", "Haleem", "Irani Chai", "Osmania Biscuit", "Lukhmi",
+    "Paya", "Nihari", "Keema", "Korma", "Kebab", "Shawarma",
+    "Baghara Baingan", "Mirchi Ka Salan", "Double Ka Meetha",
+    "Qubani Ka Meetha", "Gil-e-Firdaus", "Sheer Khurma",
+    # Restaurant brands
+    "Paradise", "Bawarchi", "Shah Ghouse", "Cafe Bahar", "Alpha Hotel",
+    "Shadab", "Pista House", "Karachi Bakery", "Nimrah Cafe",
+    "Chutneys", "Rayalaseema Ruchulu", "Ulavacharu",
 }
 
-
-# ========================================
-# LANGUAGE-SPECIFIC IMPROVEMENTS
-# ========================================
-LANGUAGE_FIXES = {
-    "te": {  # Telugu
-        "is": "ఉంది",
-        "are": "ఉన్నాయి",
-        "the": "",  # Telugu doesn't always need "the"
-        "a": "",
-        "an": "",
-    },
-    "ur": {  # Urdu
-        "is": "ہے",
-        "are": "ہیں",
-    },
-    "hi": {  # Hindi
-        "is": "है",
-        "are": "हैं",
-    }
+PRESERVE_BRANDS = {
+    "Inorbit", "Inorbit Mall", "GVK One", "Forum Sujana Mall",
+    "AMB Cinemas", "Prasads IMAX", "IKEA",
+    "IIT Hyderabad", "IIIT Hyderabad", "ISB", "Osmania University",
+    "JNTU", "University of Hyderabad",
+    "Apollo", "Yashoda", "CARE Hospitals", "Continental Hospitals",
+    "Gandhi Hospital",
 }
 
+PRESERVE_SERVICES = {
+    "TSRTC", "RTC", "MMTS", "Metro Rail", "HMRL",
+    "Ola", "Uber", "Rapido", "Swiggy", "Zomato",
+    "BookMyShow", "Paytm", "Google Maps", "WhatsApp",
+    "WiFi", "AC", "IMAX", "4DX", "QR Code", "ATM", "GPS", "AQI",
+}
+
+# Merge all into one set
+ALL_PRESERVE = (
+    PRESERVE_PLACES | PRESERVE_FOOD | PRESERVE_BRANDS | PRESERVE_SERVICES
+)
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# TRANSLATION CLIENT — deep_translator only, no API key needed
+# ══════════════════════════════════════════════════════════════════════════════
 
 @st.cache_resource
-def get_translator():
-    """Get cached translator instance"""
-    logger.debug("Initializing translator instance")
-    return Translator()
-
-
-def preserve_terms(text: str) -> tuple:
+def get_translator_fn():
     """
-    Replace Hyderabad-specific terms with placeholders
-    Returns: (modified_text, mapping)
+    Returns a translate(text, target_lang) function using deep_translator.
+    Cached so the import only happens once.
     """
-    mapping = {}
-    modified_text = text
-    
-    # Combine all terms to preserve
-    all_terms = PRESERVE_TERMS.union(TECHNICAL_TERMS)
-    
-    # Sort by length (longest first) to avoid partial matches
-    sorted_terms = sorted(all_terms, key=len, reverse=True)
-    
-    for i, term in enumerate(sorted_terms):
-        placeholder = f"__PRESERVE_{i}__"
-        # Case-insensitive replacement
-        pattern = re.compile(re.escape(term), re.IGNORECASE)
-        if pattern.search(modified_text):
-            mapping[placeholder] = term
-            modified_text = pattern.sub(placeholder, modified_text)
-    
-    logger.debug(f"Preserved {len(mapping)} terms")
-    return modified_text, mapping
+    try:
+        from deep_translator import GoogleTranslator
+
+        def _translate(text: str, target_lang: str) -> str:
+            return GoogleTranslator(source="auto", target=target_lang).translate(text)
+
+        logger.info("✅ deep_translator loaded successfully")
+        return _translate
+
+    except ImportError:
+        logger.error("deep_translator not installed — run: pip install deep-translator")
+        return None
+
+    except Exception as e:
+        logger.error(f"Failed to load translator: {e}")
+        return None
 
 
-def restore_terms(text: str, mapping: dict) -> str:
-    """Restore preserved terms"""
+# ══════════════════════════════════════════════════════════════════════════════
+# PRESERVATION SYSTEM
+# ══════════════════════════════════════════════════════════════════════════════
+
+def _extract_preservables(text: str) -> Tuple[str, Dict[str, str]]:
+    """
+    Replace everything that must NOT be translated with placeholders.
+    Returns (modified_text, {placeholder: original_value}).
+    """
+    mapping: Dict[str, str] = {}
+    out = text
+    counter = [0]  # list so nested fn can mutate it
+
+    def _slot(original: str) -> str:
+        """Register a value and return its placeholder."""
+        key = f"XPXX{counter[0]}XPXX"
+        mapping[key] = original
+        counter[0] += 1
+        return key
+
+    # ── 1. Markdown links [label](url) ──────────────────────────────────────
+    out = re.sub(
+        r'\[([^\]]+)\]\(([^\)]+)\)',
+        lambda m: _slot(m.group(0)),
+        out
+    )
+
+    # ── 2. Plain URLs ────────────────────────────────────────────────────────
+    out = re.sub(
+        r'https?://\S+',
+        lambda m: _slot(m.group(0)),
+        out
+    )
+
+    # ── 3. Currency amounts  ₹500  /  ₹1,200.50 ─────────────────────────────
+    out = re.sub(
+        r'₹\s*[\d,]+(?:\.\d+)?',
+        lambda m: _slot(m.group(0)),
+        out
+    )
+
+    # ── 4. Times  8:30 AM / 19:00 ────────────────────────────────────────────
+    out = re.sub(
+        r'\b\d{1,2}:\d{2}(?:\s*[APap][Mm])?\b',
+        lambda m: _slot(m.group(0)),
+        out
+    )
+
+    # ── 5. Percentages  75% ─────────────────────────────────────────────────
+    out = re.sub(
+        r'\b\d+\s*%',
+        lambda m: _slot(m.group(0)),
+        out
+    )
+
+    # ── 6. Measurements  10 km, 500 g, 2 L ──────────────────────────────────
+    out = re.sub(
+        r'\b\d+(?:\.\d+)?\s*(?:km/h|km|m|kg|g|L|ml|min|mins|hr|hrs)\b',
+        lambda m: _slot(m.group(0)),
+        out
+    )
+
+    # ── 7. Standalone numbers ────────────────────────────────────────────────
+    out = re.sub(
+        r'\b\d+\b',
+        lambda m: _slot(m.group(0)),
+        out
+    )
+
+    # ── 8. Emojis ────────────────────────────────────────────────────────────
+    out = re.sub(
+        r'[\U0001F300-\U0001FAFF\u2600-\u27BF]',
+        lambda m: _slot(m.group(0)),
+        out
+    )
+
+    # ── 9. Known Hyderabad / brand terms (longest first, case-insensitive) ───
+    sorted_terms = sorted(ALL_PRESERVE, key=len, reverse=True)
+    for term in sorted_terms:
+        pattern = r'(?<!\w)' + re.escape(term) + r'(?!\w)'
+        # Replace ONE occurrence at a time so each gets a unique placeholder
+        while True:
+            m = re.search(pattern, out, re.IGNORECASE)
+            if not m:
+                break
+            out = out[:m.start()] + _slot(m.group(0)) + out[m.end():]
+
+    logger.debug(f"Preserved {len(mapping)} items")
+    return out, mapping
+
+
+def _restore_preservables(text: str, mapping: Dict[str, str]) -> str:
+    """Restore all placeholders to their original values."""
+    out = text
     for placeholder, original in mapping.items():
-        text = text.replace(placeholder, original)
-    return text
+        out = out.replace(placeholder, original)
+    return out
 
 
-def preserve_special_elements(text: str) -> tuple:
-    """
-    Preserve markdown, URLs, numbers, emojis
-    Returns: (modified_text, elements_dict)
-    """
-    elements = {}
-    counter = 0
-    
-    # Preserve code blocks
-    def replace_code_block(match):
-        nonlocal counter
-        key = f"__CODE_BLOCK_{counter}__"
-        elements[key] = match.group(0)
-        counter += 1
-        return key
-    
-    text = re.sub(r'```[\s\S]*?```', replace_code_block, text)
-    
-    # Preserve inline code
-    def replace_inline_code(match):
-        nonlocal counter
-        key = f"__INLINE_CODE_{counter}__"
-        elements[key] = match.group(0)
-        counter += 1
-        return key
-    
-    text = re.sub(r'`[^`]+`', replace_inline_code, text)
-    
-    # Preserve URLs
-    def replace_url(match):
-        nonlocal counter
-        key = f"__URL_{counter}__"
-        elements[key] = match.group(0)
-        counter += 1
-        return key
-    
-    text = re.sub(r'https?://[^\s\)]+', replace_url, text)
-    
-    # Preserve markdown links
-    def replace_md_link(match):
-        nonlocal counter
-        key = f"__MD_LINK_{counter}__"
-        elements[key] = match.group(0)
-        counter += 1
-        return key
-    
-    text = re.sub(r'\[([^\]]+)\]\(([^\)]+)\)', replace_md_link, text)
-    
-    # Preserve currency with numbers
-    def replace_currency(match):
-        nonlocal counter
-        key = f"__CURRENCY_{counter}__"
-        elements[key] = match.group(0)
-        counter += 1
-        return key
-    
-    text = re.sub(r'₹\s*\d[\d,]*', replace_currency, text)
-    
-    # Preserve times (BEFORE numbers to avoid conflict)
-    def replace_time(match):
-        nonlocal counter
-        key = f"__TIME_{counter}__"
-        elements[key] = match.group(0)
-        counter += 1
-        return key
-    
-    text = re.sub(r'\d{1,2}:\d{2}\s*(?:AM|PM|am|pm)?', replace_time, text)
-    
-    # Preserve percentages (BEFORE numbers)
-    def replace_percent(match):
-        nonlocal counter
-        key = f"__PERCENT_{counter}__"
-        elements[key] = match.group(0)
-        counter += 1
-        return key
-    
-    text = re.sub(r'\d+%', replace_percent, text)
-    
-    # Preserve standalone numbers (LAST)
-    def replace_number(match):
-        nonlocal counter
-        key = f"__NUMBER_{counter}__"
-        elements[key] = match.group(0)
-        counter += 1
-        return key
-    
-    text = re.sub(r'\b\d+\b', replace_number, text)
-    
-    logger.debug(f"Preserved {len(elements)} special elements")
-    return text, elements
+# ══════════════════════════════════════════════════════════════════════════════
+# CORE TRANSLATION LOGIC
+# ══════════════════════════════════════════════════════════════════════════════
 
-
-def restore_special_elements(text: str, elements: dict) -> str:
-    """Restore special elements"""
-    # Restore ALL preserved elements from the dict
-    for key, value in elements.items():
-        text = text.replace(key, value)
-    
-    return text
-
-
-def split_into_chunks(text: str, max_length: int = 500) -> list:
-    """
-    Split text into smaller chunks at sentence boundaries
-    Helps preserve context during translation
-    """
-    # Split by double newlines (paragraphs)
-    paragraphs = text.split('\n\n')
-    
-    chunks = []
-    current_chunk = ""
-    
-    for para in paragraphs:
-        # If paragraph is short, add to current chunk
-        if len(current_chunk) + len(para) < max_length:
-            current_chunk += para + "\n\n"
-        else:
-            # Save current chunk and start new one
-            if current_chunk:
-                chunks.append(current_chunk.strip())
-            current_chunk = para + "\n\n"
-    
-    # Add last chunk
-    if current_chunk:
-        chunks.append(current_chunk.strip())
-    
-    logger.debug(f"Split text into {len(chunks)} chunks")
-    return chunks
-
-
-def translate_chunk(text: str, target_lang: str) -> str:
-    """Translate a single chunk with error handling"""
-    try:
-        trans = get_translator()
-        result = trans.translate(text, dest=target_lang)
-        return result.text
-    except Exception as e:
-        logger.error(f"Chunk translation failed: {e}")
-        return text  # Return original on error
-
-
-def translate_text(text: str, target_lang: str = "te") -> str:
-    """
-    Enhanced translation with context preservation
-    
-    Args:
-        text: Text to translate
-        target_lang: Target language code (te/ur/hi)
-    
-    Returns:
-        Translated text
-    """
-    if not text or target_lang == "en":
+def _translate_chunk(text: str, target_lang: str, translate_fn) -> str:
+    """Translate one chunk with error recovery."""
+    if not text or not text.strip():
         return text
-    
-    logger.info(f"Translating {len(text)} chars to {target_lang}")
-    
     try:
-        # Step 1: Preserve Hyderabad-specific terms
-        text_with_placeholders, term_mapping = preserve_terms(text)
-        
-        # Step 2: Preserve special elements (markdown, URLs, etc.)
-        text_clean, elements = preserve_special_elements(text_with_placeholders)
-        
-        # Step 3: Split into chunks for better context
-        chunks = split_into_chunks(text_clean, max_length=400)
-        
-        # Step 4: Translate each chunk
-        translated_chunks = []
-        for i, chunk in enumerate(chunks, 1):
-            if chunk.strip():
-                logger.debug(f"Translating chunk {i}/{len(chunks)}")
-                translated = translate_chunk(chunk, target_lang)
-                translated_chunks.append(translated)
-        
-        # Step 5: Join translated chunks
-        translated_text = "\n\n".join(translated_chunks)
-        
-        # Step 6: Restore special elements
-        translated_text = restore_special_elements(translated_text, elements)
-        
-        # Step 7: Restore Hyderabad-specific terms
-        translated_text = restore_terms(translated_text, term_mapping)
-        
-        logger.info(f"✅ Translation complete: {len(translated_text)} chars")
-        return translated_text
-        
+        result = translate_fn(text, target_lang)
+        return result if result else text
     except Exception as e:
-        logger.error(f"Translation failed: {e}", exc_info=True)
-        return text  # Return original text on error
+        logger.warning(f"Chunk translation failed ({target_lang}): {e}")
+        return text
 
 
 def translate_response(response: str, target_lang: str) -> str:
     """
-    Main translation function for bot responses
-    Preserves formatting and Hyderabad-specific terms
+    Main translation function.
+    Translates bot responses to Telugu / Hindi / Urdu while preserving
+    all place names, food names, numbers, emojis, URLs, and formatting.
+
+    Args:
+        response:    Text to translate.
+        target_lang: Language code — "te", "hi", or "ur".
+                     Returns the original if "en".
+
+    Returns:
+        Translated text, or original text if translation fails.
     """
-    return translate_text(response, target_lang)
+    # Nothing to do for English or empty strings
+    if not response or target_lang == "en":
+        return response or ""
+
+    translate_fn = get_translator_fn()
+    if not translate_fn:
+        logger.error("No translator available — returning original")
+        return response
+
+    logger.info(f"Translating {len(response)} chars → {target_lang}")
+
+    try:
+        # Step 1 — Lock down everything that must not be translated
+        preserved_text, mapping = _extract_preservables(response)
+
+        # Step 2 — Split into paragraphs so context is preserved per block
+        paragraphs = preserved_text.split("\n\n")
+        translated_paragraphs = []
+
+        for para in paragraphs:
+            if not para.strip():
+                translated_paragraphs.append(para)
+                continue
+
+            # Long paragraphs: split on newlines to keep line structure
+            if len(para) > 800:
+                lines = para.split("\n")
+                translated_lines = [
+                    _translate_chunk(line, target_lang, translate_fn)
+                    if line.strip() else line
+                    for line in lines
+                ]
+                translated_paragraphs.append("\n".join(translated_lines))
+            else:
+                translated_paragraphs.append(
+                    _translate_chunk(para, target_lang, translate_fn)
+                )
+
+        # Step 3 — Reassemble
+        translated_text = "\n\n".join(translated_paragraphs)
+
+        # Step 4 — Restore every preserved item
+        final_text = _restore_preservables(translated_text, mapping)
+
+        # Step 5 — Light cleanup
+        final_text = _cleanup(final_text)
+
+        logger.info(f"✅ Translation done: {len(final_text)} chars")
+        return final_text
+
+    except Exception as e:
+        logger.error(f"Translation failed: {e}", exc_info=True)
+        return response  # Always return something
 
 
-# ========================================
-# LANGUAGE DISPLAY NAMES
-# ========================================
+def _cleanup(text: str) -> str:
+    """Remove common translation artifacts."""
+    # Collapse multiple spaces
+    text = re.sub(r' {2,}', ' ', text)
+    # Fix space before punctuation
+    text = re.sub(r'\s+([.,!?;:])', r'\1', text)
+    # Fix broken bold markers  ** word **  →  **word**
+    text = re.sub(r'\*\*\s+', '**', text)
+    text = re.sub(r'\s+\*\*', '**', text)
+    return text
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# HELPERS USED BY webapp.py
+# ══════════════════════════════════════════════════════════════════════════════
+
 def get_language_name(code: str) -> str:
-    """Get language display name from code"""
-    names = config.ui.LANGUAGES
-    return names.get(code, "English")
+    """Return display name for a language code."""
+    return {
+        "en": "English",
+        "te": "తెలుగు (Telugu)",
+        "hi": "हिंदी (Hindi)",
+        "ur": "اردو (Urdu)",
+    }.get(code, "English")
 
 
-# ========================================
-# UI TRANSLATIONS (Predefined)
-# ========================================
+# Pre-translated UI strings — no API call needed
 UI_TRANSLATIONS = {
-    "te": {
-        "welcome": "హైదరాబాద్ సిటీ గైడ్‌కు స్వాగతం!",
-        "ask_me": "నన్ను అడగండి...",
-        "quick_links": "త్వరిత లింక్‌లు",
+    "en": {
+        "welcome":    "Welcome to Hyderabad City Guide!",
+        "ask_me":     "Ask me anything about Hyderabad…",
+        "quick_links": "Quick Links",
+        "logout":     "Logout",
+        "account":    "Account",
     },
-    "ur": {
-        "welcome": "حیدرآباد سٹی گائیڈ میں خوش آمدید!",
-        "ask_me": "مجھ سے پوچھیں...",
-        "quick_links": "فوری لنکس",
+    "te": {
+        "welcome":    "హైదరాబాద్ సిటీ గైడ్‌కు స్వాగతం!",
+        "ask_me":     "హైదరాబాద్ గురించి ఏదైనా అడగండి…",
+        "quick_links": "త్వరిత లింక్‌లు",
+        "logout":     "లాగ్ అవుట్",
+        "account":    "ఖాతా",
     },
     "hi": {
-        "welcome": "हैदराबाद सिटी गाइड में आपका स्वागत है!",
-        "ask_me": "मुझसे पूछें...",
+        "welcome":    "हैदराबाद सिटी गाइड में आपका स्वागत है!",
+        "ask_me":     "हैदराबाद के बारे में कुछ भी पूछें…",
         "quick_links": "त्वरित लिंक",
+        "logout":     "लॉग आउट",
+        "account":    "खाता",
     },
-    "en": {
-        "welcome": "Welcome to Hyderabad City Guide!",
-        "ask_me": "Ask me anything...",
-        "quick_links": "Quick Links",
-    }
+    "ur": {
+        "welcome":    "حیدرآباد سٹی گائیڈ میں خوش آمدید!",
+        "ask_me":     "حیدرآباد کے بارے میں کچھ بھی پوچھیں…",
+        "quick_links": "فوری لنکس",
+        "logout":     "لاگ آؤٹ",
+        "account":    "اکاؤنٹ",
+    },
 }
 
 
 def get_ui_text(key: str, lang: str = "en") -> str:
-    """Get UI text in specific language"""
-    return UI_TRANSLATIONS.get(lang, {}).get(key, UI_TRANSLATIONS["en"][key])
+    """Return pre-translated UI string (no API call)."""
+    return UI_TRANSLATIONS.get(lang, UI_TRANSLATIONS["en"]).get(
+        key, UI_TRANSLATIONS["en"].get(key, key)
+    )

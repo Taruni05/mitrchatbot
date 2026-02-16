@@ -308,3 +308,35 @@ During task with name 'classifier' and id 'e28ec243-ec38-bf13-9fdc-e31b0b4f8510'
 2026-02-13 10:38:45 | webapp | [33mWARNING[0m | <module>:2136 | Invalid input: Please enter a question.
 2026-02-13 10:39:49 | webapp | [33mWARNING[0m | <module>:2136 | Invalid input: Please enter a question.
 2026-02-13 10:42:24 | webapp | [33mWARNING[0m | <module>:2169 | Invalid input: Please enter a question.
+2026-02-14 11:59:21 | webapp | [33mWARNING[0m | <module>:2223 | Invalid input: Please enter a question.
+2026-02-14 12:05:27 | webapp | [33mWARNING[0m | <module>:2223 | Invalid input: Please enter a question.
+2026-02-14 12:08:53 | webapp | [33mWARNING[0m | <module>:2223 | Invalid input: Please enter a question.
+2026-02-14 12:11:49 | webapp | [33mWARNING[0m | <module>:2223 | Invalid input: Please enter a question.
+2026-02-14 12:14:37 | webapp | [33mWARNING[0m | <module>:2223 | Invalid input: Please enter a question.
+2026-02-14 12:21:47 | webapp | [33mWARNING[0m | <module>:2223 | Invalid input: Please enter a question.
+2026-02-14 12:22:34 | webapp | [31mERROR[0m | <module>:2306 | Error processing query: can only concatenate str (not "int") to str
+Traceback (most recent call last):
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\webapp.py", line 2298, in <module>
+    learn_from_query(normalized_input, intent)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\services\ai_preferences.py", line 175, in learn_from_query
+    preferences["total_interactions"] += 1
+TypeError: can only concatenate str (not "int") to str
+2026-02-15 13:56:23 | webapp | [33mWARNING[0m | <module>:2223 | Invalid input: Please enter a question.
+2026-02-15 13:56:42 | webapp | [31mERROR[0m | <module>:2306 | Error processing query: can only concatenate str (not "int") to str
+Traceback (most recent call last):
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\webapp.py", line 2298, in <module>
+    learn_from_query(normalized_input, intent)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\services\ai_preferences.py", line 175, in learn_from_query
+    preferences["total_interactions"] += 1
+TypeError: can only concatenate str (not "int") to str
+2026-02-15 13:57:07 | webapp | [31mERROR[0m | <module>:2306 | Error processing query: can only concatenate str (not "int") to str
+Traceback (most recent call last):
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\webapp.py", line 2298, in <module>
+    learn_from_query(normalized_input, intent)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\chera\OneDrive\Desktop\projectbot1\services\ai_preferences.py", line 175, in learn_from_query
+    preferences["total_interactions"] += 1
+TypeError: can only concatenate str (not "int") to str
+2026-02-15 14:14:47 | webapp | [33mWARNING[0m | <module>:2223 | Invalid input: Please enter a question.

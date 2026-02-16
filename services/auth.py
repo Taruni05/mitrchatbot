@@ -12,7 +12,7 @@ logger = get_logger(__name__)
 
 def get_supabase() -> Optional[Client]:
     """
-    Get Supabase client.
+    Get Supabase client with authenticated session.
     
     Returns:
         Supabase client or None if not configured
@@ -25,11 +25,19 @@ def get_supabase() -> Optional[Client]:
             logger.error("Supabase credentials not configured in secrets")
             return None
         
-        return create_client(url, key)
+        client = create_client(url, key)
+        
+        # CRITICAL FIX: Set the auth session if user is logged in
+        access_token = st.session_state.get("access_token")
+        if access_token:
+            # Set the authorization header for this client
+            client.postgrest.auth(access_token)
+        
+        return client
+        
     except Exception as e:
         logger.error(f"Error creating Supabase client: {e}", exc_info=True)
         return None
-
 
 def sign_up(email: str, password: str) -> Tuple[bool, str]:
     """
@@ -79,18 +87,7 @@ def sign_up(email: str, password: str) -> Tuple[bool, str]:
 
 
 def sign_in(email: str, password: str) -> Tuple[bool, str]:
-    """
-    Log in an existing user.
-    
-    Args:
-        email: User's email address
-        password: User's password
-    
-    Returns:
-        Tuple of (success: bool, message: str)
-        - (True, user_id) on success
-        - (False, error_message) on failure
-    """
+    """Log in an existing user."""
     supabase = get_supabase()
     if not supabase:
         return False, "Database not configured. Please contact support."
@@ -104,11 +101,12 @@ def sign_in(email: str, password: str) -> Tuple[bool, str]:
         })
         
         if res.session and res.user:
-            # Store in Streamlit session state
+            # CRITICAL: Store ALL session data
             st.session_state.user_id = res.user.id
             st.session_state.user_email = res.user.email
             st.session_state.logged_in = True
-            st.session_state.access_token = res.session.access_token
+            st.session_state.access_token = res.session.access_token  # ← This is key
+            st.session_state.refresh_token = res.session.refresh_token  # ← And this
             
             logger.info(f"✅ User logged in: {email} (ID: {res.user.id})")
             return True, res.user.id
@@ -120,15 +118,12 @@ def sign_in(email: str, password: str) -> Tuple[bool, str]:
         error_msg = str(e).lower()
         logger.error(f"Login error for {email}: {e}", exc_info=True)
         
-        # Provide user-friendly error messages
         if "invalid" in error_msg or "credentials" in error_msg:
             return False, "Invalid email or password."
         elif "email not confirmed" in error_msg:
             return False, "Please verify your email before logging in."
         else:
             return False, f"Login failed: {str(e)}"
-
-
 def sign_out():
     """
     Log out the current user.
@@ -196,10 +191,49 @@ def require_login() -> bool:
         if not require_login():
             return  # Stop page execution
     """
-    if not is_logged_in():
-        show_login_page()
-        return False
-    return True
+    if is_logged_in():
+        return True
+    
+    # Show login required message
+    st.warning("🔐 Please log in to access this page")
+    
+    # Show login form
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.subheader("Login")
+        email = st.text_input("Email", key="login_email")
+        password = st.text_input("Password", type="password", key="login_password")
+        
+        if st.button("Login", use_container_width=True):
+            if email and password:
+                success, result = sign_in(email, password)
+                if success:
+                    st.success("✅ Logged in!")
+                    st.rerun()
+                else:
+                    st.error(f"❌ {result}")
+            else:
+                st.error("Please enter email and password")
+    
+    with col2:
+        st.subheader("Sign Up")
+        st.caption("Create a new account")
+        
+        new_email = st.text_input("Email", key="signup_email")
+        new_password = st.text_input("Password", type="password", key="signup_password")
+        
+        if st.button("Sign Up", use_container_width=True):
+            if new_email and new_password:
+                success, result = sign_up(new_email, new_password)
+                if success:
+                    st.success("✅ Account created! Please log in.")
+                else:
+                    st.error(f"❌ {result}")
+            else:
+                st.error("Please enter email and password")
+    
+    return False
 
 
 def show_login_page():
