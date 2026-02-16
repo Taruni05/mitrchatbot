@@ -79,3 +79,19 @@ def get_rate_limit_info(user_id: str) -> Dict:
         "max_requests": _global_limiter.max_requests,
         "window_seconds": _global_limiter.window_seconds,
     }
+def get_user_id() -> str:
+    """Get unique user identifier"""
+    import streamlit as st
+    import uuid
+    
+    # Use logged-in user_id if available
+    if st.session_state.get("logged_in", False):
+        user_id = st.session_state.get("user_id", "")
+        if user_id:
+            return user_id
+    
+    # Otherwise use session ID
+    if "session_id" not in st.session_state:
+        st.session_state.session_id = str(uuid.uuid4())
+    
+    return f"session_{st.session_state.session_id}"

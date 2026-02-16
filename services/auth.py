@@ -13,6 +13,7 @@ logger = get_logger(__name__)
 def get_supabase() -> Optional[Client]:
     """
     Get Supabase client with authenticated session.
+    Auto-refreshes token if expired.
     
     Returns:
         Supabase client or None if not configured
@@ -27,17 +28,58 @@ def get_supabase() -> Optional[Client]:
         
         client = create_client(url, key)
         
-        # CRITICAL FIX: Set the auth session if user is logged in
+        # ✅ FIX: Set the auth session if user is logged in
         access_token = st.session_state.get("access_token")
-        if access_token:
-            # Set the authorization header for this client
-            client.postgrest.auth(access_token)
+        refresh_token = st.session_state.get("refresh_token")
+        
+        if access_token and refresh_token:
+            try:
+                # Try to set the session
+                client.postgrest.auth(access_token)
+                
+                # ✅ NEW: Check if token is expired and refresh if needed
+                # Try a simple query to test if token is valid
+                try:
+                    client.table("user_preferences").select("user_id").limit(1).execute()
+                except Exception as e:
+                    # If JWT expired, refresh the token
+                    if "JWT expired" in str(e) or "PGRST303" in str(e):
+                        logger.warning("🔄 JWT expired, refreshing token...")
+                        
+                        # Refresh the session
+                        refresh_response = client.auth.refresh_session(refresh_token)
+                        
+                        if refresh_response.session:
+                            # Update session state with new tokens
+                            st.session_state.access_token = refresh_response.session.access_token
+                            st.session_state.refresh_token = refresh_response.session.refresh_token
+                            
+                            # Set the new token
+                            client.postgrest.auth(refresh_response.session.access_token)
+                            logger.info("✅ Token refreshed successfully")
+                        else:
+                            logger.error("❌ Token refresh failed - user needs to re-login")
+                            # Clear invalid session
+                            sign_out()
+                            return None
+                    else:
+                        # Some other error, re-raise it
+                        raise e
+                        
+            except Exception as e:
+                logger.error(f"Error setting auth session: {e}")
+                # If anything fails, clear session and require re-login
+                if "JWT expired" in str(e) or "PGRST303" in str(e):
+                    logger.warning("⚠️ Session expired, user needs to re-login")
+                    sign_out()
+                    return None
         
         return client
         
     except Exception as e:
         logger.error(f"Error creating Supabase client: {e}", exc_info=True)
         return None
+    
 
 def sign_up(email: str, password: str) -> Tuple[bool, str]:
     """
@@ -124,6 +166,8 @@ def sign_in(email: str, password: str) -> Tuple[bool, str]:
             return False, "Please verify your email before logging in."
         else:
             return False, f"Login failed: {str(e)}"
+        
+        
 def sign_out():
     """
     Log out the current user.
@@ -141,13 +185,13 @@ def sign_out():
     
     # Clear all auth-related session state
     keys_to_clear = ["user_id", "user_email", "logged_in", "access_token", 
+                     "refresh_token",  # ✅ ADD THIS
                      "user_preferences", "messages"]
     
     for key in keys_to_clear:
         st.session_state.pop(key, None)
     
     logger.info(f"✅ Session cleared for: {user_email}")
-
 
 def is_logged_in() -> bool:
     """
@@ -235,147 +279,3 @@ def require_login() -> bool:
     
     return False
 
-
-def show_login_page():
-    """
-    Render the login/signup UI inline.
-    This completely replaces the page content with auth UI.
-    """
-    # Custom CSS for auth page
-    st.markdown("""
-    <style>
-    .auth-container {
-        max-width: 400px;
-        margin: 0 auto;
-        padding: 2rem;
-    }
-    .auth-title {
-        text-align: center;
-        margin-bottom: 2rem;
-    }
-    </style>
-    """, unsafe_allow_html=True)
-    
-    # Header
-    st.markdown('<div class="auth-container">', unsafe_allow_html=True)
-    st.markdown('<h1 class="auth-title">🏙️ Mitr</h1>', unsafe_allow_html=True)
-    st.markdown('<p style="text-align: center;">Your Hyderabad City Guide</p>', 
-                unsafe_allow_html=True)
-    st.markdown("---")
-    
-    # Tabs for Login and Signup
-    tab_login, tab_signup = st.tabs(["🔑 Login", "✨ Sign Up"])
-    
-    # ─── LOGIN TAB ───────────────────────────────────────────────────
-    with tab_login:
-        st.markdown("### Welcome back!")
-        
-        with st.form("login_form", clear_on_submit=False):
-            email = st.text_input(
-                "Email",
-                placeholder="your@email.com",
-                key="login_email"
-            )
-            password = st.text_input(
-                "Password",
-                type="password",
-                placeholder="Enter your password",
-                key="login_password"
-            )
-            
-            submitted = st.form_submit_button(
-                "Login",
-                type="primary",
-                use_container_width=True
-            )
-            
-            if submitted:
-                if not email or not password:
-                    st.error("⚠️ Please enter both email and password")
-                else:
-                    with st.spinner("Logging in..."):
-                        success, result = sign_in(email, password)
-                    
-                    if success:
-                        st.success("✅ Logged in successfully!")
-                        st.balloons()
-                        # Small delay to show success message
-                        import time
-                        time.sleep(0.5)
-                        st.rerun()
-                    else:
-                        st.error(f"❌ {result}")
-        
-        st.markdown("---")
-        st.caption("Don't have an account? Use the 'Sign Up' tab above.")
-    
-    # ─── SIGNUP TAB ──────────────────────────────────────────────────
-    with tab_signup:
-        st.markdown("### Create your account")
-        
-        with st.form("signup_form", clear_on_submit=False):
-            new_email = st.text_input(
-                "Email",
-                placeholder="your@email.com",
-                key="signup_email"
-            )
-            new_password = st.text_input(
-                "Password",
-                type="password",
-                placeholder="At least 6 characters",
-                key="signup_password",
-                help="Minimum 6 characters"
-            )
-            confirm_password = st.text_input(
-                "Confirm Password",
-                type="password",
-                placeholder="Re-enter password",
-                key="signup_confirm"
-            )
-            
-            submitted = st.form_submit_button(
-                "Create Account",
-                type="primary",
-                use_container_width=True
-            )
-            
-            if submitted:
-                # Validation
-                if not new_email or not new_password:
-                    st.error("⚠️ Please fill all fields")
-                elif len(new_password) < 6:
-                    st.error("⚠️ Password must be at least 6 characters")
-                elif new_password != confirm_password:
-                    st.error("⚠️ Passwords do not match")
-                else:
-                    with st.spinner("Creating account..."):
-                        success, result = sign_up(new_email, new_password)
-                    
-                    if success:
-                        st.success(
-                            "✅ Account created successfully!\n\n"
-                            "Please check your email to verify your account, "
-                            "then log in using the Login tab."
-                        )
-                        st.info(
-                            "💡 **Next steps:**\n"
-                            "1. Check your email inbox\n"
-                            "2. Click the verification link\n"
-                            "3. Return here and login"
-                        )
-                    else:
-                        st.error(f"❌ {result}")
-        
-        st.markdown("---")
-        st.caption("Already have an account? Use the 'Login' tab above.")
-    
-    st.markdown('</div>', unsafe_allow_html=True)
-    
-    # Footer
-    st.markdown("---")
-    st.markdown(
-        "<p style='text-align: center; color: #666;'>"
-        "Made with ❤️ for Hyderabad"
-        "</p>",
-        unsafe_allow_html=True
-    )

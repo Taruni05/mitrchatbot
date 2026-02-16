@@ -105,22 +105,97 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="expanded",
 )
-if not is_logged_in() and not st.session_state.get("guest_mode", False):
-    st.warning("🔐 Please log in to access the full chat experience")
+from services.auth import is_logged_in, get_supabase
     
-    col1, col2 = st.columns(2)
-    
-    with col1:
-        if st.button("🔑 Go to Login Page", use_container_width=True, type="primary"):
+if is_logged_in():
+    # Try to get a fresh client (this will auto-refresh token if needed)
+    supabase = get_supabase()
+    if not supabase:
+    # Token refresh failed, need to re-login
+        st.error("⚠️ Your session has expired. Please login again.")
+        if st.button("Go to Login"):
+            st.session_state.clear()
             st.switch_page("pages/login.py")
+        st.stop()
+            
+if "guest_chat_count" not in st.session_state:
+    st.session_state.guest_chat_count = 0
+
+# Check authentication
+if not is_logged_in():
+    # Check if guest exceeded free trial
+    if st.session_state.guest_chat_count >= 5:
+        st.error("🔒 **Free Trial Ended**")
+        
+        st.markdown(
+            f"""
+            You've used all **5 free chats** as a guest. 🎉
+            
+            ### Create a Free Account to Continue:
+            
+            ✅ **Unlimited conversations**  
+            ✅ **Save chat history**  
+            ✅ **Personalized recommendations**  
+            ✅ **Analytics dashboard**  
+            ✅ **Voice features**  
+            ✅ **Multi-language support**
+            
+            **It takes just 30 seconds!**
+            """
+        )
+        
+        col1, col2, col3 = st.columns([2, 2, 1])
+        
+        with col1:
+            if st.button("🔑 Create Free Account", use_container_width=True, type="primary"):
+                st.switch_page("pages/login.py")
+        
+        with col2:
+            if st.button("🔓 Already Have Account? Login", use_container_width=True):
+                st.switch_page("pages/login.py")
+        
+        with col3:
+            # Hidden reset button for testing
+            if st.button("🔄", use_container_width=True, help="Reset (for testing)"):
+                st.session_state.guest_chat_count = 0
+                st.rerun()
+        
+        # Show what they're missing
+        st.markdown("---")
+        st.markdown("### 🌟 What Our Users Say:")
+        
+        col1, col2 = st.columns(2)
+        with col1:
+            st.info(
+                "**Rajesh K.** ⭐⭐⭐⭐⭐  \n"
+                "*Best Hyderabad guide app! Saved my biryani preferences!*"
+            )
+        with col2:
+            st.info(
+                "**Priya M.** ⭐⭐⭐⭐⭐  \n"
+                "*Voice feature in Telugu is amazing! Very helpful.*"
+            )
+        
+        st.stop()
     
-    with col2:
-        if st.button("👤 Continue as Guest", use_container_width=True):
-            st.session_state.guest_mode = True
-            st.rerun()
-    
-    st.stop()
+    else:
+        # Guest mode active - allow chatting
+        remaining = 5 - st.session_state.guest_chat_count
+        st.session_state.guest_mode = True
+        
+        # Show friendly banner
+        if remaining == 5:
+            st.success("👋 **Welcome!** Try MITR free - 5 chats to explore Hyderabad!")
+        elif remaining <= 2:
+            st.warning(f"⏰ **{remaining} free chats remaining!** Login to continue unlimited.")
+            if st.button("🔑 Quick Sign Up (30 seconds)", type="primary"):
+                st.switch_page("pages/login.py")
+        else:
+            st.info(f"👤 **Guest Mode:** {remaining} free chats left")
+
+
 initialize_preferences()
+memory = get_conversation_memory()
 # Header
 st.title(" MITR - Your Friend")
 st.subheader("Your personal assistant for exploring Hyderabad!")
@@ -561,6 +636,7 @@ GOVT_SERVICES = [
 # ========================================
 class BotState(TypedDict):
     user_input: str
+    context: str
     intent: str
     response: str
 
@@ -714,169 +790,134 @@ def is_food_query(message: str) -> bool:
 
 
 def classify_intent(state: BotState):
-    """Classify user intent"""
+    """Classify user intent with strict priority order"""
     message = state["user_input"].lower()
-
-    if any(
-        message.strip().startswith(word) for word in ["hello", "hi", "hey", "namaste"]
-    ):
-        state["intent"] = "greeting"
-
-    elif any(word in message for word in ["emergency", "police", "ambulance", "fire"]):
-        state["intent"] = "emergency"
     
-    elif any(word in message for word in [
-        "event", "events", "exhibition", "expo", "hitex", "comic con",
-        "numaish", "book fair", "happening", "what's on",
-    ]):
-        state["intent"] = "events"
-
-    # ── government services ─────────────────────────────────────────────
-    elif any(word in message for word in [
-        "meeseva", "rta", "passport", "aadhaar", "aadhar", "ghmc",
-        "driving license", "birth certificate", "government service",
-        "govt service", "tseva", "consumer court",
-    ]):
-        state["intent"] = "govt"
+    # Store detected intent
+    detected_intent = "general"  # Default fallback
     
-
-    elif any(word in message for word in ["mmts", "train", "suburban rail"]) or (
-        "from" in message and "to" in message and any(w in message for w in ["train", "rail"])
-    ):
-        state["intent"] = "mmts"
-    elif any(word in message.lower() for word in 
-           ["power", "power cut", "electricity", "outage", "load shed",
-            "water", "water supply", "tap water"]):
-        state["intent"] = "utilities"
-        return state
-    elif any(word in message for word in ["news", "headline", "latest news", "today news", "city news", "updates"]):
-        state["intent"] = "news"
-    elif any(word in message for word in ["crowd","crowded", "busy", "best time", "avoid crowd",
-        "peaceful", "quiet", "less people", "when to visit",]):
-        state["intent"] = "crowd"
-    elif any(word in message for word in ["metro", "transport", "airport"]):
-        state["intent"] = "transport"
-
-    elif any(word in message for word in ["bus", "rtc", "tsrtc"]):
-        state["intent"] = "bus"
-
-    elif any(word in message for word in ["weather", "temperature", "rain", "climate", "forecast"]):
-        state["intent"] = "weather"
-
-    elif any(word in message for word in ["mall", "shopping", "shop", "market", "ikea", "inorbit", "gvk", "sale", "discount"]):
-        state["intent"] = "shopping"
-
-    elif any(word in message for word in ["plan", "itinerary", "tour", "trip", "day out", "visit", "sightseeing", "trail"]):
-        state["intent"] = "itinerary"
-
+    # ══════════════════════════════════════════════════════════
+    # PRIORITY 1: EMERGENCY (highest priority)
+    # ══════════════════════════════════════════════════════════
+    if any(word in message for word in ["emergency", "police", "ambulance", "fire", "help urgent"]):
+        detected_intent = "emergency"
     
+    # ══════════════════════════════════════════════════════════
+    # PRIORITY 2: TRANSPORT (metro, bus, train)
+    # ══════════════════════════════════════════════════════════
+    elif any(word in message for word in ["metro", "subway"]) and any(word in message for word in ["from", "to", "route", "station"]):
+        detected_intent = "transport"
     
-
-    elif any(word in message for word in ["traffic", "congestion", "road", "jam", "slow", "block"]):
-        state["intent"] = "traffic"
-
-    elif any(word in message for word in ["movie", "cinema", "theater", "pvr", "inox", "imax", "film", "show"]):
-        state["intent"] = "movies"
-
-    # ── palaces ─────────────────────────────────────────────────────────
-    elif any(word in message for word in [
-        "palace", "chowmahalla", "falaknuma", "purani haveli", "king koti",
-    ]):
-        state["intent"] = "palace"
-
-    # ── museums ─────────────────────────────────────────────────────────
-    elif any(word in message for word in [
-        "museum", "gallery", "salar jung", "nizam museum", "archaeology",
-        "birla science", "state art",
-    ]):
-        state["intent"] = "museum"
-
-    # ── parks & nature ──────────────────────────────────────────────────
-    elif any(word in message for word in [
-        "park", "hussain sagar", "zoo", "zoological", "kbr", "botanical",
-        "sanjeevaiah", "lake front", "nature",
-    ]):
-        state["intent"] = "park"
-
-    # ── modern attractions ──────────────────────────────────────────────
-    elif any(word in message for word in [
-        "ramoji", "shilparamam", "cable bridge", "durgam", "necklace road",
-        "film city", "attraction",
-    ]):
-        state["intent"] = "attraction"
-
-    # ── monuments ───────────────────────────────────────────────────────
-    elif any(word in message for word in [
-        "charminar", "golconda", "monument", "fort", "qutb shahi",
-        "makkah masjid", "historical",
-    ]):
-        state["intent"] = "monument"
-
-    # ── temples / religious sites ───────────────────────────────────────
-    elif any(word in message for word in [
-        "temple", "birla", "chilkur", "mandir", "mosque", "masjid",
-        "church", "cathedral", "basilica", "iskcon", "peddamma",
-        "hanuman", "yellamma", "religious",
-    ]):
-        state["intent"] = "temple"
-
-
-    elif any(word in message for word in ["fuel", "petrol", "diesel", "cng", "gas price"]):
-        state["intent"] = "fuel"
-
+    elif any(word in message for word in ["bus", "rtc", "tsrtc"]) and any(word in message for word in ["from", "to", "route"]):
+        detected_intent = "bus"
+    
+    elif any(word in message for word in ["mmts", "train", "suburban rail"]):
+        detected_intent = "mmts"
+    
+    # ══════════════════════════════════════════════════════════
+    # PRIORITY 3: SPECIFIC SERVICES
+    # ══════════════════════════════════════════════════════════
+    elif any(word in message for word in ["hospital", "hospitals", "doctor", "medical", "clinic", "apollo", "yashoda"]):
+        detected_intent = "healthcare"
+    
     elif is_food_query(message):
-        state["intent"] = "food"
-    elif any(word in message for word in [
-        "hospital", "hospitals", "doctor", "medical", "healthcare", "health",
-        "clinic", "apollo", "yashoda", "care", "continental", "emergency room",
-        "pharmacy", "medicine", "treatment", "surgery",
-    ]):
-        state["intent"] = "healthcare"
-    elif any(word in message for word in [
-        "sport", "sports", "stadium", "cricket", "gym", "fitness",
-        "uppal stadium", "sports complex", "badminton", "tennis",
-        "lal bahadur stadium", "gachibowli stadium", "arena",
-    ]):
-        state["intent"] = "sports"
-
-    elif any(word in message for word in [
-        "school", "college", "university", "education", "institute",
-        "iit", "nit", "bits", "iiit", "osmania", "jntu",
-        "study", "courses", "admission", "campus",
-    ]):
-        state["intent"] = "education"
-    elif any(word in message for word in [
-        "history", "trivia", "fact", "facts", "did you know",
-        "tell me about hyderabad", "about hyderabad", "founded",
-        "nizam", "nizams", "pearl city", "city of pearls",
-        "hyderabadi", "heritage", "legacy",
-    ]):
-        state["intent"] = "trivia"
-    elif any(word in message for word in [
-    "festival", "ganesh", "diwali", "bonalu", "eid", "ramadan",
-    "numaish", "rush", "crowd today", "procession", "immersion"
-    ]):
-        state["intent"] = "festival_traffic"
-
-    elif any(word in message for word in [
-        "festival", "festivals", "bonalu", "bathukamma", "dussehra", "ganesh",
-        "ramadan", "eid", "diwali", "holi", "sankranti", "ugadi",
-        "culture", "cultural", "tradition", "celebration",
-    ]):
-        state["intent"] = "festival"
-    # ── events & exhibitions ───────────────────────────────────────────
-    elif any(word in message for word in [
-    "deal", "deals", "offer", "offers", "discount", "discounts",
-    "swiggy", "zomato", "amazon", "flipkart", "coupon", "sale",
-    "cheap", "save money", "cashback", "promo"
-    ]):
-        state["intent"] = "deals"
-
-    else:
-        state["intent"] = "general"
-
+        detected_intent = "food"
+    
+    elif any(word in message for word in ["weather", "temperature", "rain", "climate", "forecast"]):
+        detected_intent = "weather"
+    
+    elif any(word in message for word in ["news", "headline", "latest", "updates"]):
+        detected_intent = "news"
+    
+    elif any(word in message for word in ["traffic", "congestion", "road", "jam"]):
+        detected_intent = "traffic"
+    
+    elif any(word in message for word in ["fuel", "petrol", "diesel", "cng", "gas price"]):
+        detected_intent = "fuel"
+    
+    # ══════════════════════════════════════════════════════════
+    # PRIORITY 4: TOURISM
+    # ══════════════════════════════════════════════════════════
+    elif any(word in message for word in ["charminar", "golconda", "monument", "fort", "historical"]):
+        detected_intent = "monument"
+    
+    elif any(word in message for word in ["temple", "birla", "mosque", "church", "religious"]):
+        detected_intent = "temple"
+    
+    elif any(word in message for word in ["palace", "chowmahalla", "falaknuma"]):
+        detected_intent = "palace"
+    
+    elif any(word in message for word in ["museum", "gallery", "salar jung"]):
+        detected_intent = "museum"
+    
+    elif any(word in message for word in ["park", "zoo", "hussain sagar", "kbr"]):
+        detected_intent = "park"
+    
+    elif any(word in message for word in ["ramoji", "film city", "attraction"]):
+        detected_intent = "attraction"
+    
+    # ══════════════════════════════════════════════════════════
+    # PRIORITY 5: OTHER SERVICES
+    # ══════════════════════════════════════════════════════════
+    elif any(word in message for word in ["mall", "shopping", "shop", "market", "ikea", "inorbit", "gvk"]):
+        detected_intent = "shopping"
+    
+    elif any(word in message for word in ["movie", "cinema", "theater", "pvr", "imax"]):
+        detected_intent = "movies"
+    
+    elif any(word in message for word in ["plan", "itinerary", "tour", "trip"]):
+        detected_intent = "itinerary"
+    
+    elif any(word in message for word in ["crowd", "busy", "best time", "peaceful"]):
+        detected_intent = "crowd"
+    
+    elif any(word in message for word in ["power cut", "electricity", "water supply"]):
+        detected_intent = "utilities"
+    
+    elif any(word in message for word in ["deal", "offer", "discount", "swiggy", "zomato"]):
+        detected_intent = "deals"
+    
+    # ══════════════════════════════════════════════════════════
+    # PRIORITY 6: GOVERNMENT SERVICES (LOWER PRIORITY)
+    # ══════════════════════════════════════════════════════════
+    elif any(word in message for word in ["meeseva", "passport", "aadhaar", "driving license", "birth certificate"]):
+        detected_intent = "govt"
+    
+    # ⚠️ SPECIAL: Only trigger "govt" for RTA if NO OTHER transport keywords
+    elif "rta" in message and not any(word in message for word in ["metro", "bus", "train", "route", "from", "to"]):
+        detected_intent = "govt"
+    
+    # ══════════════════════════════════════════════════════════
+    # PRIORITY 7: GENERAL INFO
+    # ══════════════════════════════════════════════════════════
+    elif any(word in message for word in ["sport", "stadium", "cricket", "gym"]):
+        detected_intent = "sports"
+    
+    elif any(word in message for word in ["school", "college", "university", "iit"]):
+        detected_intent = "education"
+    
+    elif any(word in message for word in ["history", "trivia", "fact", "tell me about"]):
+        detected_intent = "trivia"
+    
+    elif any(word in message for word in ["festival", "bonalu", "diwali"]):
+        detected_intent = "festival"
+    
+    elif any(word in message for word in ["event", "exhibition", "hitex", "numaish"]):
+        detected_intent = "events"
+    
+    # ══════════════════════════════════════════════════════════
+    # GREETING & FALLBACK
+    # ══════════════════════════════════════════════════════════
+    elif any(message.strip().startswith(word) for word in ["hello", "hi", "hey", "namaste"]):
+        detected_intent = "greeting"
+    
+    # Set the intent
+    state["intent"] = detected_intent
+    
+    # 🔍 DEBUG LOG
+    logger.info(f"Intent Classification: '{message[:50]}...' → {detected_intent}")
+    
     return state
-
 
 # ── greeting & emergency ────────────────────────────────────────────────────
 
@@ -1894,9 +1935,9 @@ def create_workflow():
 with st.spinner("Starting assistant…"):
     app = create_workflow()
 
-if not is_logged_in():
-    show_login_page()
-    st.stop()  
+#if not is_logged_in():
+   #show_login_page()
+    #st.stop()  
 
 
 # ========================================
@@ -1914,39 +1955,68 @@ st.sidebar.markdown("---")
 st.sidebar.subheader("👤 Account")
 
 if is_logged_in():
+    # ──── LOGGED IN USER ────
     user_email = st.session_state.get("user_email", "User")
-    st.sidebar.markdown(f"**Logged in as:**  \n{user_email}")
+    st.sidebar.success(f"✅ **Logged in**\n{user_email}")
     
-    col1, col2 = st.sidebar.columns(2)
-    
-    with col1:
-        if st.sidebar.button("📊 Analytics", use_container_width=True):
-            st.switch_page("pages/analytics.py")
-    
-    with col2:
-        if st.sidebar.button("🚪 Logout", use_container_width=True):
-            sign_out()
-            st.rerun()
-    
-    # Quick stats
+    # Stats preview
     try:
         stats = get_user_stats()
         total_msgs = stats.get("total_messages", 0)
         if total_msgs > 0:
-            st.sidebar.caption(f"📊 Total Chats: {total_msgs}")
-    except Exception as e:
-        logger.debug(f"Stats error: {e}")
+            st.sidebar.metric("💬 Total Chats", total_msgs)
+    except:
+        pass
+    
+    # Action buttons
+    col1, col2 = st.sidebar.columns(2)
+    with col1:
+        if st.sidebar.button("📊 Analytics", use_container_width=True):
+            st.switch_page("pages/analytics.py")
+    with col2:
+        if st.sidebar.button("🚪 Logout", use_container_width=True):
+            sign_out()
+            st.rerun()
 
 elif st.session_state.get("guest_mode", False):
-    st.sidebar.info("👤 **Guest Mode**")
-    st.sidebar.caption("Limited features")
+    # ──── GUEST MODE ────
+    remaining = 5 - st.session_state.get("guest_chat_count", 0)
     
-    if st.sidebar.button("🔑 Login for Full Access", use_container_width=True):
-        st.session_state.guest_mode = False
+    # Visual indicator
+    if remaining <= 1:
+        st.sidebar.error(f"🔴 **{remaining} chat left!**")
+    elif remaining <= 2:
+        st.sidebar.warning(f"🟡 **{remaining} chats left**")
+    else:
+        st.sidebar.info(f"👤 **Guest Mode**\n{remaining}/5 chats remaining")
+    
+    # Progress bar
+    progress = st.session_state.get("guest_chat_count", 0) / 5
+    st.sidebar.progress(progress)
+    
+    # Call to action
+    if remaining <= 3:
+        st.sidebar.markdown("### 🎁 Unlock Unlimited")
+        st.sidebar.markdown(
+            "- 💬 Unlimited chats\n"
+            "- 📊 Analytics\n"
+            "- 🗣️ Voice features\n"
+            "- 💾 Save history"
+        )
+    
+    if st.sidebar.button("🔑 Sign Up Free", use_container_width=True, type="primary"):
         st.switch_page("pages/login.py")
+    
+    if st.sidebar.button("🔓 Login", use_container_width=True):
+        st.switch_page("pages/login.py")
+
 else:
+    # ──── NOT LOGGED IN ────
+    st.sidebar.info("🔐 **Not logged in**")
+    
     if st.sidebar.button("🔑 Login / Sign Up", use_container_width=True, type="primary"):
         st.switch_page("pages/login.py")
+
 
 # ──────────────────────────────────────
 # LANGUAGE SELECTOR (Keep existing code)
@@ -2159,11 +2229,27 @@ if "messages" not in st.session_state:
         logger.warning(f"Failed to load history (non-critical): {e}")
     
     # If no history or not logged in, show welcome
-    if not st.session_state.messages:
-        st.session_state.messages.append({
-            "role": "assistant",
-            "content": "👋 Welcome to MITR! I am your personal assistant for exploring Hyderabad. How can I help you today?"
-        })
+    if not is_logged_in() and st.session_state.get("guest_mode", False):
+        welcome_msg = (
+            "👋 **Welcome to MITR!**\n\n"
+            "I'm your personal assistant for exploring Hyderabad.\n\n"
+            "🎁 **You have 5 free chats** to try me out!\n\n"
+            "Ask me about:\n"
+            "- 🍛 Best biryani places\n"
+            "- 🚇 Metro routes & timings\n"
+            "- 🏛️ Tourist attractions\n"
+            "- ☀️ Weather & traffic\n"
+            "- 🎬 Movies & events\n\n"
+            "**Pro tip:** Create a free account for unlimited access! 🚀"
+        )
+    else:
+        welcome_msg = "👋 Welcome to MITR! How can I help you explore Hyderabad today?"
+    
+    st.session_state.messages.append({
+        "role": "assistant",
+        "content": welcome_msg
+    })
+
 
 
 for message in st.session_state.messages:
@@ -2218,7 +2304,15 @@ if user_input:
         {"role": "user", "content": user_input}
     )
     logger.info(f"User query: {user_input[:100]}")
-    
+    if not is_logged_in() and st.session_state.get("guest_mode", False):
+        st.session_state.guest_chat_count += 1
+        logger.info(f"Guest chat: {st.session_state.guest_chat_count}/5")
+        
+        # Show warning if approaching limit
+        if st.session_state.guest_chat_count == 4:
+            st.toast("⚠️ 1 free chat remaining! Sign up to continue.", icon="⏰")
+        elif st.session_state.guest_chat_count == 3:
+            st.toast("💡 2 free chats left! Create account for unlimited access.", icon="ℹ️")
     # 2️⃣ Validate & Sanitize (BEFORE spinner)
     is_valid, clean_input, error_msg = validate_and_sanitize(user_input)
     
@@ -2293,7 +2387,8 @@ if user_input:
                     
                     # ✅ Run LangGraph with context
                     result = app.invoke({
-                        "user_input": context_prompt,  # Use context-aware prompt
+                        "user_input": normalized_input,  # ✅ Send clean query to handlers
+                        "context": context_prompt,        # ✅ Available if handlers need it
                         "intent": "",
                         "response": ""
                     })

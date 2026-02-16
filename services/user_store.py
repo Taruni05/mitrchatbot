@@ -15,6 +15,42 @@ from services.logger import get_logger
 logger = get_logger(__name__)
 
 
+# ✅ ADD THIS NEW FUNCTION
+def get_supabase_with_retry(max_retries: int = 2):
+    """
+    Get Supabase client with retry on JWT expiry.
+    
+    Args:
+        max_retries: Number of times to retry getting a fresh client
+    
+    Returns:
+        Supabase client or None
+    """
+    for attempt in range(max_retries):
+        supabase = get_supabase()
+        if supabase:
+            try:
+                # Quick validation test - try a simple query
+                supabase.table("user_preferences").select("user_id").limit(1).execute()
+                return supabase
+            except Exception as e:
+                if "JWT expired" in str(e) or "PGRST303" in str(e):
+                    logger.warning(f"JWT expired on attempt {attempt + 1}, retrying...")
+                    if attempt < max_retries - 1:
+                        import time
+                        time.sleep(0.5)  # Brief pause before retry
+                        continue
+                # If not a JWT error or final attempt, return the client anyway
+                return supabase
+        else:
+            logger.error(f"get_supabase_with_retry() returned None on attempt {attempt + 1}")
+            if attempt < max_retries - 1:
+                import time
+                time.sleep(0.5)
+                continue
+    
+    return None
+
 # ═══════════════════════════════════════════════════════════════════════════
 # PREFERENCES MANAGEMENT (JSONB Storage)
 # ═══════════════════════════════════════════════════════════════════════════
@@ -36,7 +72,7 @@ def load_preferences() -> Dict:
         logger.debug("Cannot load preferences: No user logged in")
         return {}
     
-    supabase = get_supabase()
+    supabase = get_supabase_with_retry()
     if not supabase:
         logger.error("Cannot load preferences: Supabase not configured")
         return {}
@@ -101,7 +137,7 @@ def save_preferences(preferences: Dict) -> bool:
         logger.warning("Cannot save preferences: No user logged in")
         return False
     
-    supabase = get_supabase()
+    supabase = get_supabase_with_retry()
     if not supabase:
         logger.error("Cannot save preferences: Supabase not configured")
         return False
@@ -149,7 +185,7 @@ def delete_all_preferences() -> bool:
     if not user_id:
         return False
     
-    supabase = get_supabase()
+    supabase = get_supabase_with_retry()
     if not supabase:
         return False
     
@@ -177,7 +213,7 @@ def save_chat_message(user_message: str, bot_response: str, intent: str = "") ->
         logger.debug("Cannot save chat: No user logged in")
         return False
     
-    supabase = get_supabase()
+    supabase = get_supabase_with_retry()
     if not supabase:
         logger.error("Cannot save chat: Supabase not configured")
         return False
@@ -208,7 +244,7 @@ def load_chat_history(limit: int = 50) -> List[Dict]:
     if not user_id:
         return []
     
-    supabase = get_supabase()
+    supabase = get_supabase_with_retry()
     if not supabase:
         return []
     
@@ -240,7 +276,7 @@ def get_chat_history_count() -> int:
     if not user_id:
         return 0
     
-    supabase = get_supabase()
+    supabase = get_supabase_with_retry()
     if not supabase:
         return 0
     
@@ -266,7 +302,7 @@ def delete_chat_history() -> bool:
     if not user_id:
         return False
     
-    supabase = get_supabase()
+    supabase = get_supabase_with_retry()
     if not supabase:
         return False
     
@@ -297,7 +333,7 @@ def get_user_stats() -> Dict:
     if not user_id:
         return {}
     
-    supabase = get_supabase()
+    supabase = get_supabase_with_retry()
     if not supabase:
         return {}
     
