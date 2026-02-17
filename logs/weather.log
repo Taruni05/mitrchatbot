@@ -366,3 +366,7 @@ requests.exceptions.ConnectionError: HTTPSConnectionPool(host='api.openweatherma
 2026-02-17 21:58:51 | weather | [32mINFO[0m | get_aqi_by_coords:242 | AQI fetched: 5
 2026-02-17 21:58:53 | weather | [32mINFO[0m | get_weather_by_coords:40 | Weather: 25.15°C, Haze
 2026-02-17 21:58:54 | weather | [32mINFO[0m | get_weather_by_coords:40 | Weather: 25.18°C, Haze
+2026-02-17 22:19:03 | weather | [32mINFO[0m | get_weather_by_coords:40 | Weather: 24.23°C, Haze
+2026-02-17 22:19:04 | weather | [32mINFO[0m | get_aqi_by_coords:242 | AQI fetched: 5
+2026-02-17 22:19:08 | weather | [32mINFO[0m | get_weather_by_coords:40 | Weather: 24.15°C, Haze
+2026-02-17 22:19:10 | weather | [32mINFO[0m | get_weather_by_coords:40 | Weather: 24.18°C, Haze

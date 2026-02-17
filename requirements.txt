@@ -4,9 +4,6 @@ google-genai>=0.2.0
 requests>=2.31.0
 beautifulsoup4>=4.12.0
 pandas>=2.0.0
-# Multilingual Support
-# googletrans  # REMOVED: unmaintained
-deep-translator
-# Voice Interaction (Easy Install - No PyAudio!)
-gTTS==2.5.0
-supabase==2.3.4
+deep-translator>=1.11.4
+supabase>=2.10.0
+gTTS>=2.5.0
