@@ -105,7 +105,9 @@ def initialize_session_state():
     
     if "messages" not in st.session_state:
         st.session_state["messages"] = []
-    
+    if 'conversation_entities' not in st.session_state:
+        st.session_state.conversation_entities = {}
+   
     # User preferences
     if "user_preferences" not in st.session_state:
         st.session_state["user_preferences"] = {}
