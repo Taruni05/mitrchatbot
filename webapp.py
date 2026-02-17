@@ -205,9 +205,8 @@ if not is_logged_in():
         st.session_state.guest_mode = True
         
         # Show friendly banner
-        if remaining == 5:
-            st.success("👋 **Welcome!** Try MITR free - 5 chats to explore Hyderabad!")
-        elif remaining <= 2:
+        
+        if remaining <= 2:
             st.warning(f"⏰ **{remaining} free chats remaining!** Login to continue unlimited.")
             if st.button("🔑 Quick Sign Up (30 seconds)", type="primary"):
                 st.switch_page("pages/login.py")
