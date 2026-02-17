@@ -23,7 +23,7 @@ logger = get_logger(__name__)
 
 def get_rapidapi_key():
     """Get RapidAPI key for Zomato/Swiggy APIs"""
-    return config.api.get_rapidapi_key()
+    return config.api.get_rapidapi_key
 
 
 # ═══════════════════════════════════════════════════════════════════════════

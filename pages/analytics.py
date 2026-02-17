@@ -4,9 +4,10 @@ Shows user's chat history, usage patterns, and insights.
 """
 
 import streamlit as st
-from datetime import datetime, timedelta
+from datetime import datetime          # FIX 1.1: removed unused `timedelta`
 from typing import Dict, List
 import pandas as pd
+import json                            # moved to top-level (was inside button block)
 from collections import Counter
 
 # Import services
@@ -14,6 +15,7 @@ from services.auth import is_logged_in, get_current_user_id, require_login
 from services.user_store import get_user_stats, load_chat_history, load_preferences
 from services.cache_manager import get_cache_stats
 from services.logger import get_logger
+from services.theme import apply_theme
 
 logger = get_logger(__name__)
 
@@ -23,6 +25,7 @@ st.set_page_config(
     page_icon="📊",
     layout="wide"
 )
+apply_theme("Auto")
 
 # Require login
 if not require_login():
@@ -35,11 +38,13 @@ if not require_login():
 st.title("📊 Your MITR Analytics")
 st.markdown("Insights into your Hyderabad exploration journey")
 
+
 # Get user data
 user_id = get_current_user_id()
 stats = get_user_stats()
 preferences = load_preferences()
 history = load_chat_history(limit=100)
+cache_stats = get_cache_stats()        # FIX 1.2: moved here so it's always in scope
 
 # ============================================================================
 # OVERVIEW METRICS
@@ -63,7 +68,6 @@ with col3:
     st.metric("📊 Avg Chats/Day", f"{avg_per_day:.1f}")
 
 with col4:
-    cache_stats = get_cache_stats()
     hit_rate = cache_stats.get("hit_rate", 0)
     st.metric("⚡ Cache Hit Rate", f"{hit_rate:.0f}%")
 
@@ -139,9 +143,12 @@ if history and len(history) > 5:
         
         st.metric("Peak Hour", time_str, f"{peak_count} chats")
     
+    # FIX 1.8: Removed fake "Avg Response Time" metric — no real data backs it.
+    #           Replaced with a genuinely available stat: total unique hours used.
     with col2:
-        # Average response time (if we tracked it)
-        st.metric("Avg Response Time", "< 3 sec", "Fast ⚡")
+        unique_hours = hourly_counts[hourly_counts > 0].count()
+        st.metric("Active Hours of Day", f"{unique_hours} / 24",
+                  help="Number of distinct hours of the day you've used MITR")
     
     # Hourly heatmap data
     st.markdown("**📊 Usage by Hour of Day:**")
@@ -171,10 +178,27 @@ with col1:
 
 with col2:
     st.markdown("**🎯 Interests:**")
-    interests = preferences.get("interests", [])
-    if interests:
-        for interest in interests[:5]:
-            st.markdown(f"- {interest.title()}")
+    # FIX 1.6: `interests` is a dict {category: count}, not a list.
+    #           Sort by count descending, show only categories with count > 0.
+    interests = preferences.get("interests", {})
+    if isinstance(interests, dict):
+        active_interests = sorted(
+            [(k, v) for k, v in interests.items() if v > 0],
+            key=lambda x: x[1],
+            reverse=True
+        )
+        if active_interests:
+            for interest, count in active_interests[:5]:
+                st.markdown(f"- {interest.title()} *(×{count})*")
+        else:
+            st.caption("No interests recorded yet")
+    elif isinstance(interests, list):
+        # Legacy flat-list support (in case old data exists)
+        if interests:
+            for interest in interests[:5]:
+                st.markdown(f"- {interest.title()}")
+        else:
+            st.caption("No interests saved yet")
     else:
         st.caption("No interests saved yet")
 
@@ -277,14 +301,23 @@ with col1:
 with col2:
     st.markdown("**📊 Your Stats vs Average User:**")
     
-    # Compare with averages (hardcoded for demo)
+    # FIX 1.7: Corrected the percentile calculation and message.
+    #   - Don't cap the ratio before computing the rank description.
+    #   - "top X%" means the fraction of users who chat MORE than you,
+    #     so if you chat 2× the average you're approximately in the top 50 / 2 = 25%,
+    #     which we approximate as max(1, 100 // ratio)%.
     avg_user_chats = 25
-    your_percentile = min(100, (total_chats / avg_user_chats) * 100)
-    
-    if total_chats > avg_user_chats:
-        st.success(f"You're in the top {100 - your_percentile:.0f}% most active users! 🌟")
+    if total_chats == 0:
+        st.info("Start chatting to see how you compare to other users!")
     else:
-        st.info(f"You're {your_percentile:.0f}% as active as average users.")
+        ratio = total_chats / avg_user_chats  # e.g. 2.0 = twice as active
+        if total_chats > avg_user_chats:
+            # Approximate top-percentile: higher ratio → smaller top-% number
+            top_pct = max(1, int(100 / ratio))
+            st.success(f"You're in the top **{top_pct}%** of most active users! 🌟")
+        else:
+            activity_pct = int(ratio * 100)
+            st.info(f"You're **{activity_pct}%** as active as the average user. Keep exploring!")
 
 # ============================================================================
 # DATA EXPORT
@@ -293,59 +326,78 @@ with col2:
 st.markdown("---")
 st.subheader("📥 Export Your Data")
 
+# FIX 1.4 & 1.5: Prepare all downloadable data unconditionally before rendering
+# any buttons. st.download_button renders persistently on its own — no outer
+# st.button wrapper needed.  The "Clear All Data" flow uses st.session_state
+# to show a confirmation step that survives the Streamlit rerun cycle.
+
 col1, col2, col3 = st.columns(3)
 
 with col1:
-    if st.button("📄 Download Chat History (CSV)", use_container_width=True):
-        if history:
-            # Convert to DataFrame
-            df = pd.DataFrame(history)
-            csv = df.to_csv(index=False)
-            
-            st.download_button(
-                label="💾 Download CSV",
-                data=csv,
-                file_name=f"mitr_history_{datetime.now().strftime('%Y%m%d')}.csv",
-                mime="text/csv"
-            )
-        else:
-            st.warning("No history to export")
+    # FIX 1.4 (CSV): Prepare CSV data upfront; render download_button directly.
+    if history:
+        csv_df = pd.DataFrame(history)
+        csv_data = csv_df.to_csv(index=False)
+        st.download_button(
+            label="📄 Download Chat History (CSV)",
+            data=csv_data,
+            file_name=f"mitr_history_{datetime.now().strftime('%Y%m%d')}.csv",
+            mime="text/csv",
+            use_container_width=True
+        )
+    else:
+        st.button("📄 Download Chat History (CSV)", disabled=True,
+                  use_container_width=True, help="No history to export yet")
 
 with col2:
-    if st.button("📊 Download Analytics Report (JSON)", use_container_width=True):
-        import json
-        
-        report = {
-            "user_id": user_id,
-            "generated_at": datetime.now().isoformat(),
-            "stats": stats,
-            "preferences": preferences,
-            "total_conversations": len(history),
-            "cache_stats": cache_stats
-        }
-        
-        json_str = json.dumps(report, indent=2)
-        
-        st.download_button(
-            label="💾 Download JSON",
-            data=json_str,
-            file_name=f"mitr_analytics_{datetime.now().strftime('%Y%m%d')}.json",
-            mime="application/json"
-        )
+    # FIX 1.4 (JSON): Same pattern — prepare data upfront.
+    report = {
+        "user_id": user_id,
+        "generated_at": datetime.now().isoformat(),
+        "stats": stats,
+        "preferences": preferences,
+        "total_conversations": len(history),
+        "cache_stats": cache_stats
+    }
+    json_str = json.dumps(report, indent=2)
+    st.download_button(
+        label="📊 Download Analytics Report (JSON)",
+        data=json_str,
+        file_name=f"mitr_analytics_{datetime.now().strftime('%Y%m%d')}.json",
+        mime="application/json",
+        use_container_width=True
+    )
 
 with col3:
-    if st.button("🗑️ Clear All Data", use_container_width=True, type="secondary"):
-        st.warning("⚠️ This will delete all your chat history and preferences!")
-        
-        if st.button("⚠️ Confirm Delete", type="primary"):
-            from services.user_store import delete_all_preferences
-            # Note: You'd need to add a delete_all_history() function
-            
-            st.error("Data deletion feature coming soon!")
-            # delete_all_preferences()
-            # delete_all_history()
-            # st.success("All data deleted!")
-            # st.rerun()
+    # FIX 1.5: Use st.session_state to implement a two-step confirm flow that
+    # survives Streamlit reruns. A nested st.button inside if st.button(...) is
+    # always invisible after the triggering rerun.
+    if "confirm_delete" not in st.session_state:
+        st.session_state.confirm_delete = False
+
+    if not st.session_state.confirm_delete:
+        if st.button("🗑️ Clear All Data", use_container_width=True, type="secondary"):
+            st.session_state.confirm_delete = True
+            st.rerun()
+    else:
+        st.warning("⚠️ This will permanently delete all your chat history and preferences!")
+        confirm_col, cancel_col = st.columns(2)
+
+        with confirm_col:
+            if st.button("⚠️ Yes, Delete Everything", type="primary", use_container_width=True):
+                from services.user_store import delete_all_user_data
+                success = delete_all_user_data()
+                st.session_state.confirm_delete = False
+                if success:
+                    st.success("✅ All data deleted successfully.")
+                    st.rerun()
+                else:
+                    st.error("❌ Deletion failed. Please try again.")
+
+        with cancel_col:
+            if st.button("Cancel", use_container_width=True):
+                st.session_state.confirm_delete = False
+                st.rerun()
 
 # ============================================================================
 # FOOTER

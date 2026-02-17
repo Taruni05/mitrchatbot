@@ -31,7 +31,6 @@ logger = get_logger(__name__)
 
 
 # ─── Gemini client (same key the rest of the app uses) ───────────────────────
-@st.cache_resource
 def _get_client() -> genai.Client:
     """Return a Gemini client, reading the key from st.secrets or env."""
     key = config.api.get_next_gemini_key()
@@ -100,17 +99,7 @@ def synthesize(text: str, language: str = "en") -> bytes:
         clean = clean[:500] + "…"
 
     try:
-        
-        # Map unsupported languages to supported ones
-        GTTS_LANG_MAP = {
-            "te": "en",  # Telugu not supported, use English
-            "ur": "ur",  # Urdu supported
-            "hi": "hi",  # Hindi supported
-            "en": "en"   # English supported
-        }
-        gtts_lang = GTTS_LANG_MAP.get(language, "en")
-        
-        tts = gTTS(text=clean, lang=gtts_lang, slow=False)
+        tts = gTTS(text=clean, lang=language, slow=False)
         buf = io.BytesIO()
         tts.write_to_fp(buf)
         buf.seek(0)

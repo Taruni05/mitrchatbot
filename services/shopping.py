@@ -8,6 +8,10 @@ logger = get_logger(__name__)
 from services.kb_loader import get_shopping
 
 
+# Initialize at module level
+MALLS_DATA = None
+
+
 def load_shopping_data():
     return get_shopping()
 

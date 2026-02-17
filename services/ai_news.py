@@ -15,7 +15,7 @@ from services.config import config
 logger = setup_logger('ai_news', 'ai_news.log')
 
 # Initialize Gemini client with config
-client = genai.Client(api_key=config.api.get_next_gemini_key())
+# Client created per-request to enable key rotation
 
 
 def summarize_news(articles, query: str = None):
@@ -143,6 +143,7 @@ Format:
 Keep it concise and relevant to Hyderabad only."""
                 logger.debug("Using simplified prompt for retry")
             
+            client = genai.Client(api_key=config.api.get_next_gemini_key())
             response = client.models.generate_content(
                 model=config.api.GEMINI_MODEL,
                 contents=prompt,

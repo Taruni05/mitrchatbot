@@ -1,11 +1,9 @@
-from collections import deque
 # web_app.py - Beautiful Web Interface for Hyderabad Chatbot
 import streamlit as st
 import json
 from langgraph.graph import StateGraph, END
 from typing import TypedDict
 from services.locations import HYDERABAD_AREA_COORDS
-from services.kb_loader import load_knowledge_base
 from services.weatherapi import (
     get_weather_by_coords,
     get_aqi_by_coords,
@@ -84,41 +82,23 @@ from services.input_validator import validate_and_sanitize
 from services.rate_limiter import is_rate_limited, get_rate_limit_info,get_user_id
 # Initialize main app logger
 logger = get_logger(__name__)
-
-def initialize_session_state():
-    """Initialize all session state variables to prevent AttributeError"""
-    
-    # Cache stats
-    if "cache_stats" not in st.session_state:
-        st.session_state["cache_stats"] = {}
-    
-    # User authentication
-    if "authenticated" not in st.session_state:
-        st.session_state.authenticated = False
-    
+def get_user_id() -> str:
+    """
+    Get or create a unique user ID for this session.
+    Used for rate limiting.
+    """
     if "user_id" not in st.session_state:
-        st.session_state.user_id = "guest"
+        import secrets
+        st.session_state.user_id = secrets.token_hex(16)
+        logger.info(f"New user session: {st.session_state.user_id}")
     
-    # Conversation
-    if "conversation_history" not in st.session_state:
-        st.session_state["conversation_history"] = deque(maxlen=50)
-    
-    if "messages" not in st.session_state:
-        st.session_state["messages"] = []
-    
-    # User preferences
-    if "user_preferences" not in st.session_state:
-        st.session_state["user_preferences"] = {}
-    
-    # Theme
-    if "theme_mode" not in st.session_state:
-        st.session_state.theme_mode = "Auto"
+    return st.session_state.user_id
+# Removed: os.environ mutation (causes race conditions)
 
 
-
-# Initialize session state
-initialize_session_state()
-
+# ========================================
+# PAGE CONFIG - Must be first Streamlit command
+# ========================================
 st.set_page_config(
     page_title=config.app.APP_NAME,
     page_icon=config.app.APP_ICON,
@@ -132,7 +112,7 @@ if is_logged_in():
     # Try to get a fresh client (this will auto-refresh token if needed)
     supabase = get_supabase()
     if not supabase:
-        # Token refresh failed, need to re-login, need to re-login
+    # Token refresh failed, need to re-login
         st.error("⚠️ Your session has expired. Please login again.")
         if st.button("Go to Login"):
             st.session_state.clear()
@@ -266,44 +246,18 @@ greeting = get_personalized_greeting(prefs)
 st.markdown(f"### {greeting}")
 
 # Show personalized suggestions as quick action buttons
-# REPLACE WITH:
-try:
-    # Combine personalized + proactive, deduplicated
-    personal_raw = get_personalized_suggestions(prefs)
-    proactive_raw = get_proactive_suggestions(max_suggestions=3)
-
-    combined = []
-    seen_texts = set()
-
-    for s in personal_raw[:3]:
-        button_text = s.split(" ", 1)[1] if " " in s else s
-        key = button_text.lower().strip()
-        if key not in seen_texts:
-            seen_texts.add(key)
-            combined.append({"text": s, "query": button_text})
-
-    for s in proactive_raw:
-        key = s["text"].lower().strip()
-        if key not in seen_texts:
-            seen_texts.add(key)
-            combined.append(s)
-
-    if combined:
-        st.markdown("**🎯 Suggested for you:**")
-        cols = st.columns(min(len(combined[:5]), 5))
-        for i, suggestion in enumerate(combined[:5]):
-            with cols[i]:
-                if st.button(
-                    suggestion["text"],
-                    key=f"combined_suggest_{i}_{hash(suggestion['text'])}",
-                    use_container_width=True
-                ):
-                    st.session_state.last_query = suggestion["query"]
-                    st.rerun()
-        st.markdown("---")
-
-except Exception as e:
-    logger.warning(f"Could not load suggestions: {e}")
+suggestions = get_personalized_suggestions(prefs)
+if suggestions:
+    st.markdown("**🎯 Suggested for you:**")
+    cols = st.columns(min(len(suggestions), 5))
+    for i, suggestion in enumerate(suggestions[:5]):
+        with cols[i]:
+            # Extract the main text after emoji
+            button_text = suggestion.split(" ", 1)[1] if " " in suggestion else suggestion
+            if st.button(button_text, key=f"suggestion_{i}", use_container_width=True):
+                st.session_state.last_query = button_text
+                st.rerun()
+    st.markdown("---")
 # ========================================
 # PROACTIVE ALERTS FOR SAVED AREAS
 # ========================================
@@ -321,7 +275,7 @@ if saved_areas:
         st.warning("⚡💧 **Utility Alerts in Your Areas**")
         for alert in utility_alerts:
             st.markdown(f"• {alert}")
-
+        st.markdown("---")
 
 st.empty()
 
@@ -374,7 +328,15 @@ with st.spinner("Setting up your view..."):
 # ========================================
 # LOAD KNOWLEDGE BASE
 # ========================================
-
+@st.cache_resource
+def load_knowledge_base():
+    """Load knowledge base (cached for performance)"""
+    try:
+        with open("knowledge_base.json", "r", encoding="utf-8") as f:
+            return json.load(f)
+    except Exception as e:
+        st.error(f"❌ Error loading knowledge base: {e}")
+        return None
 
 
 with st.spinner("Loading city knowledge base…"):
@@ -477,20 +439,22 @@ def _match_item(query: str, items: list) -> dict | None:
 
 
 def _format_detail(item: dict, emoji: str = "🏛️") -> str:
+    """Full-detail card for a single tourism KB item."""
     name        = item.get("name", "Unknown")
     item_type   = item.get("type")
     location    = item.get("location")
     description = item.get("description", "")
 
-    lines = [f"{emoji} **{name}**\n\n"]
+    lines = [f"{emoji} **{name}**\n"]
     if item_type:
-        lines.append(f"🏷️  **Type:** {item_type}  \n")
+        lines.append(f"🏷️  **Type:** {item_type}")
     if location:
-        lines.append(f"📍 **Location:** {location}  \n")
+        lines.append(f"📍 **Location:** {location}")
     if description:
-        lines.append(f"\n\n📖 **About:**  \n{description}")
-    lines.append("\n\n💡 **Tip:** Visit early in the morning to avoid crowds and get the best photos!")
-    return "".join(lines)
+        lines.append(f"\n📖 **About:**\n{description}")
+    lines.append("\n💡 **Tip:** Visit early in the morning to avoid crowds and get the best photos!")
+    return "\n".join(lines)
+
 
 def _format_list(items: list, title: str, emoji: str = "🏛️") -> str:
     """Browsable list with first-sentence teasers."""
@@ -501,11 +465,11 @@ def _format_list(items: list, title: str, emoji: str = "🏛️") -> str:
         desc = item.get("description", "")
         first_sentence = desc.split(".")[0] if desc else ""
 
-        lines.append(f"**{i}. {name}**   \n")
-        lines.append(f"   📍 {loc}   \n")
+        lines.append(f"**{i}. {name}**")
+        lines.append(f"   📍 {loc}")
         if first_sentence:
-            lines.append(f"   {first_sentence}.   \n")
-        lines.append("\n")
+            lines.append(f"   {first_sentence}.")
+        lines.append("")
     return "\n".join(lines)
 
 
@@ -568,241 +532,183 @@ def is_food_query(message: str) -> bool:
 
 
 def classify_intent(state: BotState):
-    """Classify user intent"""
+    """Classify user intent with strict priority order"""
     message = state["user_input"].lower()
-
-    if any(
-        message.strip().startswith(word) for word in ["hello", "hi", "hey", "namaste"]
-    ):
-        state["intent"] = "greeting"
-        return state
-
-    elif any(word in message for word in ["emergency", "police", "ambulance", "fire"]):
-        state["intent"] = "emergency"
-        return state
-    elif any(word in message for word in [
-        "event", "events", "exhibition", "expo", "hitex", "comic con",
-        "numaish", "book fair", "happening", "what's on",
-    ]):
-        state["intent"] = "events"
-        return state
-
-    # ── government services ─────────────────────────────────────────────
-    elif any(word in message for word in [
-        "meeseva", "rta", "passport", "aadhaar", "aadhar", "ghmc",
-        "driving license", "birth certificate", "government service",
-        "govt service", "tseva", "consumer court",
-    ]):
-        state["intent"] = "govt"
-        return state
-
-    elif any(word in message for word in ["mmts", "train", "suburban rail"]) or (
-        "from" in message and "to" in message and any(w in message for w in ["train", "rail"])
-    ):
-        state["intent"] = "mmts"
-        return state
-    elif any(word in message.lower() for word in 
-           ["power", "power cut", "electricity", "outage", "load shed",
-            "water", "water supply", "tap water"]):
-        state["intent"] = "utilities"
-        return state
-    elif any(word in message for word in ["news", "headline", "latest news", "today news", "city news", "updates"]):
-        state["intent"] = "news"
-        return state
-    elif any(word in message for word in ["crowd","crowded", "busy", "best time", "avoid crowd",
-        "peaceful", "quiet", "less people", "when to visit",]):
-        state["intent"] = "crowd"
-        return state
-    elif any(word in message for word in ["metro", "transport", "airport"]):
-        state["intent"] = "transport"
-        return state
-
-    elif any(word in message for word in ["bus", "rtc", "tsrtc"]):
-        state["intent"] = "bus"
-        return state
-
-    elif any(word in message for word in ["weather", "temperature", "rain", "climate", "forecast"]):
-        state["intent"] = "weather"
-        return state
-
-    elif any(word in message for word in ["mall", "shopping", "shop", "market", "ikea", "inorbit", "gvk", "sale", "discount"]):
-        state["intent"] = "shopping"
-        return state
-
-    elif any(word in message for word in ["plan", "itinerary", "tour", "trip", "day out", "visit", "sightseeing", "trail"]):
-        state["intent"] = "itinerary"
-        return state
-
     
+    # Store detected intent
+    detected_intent = "general"  # Default fallback
     
-
-    elif any(word in message for word in ["traffic", "congestion", "road", "jam", "slow", "block"]):
-        state["intent"] = "traffic"
-        return state
-
-    elif any(word in message for word in ["movie", "cinema", "theater", "pvr", "inox", "imax", "film", "show"]):
-        state["intent"] = "movies"
-        return state
-
-    # ── palaces ─────────────────────────────────────────────────────────
-    elif any(word in message for word in [
-        "palace", "chowmahalla", "falaknuma", "purani haveli", "king koti",
-    ]):
-        state["intent"] = "palace"
-        return state
-
-    # ── museums ─────────────────────────────────────────────────────────
-    elif any(word in message for word in [
-        "museum", "gallery", "salar jung", "nizam museum", "archaeology",
-        "birla science", "state art",
-    ]):
-        state["intent"] = "museum"
-        return state
-
-    # ── parks & nature ──────────────────────────────────────────────────
-    elif any(word in message for word in [
-        "park", "hussain sagar", "zoo", "zoological", "kbr", "botanical",
-        "sanjeevaiah", "lake front", "nature",
-    ]):
-        state["intent"] = "park"
-        return state
-
-    # ── modern attractions ──────────────────────────────────────────────
-    elif any(word in message for word in [
-        "ramoji", "shilparamam", "cable bridge", "durgam", "necklace road",
-        "film city", "attraction",
-    ]):
-        state["intent"] = "attraction"
-        return state
-
-    # ── monuments ───────────────────────────────────────────────────────
-    elif any(word in message for word in [
-        "charminar", "golconda", "monument", "fort", "qutb shahi",
-        "makkah masjid", "historical",
-    ]):
-        state["intent"] = "monument"
-        return state
-    # ── temples / religious sites ───────────────────────────────────────
-    elif any(word in message for word in [
-        "temple", "birla", "chilkur", "mandir", "mosque", "masjid",
-        "church", "cathedral", "basilica", "iskcon", "peddamma",
-        "hanuman", "yellamma", "religious",
-    ]):
-        state["intent"] = "temple"
-        return state
-
-    elif any(word in message for word in ["fuel", "petrol", "diesel", "cng", "gas price"]):
-        state["intent"] = "fuel"
-        return state
-
+    # ══════════════════════════════════════════════════════════
+    # PRIORITY 1: EMERGENCY (highest priority)
+    # ══════════════════════════════════════════════════════════
+    if any(word in message for word in ["emergency", "police", "ambulance", "fire", "help urgent"]):
+        detected_intent = "emergency"
+    
+    # ══════════════════════════════════════════════════════════
+    # PRIORITY 2: TRANSPORT (metro, bus, train)
+    # ══════════════════════════════════════════════════════════
+    elif any(word in message for word in ["metro", "subway"]) and any(word in message for word in ["from", "to", "route", "station"]):
+        detected_intent = "transport"
+    
+    elif any(word in message for word in ["bus", "rtc", "tsrtc"]) and any(word in message for word in ["from", "to", "route"]):
+        detected_intent = "bus"
+    
+    elif any(word in message for word in ["mmts", "train", "suburban rail"]):
+        detected_intent = "mmts"
+    
+    # ══════════════════════════════════════════════════════════
+    # PRIORITY 3: SPECIFIC SERVICES
+    # ══════════════════════════════════════════════════════════
+    elif any(word in message for word in ["hospital", "hospitals", "doctor", "medical", "clinic", "apollo", "yashoda"]):
+        detected_intent = "healthcare"
+    
     elif is_food_query(message):
-        state["intent"] = "food"
-        return state
-    elif any(word in message for word in [
-        "hospital", "hospitals", "doctor", "medical", "healthcare", "health",
-        "clinic", "apollo", "yashoda", "care", "continental", "emergency room",
-        "pharmacy", "medicine", "treatment", "surgery",
-    ]):
-        state["intent"] = "healthcare"
-        return state
-    elif any(word in message for word in [
-        "sport", "sports", "stadium", "cricket", "gym", "fitness",
-        "uppal stadium", "sports complex", "badminton", "tennis",
-        "lal bahadur stadium", "gachibowli stadium", "arena",
-    ]):
-        state["intent"] = "sports"
-        return state
-    elif any(word in message for word in [
-        "school", "college", "university", "education", "institute",
-        "iit", "nit", "bits", "iiit", "osmania", "jntu",
-        "study", "courses", "admission", "campus",
-    ]):
-        state["intent"] = "education"
-        return state
-    elif any(word in message for word in [
-        "history", "trivia", "fact", "facts", "did you know",
-        "tell me about hyderabad", "about hyderabad", "founded",
-        "nizam", "nizams", "pearl city", "city of pearls",
-        "hyderabadi", "heritage", "legacy",
-    ]):
-        state["intent"] = "trivia"  
-        return state
-    elif any(word in message for word in [
-    "festival", "ganesh", "diwali", "bonalu", "eid", "ramadan",
-    "numaish", "rush", "crowd today", "procession", "immersion"
-    ]):
-        state["intent"] = "festival_traffic"
-        return state
-
-    elif any(word in message for word in [
-        "festival", "festivals", "bonalu", "bathukamma", "dussehra", "ganesh",
-        "ramadan", "eid", "diwali", "holi", "sankranti", "ugadi",
-        "culture", "cultural", "tradition", "celebration",
-    ]):
-        state["intent"] = "festival"
-        return
-    # ── events & exhibitions ───────────────────────────────────────────
-    elif any(word in message for word in [
-    "deal", "deals", "offer", "offers", "discount", "discounts",
-    "swiggy", "zomato", "amazon", "flipkart", "coupon", "sale",
-    "cheap", "save money", "cashback", "promo"
-    ]):
-        state["intent"] = "deals"
-        return state
-
-    else:
-        state["intent"] = "general"
-
+        detected_intent = "food"
+    
+    elif any(word in message for word in ["weather", "temperature", "rain", "climate", "forecast"]):
+        detected_intent = "weather"
+    
+    elif any(word in message for word in ["news", "headline", "latest", "updates"]):
+        detected_intent = "news"
+    
+    elif any(word in message for word in ["traffic", "congestion", "road", "jam"]):
+        detected_intent = "traffic"
+    
+    elif any(word in message for word in ["fuel", "petrol", "diesel", "cng", "gas price"]):
+        detected_intent = "fuel"
+    
+    # ══════════════════════════════════════════════════════════
+    # PRIORITY 4: TOURISM
+    # ══════════════════════════════════════════════════════════
+    elif any(word in message for word in ["charminar", "golconda", "monument", "fort", "historical"]):
+        detected_intent = "monument"
+    
+    elif any(word in message for word in ["temple", "birla", "mosque", "church", "religious"]):
+        detected_intent = "temple"
+    
+    elif any(word in message for word in ["palace", "chowmahalla", "falaknuma"]):
+        detected_intent = "palace"
+    
+    elif any(word in message for word in ["museum", "gallery", "salar jung"]):
+        detected_intent = "museum"
+    
+    elif any(word in message for word in ["park", "zoo", "hussain sagar", "kbr"]):
+        detected_intent = "park"
+    
+    elif any(word in message for word in ["ramoji", "film city", "attraction"]):
+        detected_intent = "attraction"
+    
+    # ══════════════════════════════════════════════════════════
+    # PRIORITY 5: OTHER SERVICES
+    # ══════════════════════════════════════════════════════════
+    elif any(word in message for word in ["mall", "shopping", "shop", "market", "ikea", "inorbit", "gvk"]):
+        detected_intent = "shopping"
+    
+    elif any(word in message for word in ["movie", "cinema", "theater", "pvr", "imax"]):
+        detected_intent = "movies"
+    
+    elif any(word in message for word in ["plan", "itinerary", "tour", "trip"]):
+        detected_intent = "itinerary"
+    
+    elif any(word in message for word in ["crowd", "busy", "best time", "peaceful"]):
+        detected_intent = "crowd"
+    
+    elif any(word in message for word in ["power cut", "electricity", "water supply"]):
+        detected_intent = "utilities"
+    
+    elif any(word in message for word in ["deal", "offer", "discount", "swiggy", "zomato"]):
+        detected_intent = "deals"
+    
+    # ══════════════════════════════════════════════════════════
+    # PRIORITY 6: GOVERNMENT SERVICES (LOWER PRIORITY)
+    # ══════════════════════════════════════════════════════════
+    elif any(word in message for word in ["meeseva", "passport", "aadhaar", "driving license", "birth certificate"]):
+        detected_intent = "govt"
+    
+    # ⚠️ SPECIAL: Only trigger "govt" for RTA if NO OTHER transport keywords
+    elif "rta" in message and not any(word in message for word in ["metro", "bus", "train", "route", "from", "to"]):
+        detected_intent = "govt"
+    
+    # ══════════════════════════════════════════════════════════
+    # PRIORITY 7: GENERAL INFO
+    # ══════════════════════════════════════════════════════════
+    elif any(word in message for word in ["sport", "stadium", "cricket", "gym"]):
+        detected_intent = "sports"
+    
+    elif any(word in message for word in ["school", "college", "university", "iit"]):
+        detected_intent = "education"
+    
+    elif any(word in message for word in ["history", "trivia", "fact", "tell me about"]):
+        detected_intent = "trivia"
+    
+    elif any(word in message for word in ["festival", "bonalu", "diwali"]):
+        detected_intent = "festival"
+    
+    elif any(word in message for word in ["event", "exhibition", "hitex", "numaish"]):
+        detected_intent = "events"
+    
+    # ══════════════════════════════════════════════════════════
+    # GREETING & FALLBACK
+    # ══════════════════════════════════════════════════════════
+    elif any(message.strip().startswith(word) for word in ["hello", "hi", "hey", "namaste"]):
+        detected_intent = "greeting"
+    
+    # Set the intent
+    state["intent"] = detected_intent
+    
+    # 🔍 DEBUG LOG
+    logger.info(f"Intent Classification: '{message[:50]}...' → {detected_intent}")
+    
     return state
+
 # ── greeting & emergency ────────────────────────────────────────────────────
 
 def handle_greeting(state: BotState):
-    state["response"] = (
-    "👋 **Hello! I am Mitr**\n\n"
-    "Your personal Hyderabad city guide.\n\n"
-    "I can help you with:\n\n"
-    "🏛️ **Monuments** - Charminar, Golconda Fort\n\n"
-    "👑 **Palaces** - Chowmahalla, Falaknuma Palace\n\n"
-    "🏛️ **Museums** - Salar Jung, Nizam's Museum\n\n"
-    "🌳 **Parks** - Hussain Sagar, KBR National Park\n\n"
-    "🎬 **Attractions** - Ramoji Film City, Shilparamam\n\n"
-    "🛕 **Temples** - Birla Mandir, Chilkur Balaji\n\n"
-    "🍛 **Food** - Best Biryani places\n\n"
-    "🚇 **Transport** - Metro, Airport info\n\n"
-    "🚆 **MMTS Trains** - Suburban rail schedules\n\n"
-    "🚌 **Bus Routes** - RTC bus timings & routes\n\n"
-    "⛽ **Fuel Prices** - Daily petrol, diesel, CNG rates\n\n"
-    "📰 **City News** - Hyderabad headlines & alerts\n\n"
-    "🛍️ **Shopping** - Malls, markets, sales\n\n"
-    "👥 **Crowd Info** - Best time to visit any place\n\n"
-    "🗓️ **Itineraries** - Personalized day plans\n\n"
-    "🎬 **Movies** - Theaters, showtimes, bookings\n\n"
-    "🌦️ **Weather** - Live updates & air quality\n\n"
-    "🎉 **Festivals** - Bonalu, Bathukamma, cultural events\n\n"
-    "⚽ **Sports** - Stadiums, sports complexes\n\n"
-    "🏥 **Healthcare** - Hospitals, emergency services\n\n"
-    "🎓 **Education** - Universities, colleges, schools\n\n"
-    "📜 **History** - Trivia, facts about Hyderabad\n\n"
-    "🎪 **Events** - HITEX, Comic Con, Numaish & more\n\n"
-    "🏛️ **Govt Services** - MeeSeva, RTA, Passport, Aadhaar\n\n"
-    "🎉 **Festival Traffic** - Live crowd & traffic alerts\n\n"
-    "💰 **Live Deals** - Swiggy, Zomato, Amazon offers\n\n"
-    "🚨 **Emergency** - Important contacts\n\n"
-    "What would you like to know?"
-)
+    state["response"] = """👋 **Hello! I am Mitr**
+Your personal Hyderabad city guide.
+I can help you with:
+🏛️ **Monuments** - Charminar, Golconda Fort
+👑 **Palaces** - Chowmahalla, Falaknuma Palace
+🏛️ **Museums** - Salar Jung, Nizam's Museum
+🌳 **Parks** - Hussain Sagar, KBR National Park
+🎬 **Attractions** - Ramoji Film City, Shilparamam
+🛕 **Temples** - Birla Mandir, Chilkur Balaji
+🍛 **Food** - Best Biryani places
+🚇 **Transport** - Metro, Airport info
+🚆 **MMTS Trains** - Suburban rail schedules
+🚌 **Bus Routes** - RTC bus timings & routes
+⛽ **Fuel Prices** - Daily petrol, diesel, CNG rates
+📰 **City News** - Hyderabad headlines & alerts
+🛍️ **Shopping** - Malls, markets, sales
+👥 **Crowd Info** - Best time to visit any place   
+🗓️ **Itineraries** - Personalized day plans
+🎬 **Movies** - Theaters, showtimes, bookings
+🌦️ **Weather** - Live updates & air quality
+🎉 **Festivals** - Bonalu, Bathukamma, cultural events
+⚽ **Sports** - Stadiums, sports complexes
+🏥 **Healthcare** - Hospitals, emergency services
+🎓 **Education** - Universities, colleges, schools
+📜 **History** - Trivia, facts about Hyderabad
+🎪 **Events** - HITEX, Comic Con, Numaish & more
+🏛️ **Govt Services** - MeeSeva, RTA, Passport, Aadhaar
+🎉 **Festival Traffic** - Live crowd & traffic alerts
+💰 **Live Deals** - Swiggy, Zomato, Amazon offers
+🚨 **Emergency** - Important contacts
+
+What would you like to know?"""
     return state
 
 
 def handle_emergency(state: BotState):
-    state["response"] = (
-    "🚨 **EMERGENCY CONTACTS - HYDERABAD**\n\n"
-    "**Immediate Help:**\n\n"
-    f"• 🚓 Police: {EMERGENCY.get('police', '100')}  \n"
-    f"• 🚑 Ambulance: {EMERGENCY.get('ambulance', '108')}  \n"
-    f"• 🔥 Fire: {EMERGENCY.get('fire', '101')}  \n"
-    f"• 👩 Women Helpline: {EMERGENCY.get('women_helpline', '181')}\n\n"
-    "⚠️ **For emergencies, call 108 immediately!**"
-)
+    state["response"] = f"""🚨 **EMERGENCY CONTACTS - HYDERABAD**
+
+**Immediate Help:**
+• 🚓 Police: {EMERGENCY.get("police", "100")}
+• 🚑 Ambulance: {EMERGENCY.get("ambulance", "108")}
+• 🔥 Fire: {EMERGENCY.get("fire", "101")}
+• 👩 Women Helpline: {EMERGENCY.get("women_helpline", "181")}
+
+⚠️ **For emergencies, call 108 immediately!**"""
     return state
 
 
@@ -964,10 +870,10 @@ def handle_transport(state: BotState):
         airport = next((t for t in transport if t.get("mode") == "Airport"), None)
         if airport:
             response = "✈️ **Rajiv Gandhi International Airport (RGIA)**\n\n"
-            response += f"📍 **Location:** {airport.get('location', 'Shamshabad')}  \n"
+            response += f"📍 **Location:** {airport.get('location', 'Shamshabad')}\n"
             response += f"🛫 **IATA Code:** {airport.get('iata_code', 'HYD')}\n\n"
-            response += f"🇮🇳 **Domestic Routes:** {', '.join(airport.get('domestic_routes', [])[:6])}  \n"
-            response += f"🌏 **International Routes:** {', '.join(airport.get('international_routes', [])[:4])}  \n"
+            response += f"🇮🇳 **Domestic Routes:** {', '.join(airport.get('domestic_routes', [])[:6])}\n"
+            response += f"🌏 **International Routes:** {', '.join(airport.get('international_routes', [])[:4])}\n"
             response += f"✈️ **Airlines:** {', '.join(airport.get('major_airlines', [])[:5])}\n\n"
             notes = airport.get('connectivity_notes', '')
             if notes:
@@ -1232,11 +1138,11 @@ def handle_healthcare(state: BotState):
         response = "🏥 **Healthcare Facilities in Hyderabad**\n\n"
         
         if hospitals:
-            response += "**Major Hospitals:**\n\n"
+            response += "**Major Hospitals:**\n"
             for hosp in hospitals[:5]:
                 name = hosp.get("name", "Unknown")
                 loc = hosp.get("location", "Hyderabad")
-                response += f"• {name} - {loc}  \n"
+                response += f"• {name} - {loc}\n"
             response += "\n"
         
         response += "🚨 **Emergency:** Call 108 for ambulance\n\n"
@@ -1284,11 +1190,11 @@ def handle_sports(state: BotState):
         response = "⚽ **Sports & Recreation in Hyderabad**\n\n"
         
         if stadiums:
-            response += "**Major Stadiums:**\n\n"
+            response += "**Major Stadiums:**\n"
             for stadium in stadiums[:4]:
                 name = stadium.get("name", "Unknown")
                 loc = stadium.get("location", "Hyderabad")
-                response += f"• {name} - {loc}  \n"
+                response += f"• {name} - {loc}\n"
             response += "\n"
         
         response += "💡 Ask me about any specific stadium!"
@@ -1488,7 +1394,7 @@ def handle_festival(state: BotState):
         response = "🎉 **Festivals & Cultural Events in Hyderabad**\n\n"
         
         if major:
-            response += "**Major Festivals:**\n\n"
+            response += "**Major Festivals:**\n"
             for fest in major[:5]:
                 name = fest.get("name", "Unknown")
                 desc = fest.get("description", "")
@@ -1496,7 +1402,7 @@ def handle_festival(state: BotState):
                 response += f"• **{name}**"
                 if first_line:
                     response += f" - {first_line}"
-                response += "  \n"
+                response += "\n"
             response += "\n"
         
         if religious:
@@ -1534,13 +1440,13 @@ def handle_events(state: BotState):
         lines = ["🎪 **Upcoming Events & Exhibitions in Hyderabad**\n"]
         lines.append("Ask me about any event for full details:\n")
         for i, evt in enumerate(EVENTS_DATA, 1):
-            lines.append(f"**{i}. {evt['name']}**  \n")
-            lines.append(f"📅 {evt['dates']}  \n")
-            lines.append(f"📍 {evt['location']}  \n")
-            lines.append(f"💰 {evt['cost']}  \n")
-            lines.append("\n")
+            lines.append(f"**{i}. {evt['name']}**")
+            lines.append(f"   📅 {evt['dates']}")
+            lines.append(f"   📍 {evt['location']}")
+            lines.append(f"   💰 {evt['cost']}")
+            lines.append("")
         lines.append("💡 **Pro Tip:** This list is manually updated. For real-time events, check Insider.in or BookMyShow.")
-        state["response"] = "".join(lines)
+        state["response"] = "\n".join(lines)
     return state
 
 
@@ -1575,13 +1481,13 @@ def handle_govt(state: BotState):
         lines = ["🏛️ **Government Services in Hyderabad**\n"]
         lines.append("Ask me about any service for full details:\n")
         for i, svc in enumerate(GOVT_SERVICES, 1):
-            lines.append(f"**{i}. {svc['name']}**  \n")
-            lines.append(f"🏷️  {svc.get('type', 'Service')}  \n")
-            lines.append(f"🌐 {svc.get('url', '')}  \n")
+            lines.append(f"**{i}. {svc['name']}**")
+            lines.append(f"   🏷️  {svc.get('type','Service')}")
+            lines.append(f"   🌐 {svc.get('url','')}")
             top_services = svc.get("services", [])[:3]
             if top_services:
-                lines.append(f"📋 Key: {', '.join(top_services)}  \n")
-            lines.append("\n")
+                lines.append(f"   📋 Key: {', '.join(top_services)}")
+            lines.append("")
         lines.append("💡 **Quick Links:**")
         lines.append("   • MeeSeva (all certificates): https://meeseva.telangana.gov.in")
         lines.append("   • T-Seva (bills & subsidies): https://www.tganywhere.telangana.gov.in")
@@ -1646,37 +1552,37 @@ Try asking:
 # ── general fallback ────────────────────────────────────────────────────────
 
 def handle_general(state: BotState):
-    state["response"] = ("""It look like i can't help with that but I can help you with any of these topics related to Hyderabad:
-    "🏛️ **Monuments** - Charminar, Golconda Fort\n\n"
-    "👑 **Palaces** - Chowmahalla, Falaknuma Palace\n\n"
-    "🏛️ **Museums** - Salar Jung, Nizam's Museum\n\n"
-    "🌳 **Parks** - Hussain Sagar, KBR National Park\n\n"
-    "🎬 **Attractions** - Ramoji Film City, Shilparamam\n\n"
-    "🛕 **Temples** - Birla Mandir, Chilkur Balaji\n\n"
-    "🍛 **Food** - Best Biryani places\n\n"
-    "🚇 **Transport** - Metro, Airport info\n\n"
-    "🚆 **MMTS Trains** - Suburban rail schedules\n\n"
-    "🚌 **Bus Routes** - RTC bus timings & routes\n\n"
-    "⛽ **Fuel Prices** - Daily petrol, diesel, CNG rates\n\n"
-    "📰 **City News** - Hyderabad headlines & alerts\n\n"
-    "🛍️ **Shopping** - Malls, markets, sales\n\n"
-    "👥 **Crowd Info** - Best time to visit any place\n\n"
-    "🗓️ **Itineraries** - Personalized day plans\n\n"
-    "🎬 **Movies** - Theaters, showtimes, bookings\n\n"
-    "🌦️ **Weather** - Live updates & air quality\n\n"
-    "🎉 **Festivals** - Bonalu, Bathukamma, cultural events\n\n"
-    "⚽ **Sports** - Stadiums, sports complexes\n\n"
-    "🏥 **Healthcare** - Hospitals, emergency services\n\n"
-    "🎓 **Education** - Universities, colleges, schools\n\n"
-    "📜 **History** - Trivia, facts about Hyderabad\n\n"
-    "🎪 **Events** - HITEX, Comic Con, Numaish & more\n\n"
-    "🏛️ **Govt Services** - MeeSeva, RTA, Passport, Aadhaar\n\n"
-    "🎉 **Festival Traffic** - Live crowd & traffic alerts\n\n"
-    "💰 **Live Deals** - Swiggy, Zomato, Amazon offers\n\n"
-    "🚨 **Emergency** - Important contacts\n\n"
+    state["response"] = """It look like i can't help with that but I can help you with any of these topics related to Hyderabad:
+
+🏛️ **Monuments** - Charminar, Golconda Fort
+👑 **Palaces** - Chowmahalla, Falaknuma Palace
+🏛️ **Museums** - Salar Jung, Nizam's Museum
+🌳 **Parks** - Hussain Sagar, KBR National Park
+🎬 **Attractions** - Ramoji Film City, Shilparamam
+🛕 **Temples** - Birla Mandir, Chilkur Balaji
+🍛 **Food** - Best Biryani places
+🚇 **Transport** - Metro, Airport info
+🚆 **MMTS Trains** - Suburban rail schedules
+🚌 **Bus Routes** - RTC bus timings & routes
+⛽ **Fuel Prices** - Daily petrol, diesel, CNG rates
+🌦️ **Weather** - Live updates & air quality
+📰 **City News** - Hyderabad headlines & alerts
+🛍️ **Shopping** - Malls, markets, sales
+👥 **Crowd Info** - Best time to visit any place    
+🗓️ **Itineraries** - Personalized day plans
+🎬 **Movies** - Theaters, showtimes, bookings
+🎉 **Festivals** - Bonalu, Bathukamma, cultural events
+⚽ **Sports** - Stadiums, sports complexes
+🏥 **Healthcare** - Hospitals, emergency services
+🎓 **Education** - Universities, colleges, schools
+📜 **History** - Trivia, facts about Hyderabad
+🎪 **Events** - HITEX, Comic Con, Numaish & more
+🏛️ **Govt Services** - MeeSeva, RTA, Passport, Aadhaar
+🎉 **Festival Traffic** - Live crowd & traffic alerts
+💰 **Live Deals** - Swiggy, Zomato, Amazon offers
+🚨 **Emergency** - Important contacts
 
 Please ask me about any of these!"""
-)
     return state
 
 
@@ -1880,6 +1786,32 @@ if st.session_state.language != language_code:
     st.session_state.language = language_code
     st.rerun()
 
+# ──────────────────────────────────────
+# ✅ NEW: PROACTIVE SUGGESTIONS
+# ──────────────────────────────────────
+st.sidebar.markdown("---")
+st.sidebar.subheader("💡 Suggested for You")
+
+try:
+    suggestions = get_proactive_suggestions(max_suggestions=3)
+    
+    if suggestions:
+        for i, suggestion in enumerate(suggestions):
+            button_key = f"suggest_{i}_{hash(suggestion['text'])}"
+            
+            if st.sidebar.button(
+                suggestion["text"],
+                key=button_key,
+                use_container_width=True
+            ):
+                st.session_state.last_query = suggestion["query"]
+                st.rerun()
+    else:
+        st.sidebar.caption("🤔 No suggestions right now")
+
+except Exception as e:
+    logger.warning(f"Could not load suggestions: {e}")
+    st.sidebar.caption("💭 Suggestions loading...")
 
 # ──────────────────────────────────────
 # ✅ NEW: CONVERSATION CONTROLS
@@ -1926,77 +1858,100 @@ if st.session_state.get("voice_enabled", False):
 # ──────────────────────────────────────
 if st.sidebar.checkbox("🔧 Show Cache Stats", value=False):
     st.sidebar.markdown("---")
-    cache_stats = get_cache_stats() if "cache_stats" in st.session_state else {}
+    cache_stats = get_cache_stats()
     st.sidebar.metric("Hit Rate", f"{cache_stats.get('hit_rate', 0):.0f}%")
     st.sidebar.metric("Cache Size", cache_stats.get('cache_size', 0))
-# ── quick links ─────────────────────────────────────────────────────
-st.sidebar.header("🎯 Quick Links")
-st.sidebar.info("**Popular Queries:**")
-if st.sidebar.button("🏛️ Famous Monuments"):
-    st.session_state.last_query = "tell me about famous monuments"
-if st.sidebar.button("👑 Royal Palaces"):
-    st.session_state.last_query = "royal palaces in hyderabad"
-if st.sidebar.button("🏛️ Museums"):
-    st.session_state.last_query = "museums in hyderabad"
-if st.sidebar.button("🌳 Parks & Nature"):
-    st.session_state.last_query = "parks and nature in hyderabad"
-if st.sidebar.button("🎬 Attractions"):
-    st.session_state.last_query = "modern attractions in hyderabad"
-if st.sidebar.button("🍛 Best Biryani Places"):
-    st.session_state.last_query = "best biryani places"
-if st.sidebar.button("🛕 Temples"):
-    st.session_state.last_query = "famous temples"
-if st.sidebar.button("🚇 Metro Info"):
-    st.session_state.last_query = "metro timings"
-if st.sidebar.button("🚌 Bus Routes"):
-    st.session_state.last_query = "bus routes in hyderabad"
-if st.sidebar.button("🚆 MMTS Train Info"):
-    st.session_state.last_query = "mmts train info"
-if st.sidebar.button("⛽ Fuel Prices"):
-    st.session_state.last_query = "fuel prices today"
-if st.sidebar.button("📰 City News"):
-    st.session_state.last_query = "hyderabad news"
-if st.sidebar.button("🛍️ Shopping Malls"):
-    st.session_state.last_query = "shopping malls in hyderabad"
-if st.sidebar.button("👥 Crowd Guide"):
-    st.session_state.last_query = "best time to visit places"
-if st.sidebar.button("🗓️ Plan My Day"):
-    st.session_state.last_query = "plan my one day hyderabad tour"
-if st.sidebar.button("🎬 Movie Theaters"):
-    st.session_state.last_query = "movie theaters in hyderabad"
-if st.sidebar.button("🌦️ Weather Update"):
-    st.session_state.last_query = "weather in hyderabad"
-if st.sidebar.button("🚦 Traffic Update"):
-    st.session_state.last_query = "traffic in hyderabad"
-if st.sidebar.button("🎉 Festivals & Culture"):
-    st.session_state.last_query = "festivals in hyderabad"
-if st.sidebar.button("⚽ Sports & Stadiums"):
-    st.session_state.last_query = "sports stadiums"
-if st.sidebar.button("🏥 Hospitals & Healthcare"):
-    st.session_state.last_query = "major hospitals"
-if st.sidebar.button("🎓 Education & Universities"):
-    st.session_state.last_query = "university in hyderabad"
-if st.sidebar.button("📜 Hyderabad History"):
-    st.session_state.last_query = "tell me about hyderabad history"
-if st.sidebar.button("🎪 Events"):
-    st.session_state.last_query = "upcoming events in hyderabad"
-if st.sidebar.button("🏛️ Government Services"):
-    st.session_state.last_query = "government services in hyderabad"
-if st.sidebar.button("🎉 Festival Traffic"):
-    st.session_state.last_query = "what festivals are happening today"
-if st.sidebar.button("💰 Live Deals & Offers"):
-    st.session_state.last_query = "show me food delivery offers"
-if st.sidebar.button("🚨 Emergency Contacts"):
-    st.session_state.last_query = "emergency numbers"
+
+    # ── quick links ─────────────────────────────────────────────────────
+    st.sidebar.header("🎯 Quick Links")
+    st.sidebar.info("**Popular Queries:**")
+
+    if st.sidebar.button("🏛️ Famous Monuments"):
+        st.session_state.last_query = "tell me about famous monuments"
+    if st.sidebar.button("👑 Royal Palaces"):
+        st.session_state.last_query = "royal palaces in hyderabad"
+    if st.sidebar.button("🏛️ Museums"):
+        st.session_state.last_query = "museums in hyderabad"
+    if st.sidebar.button("🌳 Parks & Nature"):
+        st.session_state.last_query = "parks and nature in hyderabad"
+    if st.sidebar.button("🎬 Attractions"):
+        st.session_state.last_query = "modern attractions in hyderabad"
+    if st.sidebar.button("🍛 Best Biryani Places"):
+        st.session_state.last_query = "best biryani places"
+    if st.sidebar.button("🛕 Temples"):
+        st.session_state.last_query = "famous temples"
+    if st.sidebar.button("🚇 Metro Info"):
+        st.session_state.last_query = "metro timings"
+    if st.sidebar.button("🚌 Bus Routes"):
+        st.session_state.last_query = "bus routes in hyderabad"
+    if st.sidebar.button("🚆 MMTS Train Info"):
+        st.session_state.last_query = "mmts train info"
+    if st.sidebar.button("⛽ Fuel Prices"):
+        st.session_state.last_query = "fuel prices today"
+    if st.sidebar.button("📰 City News"):
+        st.session_state.last_query = "hyderabad news"
+    if st.sidebar.button("🛍️ Shopping Malls"):
+        st.session_state.last_query = "shopping malls in hyderabad"
+    if st.sidebar.button("👥 Crowd Guide"):
+        st.session_state.last_query = "best time to visit places"
+    if st.sidebar.button("🗓️ Plan My Day"):
+        st.session_state.last_query = "plan my one day hyderabad tour"
+    if st.sidebar.button("🎬 Movie Theaters"):
+        st.session_state.last_query = "movie theaters in hyderabad"
+    if st.sidebar.button("🌦️ Weather Update"):
+        st.session_state.last_query = "weather in hyderabad"
+    if st.sidebar.button("🚦 Traffic Update"):
+        st.session_state.last_query = "traffic in hyderabad"
+    if st.sidebar.button("🎉 Festivals & Culture"):
+        st.session_state.last_query = "festivals in hyderabad"
+    if st.sidebar.button("⚽ Sports & Stadiums"):
+        st.session_state.last_query = "sports stadiums"
+    if st.sidebar.button("🏥 Hospitals & Healthcare"):
+        st.session_state.last_query = "major hospitals"
+    if st.sidebar.button("🎓 Education & Universities"):
+        st.session_state.last_query = "university in hyderabad"
+    if st.sidebar.button("📜 Hyderabad History"):
+        st.session_state.last_query = "tell me about hyderabad history"
+    if st.sidebar.button("🎪 Events"):
+        st.session_state.last_query = "upcoming events in hyderabad"
+    if st.sidebar.button("🏛️ Government Services"):
+        st.session_state.last_query = "government services in hyderabad"
+    if st.sidebar.button("🎉 Festival Traffic"):
+        st.session_state.last_query = "what festivals are happening today"
+    if st.sidebar.button("💰 Live Deals & Offers"):
+        st.session_state.last_query = "show me food delivery offers"
+    if st.sidebar.button("🚨 Emergency Contacts"):
+        st.session_state.last_query = "emergency numbers"
 
     st.markdown("---")
     st.markdown("**💡 Tip:** Type your question in the chat below!")
+# ========================================
+# TOP SUGGESTION BANNER
+# ========================================
 
+if st.session_state.get("show_suggestion_banner", True):
+    try:
+        top_suggestions = get_proactive_suggestions(max_suggestions=2)
+        
+        if top_suggestions:
+            cols = st.columns(len(top_suggestions))
+            
+            for i, suggestion in enumerate(top_suggestions):
+                with cols[i]:
+                    if st.button(
+                        suggestion["text"],
+                        key=f"banner_suggest_{i}",
+                        use_container_width=True
+                    ):
+                        st.session_state.last_query = suggestion["query"]
+                        st.rerun()
+    except Exception as e:
+        logger.debug(f"Banner suggestions failed: {e}")
 # ========================================
 # CHAT
 # ========================================
 if "messages" not in st.session_state:
-    st.session_state["messages"] = []
+    st.session_state.messages = []
     
     # Try to load from database if logged in
     try:
@@ -2004,11 +1959,11 @@ if "messages" not in st.session_state:
             history = load_chat_history(limit=20)
             if history:
                 for msg in history:
-                    st.session_state.get("messages", []).append({
+                    st.session_state.messages.append({
                         "role": "user",
                         "content": msg["user_message"]
                     })
-                    st.session_state.get("messages", []).append({
+                    st.session_state.messages.append({
                         "role": "assistant",
                         "content": msg["bot_response"]
                     })
@@ -2032,14 +1987,14 @@ if "messages" not in st.session_state:
     else:
         welcome_msg = "👋 Welcome to MITR! How can I help you explore Hyderabad today?"
     
-    st.session_state.get("messages", []).append({
+    st.session_state.messages.append({
         "role": "assistant",
         "content": welcome_msg
     })
 
 
 
-for message in st.session_state.get("messages", []):
+for message in st.session_state.messages:
     if message["role"] == "assistant":
         with st.chat_message(
             "assistant",
@@ -2087,7 +2042,7 @@ if user_input:
     memory = get_conversation_memory()
     
     # 1️⃣ Add user message to chat
-    st.session_state.get("messages", []).append(
+    st.session_state.messages.append(
         {"role": "user", "content": user_input}
     )
     logger.info(f"User query: {user_input[:100]}")
@@ -2105,7 +2060,7 @@ if user_input:
     
     if not is_valid:
         logger.warning(f"Invalid input: {error_msg}")
-        st.session_state.get("messages", []).append({
+        st.session_state.messages.append({
             "role": "assistant",
             "content": f"❌ {error_msg}"
         })
@@ -2122,7 +2077,7 @@ if user_input:
         
         logger.warning(f"Rate limit hit for user {user_id}")
         
-        st.session_state.get("messages", []).append({
+        st.session_state.messages.append({
             "role": "assistant",
             "content": (
                 f"⏱️ **Too many requests!**\n\n"
@@ -2227,7 +2182,7 @@ if user_input:
             intent = "error"
     
     # 6️⃣ Add assistant response to chat
-    st.session_state.get("messages", []).append(
+    st.session_state.messages.append(
         {"role": "assistant", "content": response}
     )
     
@@ -2243,14 +2198,3 @@ st.markdown(
     "</div>",
     unsafe_allow_html=True,
 )
-
-# Helper to route to correct station extractor
-def extract_stations_for_intent(query: str, intent: str):
-    """Route to appropriate station extractor based on intent"""
-    if "mmts" in intent.lower() or "train" in intent.lower():
-        return extract_mmts_stations(query)
-    elif "metro" in intent.lower():
-        return extract_metro_stations(query)
-    else:
-        # Default to metro for rail-related queries
-        return extract_metro_stations(query)

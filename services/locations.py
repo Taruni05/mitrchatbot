@@ -49,7 +49,6 @@ HYDERABAD_AREA_COORDS = {
     "patancheru": (17.5300, 78.2600),
     "bhel": (17.5100, 78.3000),
     "bachupally": (17.5400, 78.3700),
-    # "hitech city": duplicate removed - use "hitec city"
     "gachibowli": (17.4401, 78.3489),
     "madhapur": (17.4483, 78.3915),
     "jubilee hills": (17.4326, 78.4071),

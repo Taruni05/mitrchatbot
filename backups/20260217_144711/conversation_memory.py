@@ -26,7 +26,7 @@ class ConversationMemory:
         
         # Initialize session state storage
         if "conversation_history" not in st.session_state:
-            st.session_state["conversation_history"] = deque(maxlen=max_turns)
+            st.session_state.conversation_history = deque(maxlen=max_turns)
         
         if "conversation_entities" not in st.session_state:
             # Track mentioned entities (locations, restaurants, etc.)
@@ -49,7 +49,7 @@ class ConversationMemory:
             "entities": entities or {}
         }
         
-        st.session_state.get("conversation_history", []).append(turn)
+        st.session_state.conversation_history.append(turn)
         
         # Update entity tracking
         if entities:
@@ -68,11 +68,11 @@ class ConversationMemory:
         Returns:
             Enhanced prompt with context
         """
-        if not st.session_state.get("conversation_history", []):
+        if not st.session_state.conversation_history:
             return current_query
         
         # Get last 3 turns for context (not too much, not too little)
-        recent = list(st.session_state.get("conversation_history", []))[-3:]
+        recent = list(st.session_state.conversation_history)[-3:]
         
         context = "=== CONVERSATION HISTORY ===\n"
         for i, turn in enumerate(recent, 1):
@@ -101,7 +101,7 @@ class ConversationMemory:
         Returns:
             True if this appears to be a follow-up
         """
-        if not st.session_state.get("conversation_history", []):
+        if not st.session_state.conversation_history:
             return False
         
         query_lower = query.lower().strip()
@@ -145,7 +145,7 @@ class ConversationMemory:
         if not self.detect_followup(query):
             return query
         
-        if not st.session_state.get("conversation_history", []):
+        if not st.session_state.conversation_history:
             return query
         
         last_turn = st.session_state.conversation_history[-1]
@@ -198,7 +198,7 @@ class ConversationMemory:
     
     def get_last_intent(self) -> Optional[str]:
         """Get the intent from the last conversation turn."""
-        if not st.session_state.get("conversation_history", []):
+        if not st.session_state.conversation_history:
             return None
         return st.session_state.conversation_history[-1]["intent"]
     
@@ -208,7 +208,7 @@ class ConversationMemory:
     
     def clear_history(self):
         """Clear conversation history (for new topics or user request)."""
-        st.session_state.get("conversation_history", []).clear()
+        st.session_state.conversation_history.clear()
         st.session_state.conversation_entities.clear()
         logger.info("Cleared conversation history")
 

@@ -4,6 +4,7 @@ services/security.py
 """
 
 import re
+from services.rate_limiter import RateLimiter
 import time
 from datetime import datetime, timedelta
 from typing import Tuple, Dict, List
@@ -72,108 +73,7 @@ def validate_input(text: str, max_length: int = 500) -> Tuple[bool, str]:
 # RATE LIMITING
 # ============================================================================
 
-class RateLimiter:
-    """
-    Rate limiter to prevent abuse.
-    Tracks requests per session and enforces limits.
-    """
-    
-    def __init__(self):
-        # Initialize session state for tracking
-        if 'rate_limit_data' not in st.session_state:
-            st.session_state.rate_limit_data = {}
-        
-        # Limits
-        self.REQUESTS_PER_MINUTE = 10
-        self.REQUESTS_PER_HOUR = 50
-        self.REQUESTS_PER_DAY = 200
-    
-    def _get_session_id(self) -> str:
-        """Get or create session ID."""
-        if 'session_id' not in st.session_state:
-            st.session_state.session_id = f"session_{int(time.time())}"
-        return st.session_state.session_id
-    
-    def _clean_old_requests(self, session_id: str):
-        """Remove requests older than 24 hours."""
-        if session_id not in st.session_state.rate_limit_data:
-            st.session_state.rate_limit_data[session_id] = []
-        
-        now = datetime.now()
-        cutoff = now - timedelta(days=1)
-        
-        st.session_state.rate_limit_data[session_id] = [
-            ts for ts in st.session_state.rate_limit_data[session_id]
-            if ts > cutoff
-        ]
-    
-    def check_rate_limit(self) -> Tuple[bool, str]:
-        """
-        Check if request is within rate limits.
-        
-        Returns:
-            (is_allowed, message)
-        """
-        session_id = self._get_session_id()
-        self._clean_old_requests(session_id)
-        
-        now = datetime.now()
-        requests = st.session_state.rate_limit_data.get(session_id, [])
-        
-        # Check per-minute limit
-        one_min_ago = now - timedelta(minutes=1)
-        recent_requests_1min = len([ts for ts in requests if ts > one_min_ago])
-        
-        if recent_requests_1min >= self.REQUESTS_PER_MINUTE:
-            logger.warning(f"Rate limit exceeded (1 min): {session_id}")
-            return False, f"⚠️ Too many requests. Please wait a minute. ({recent_requests_1min}/{self.REQUESTS_PER_MINUTE})"
-        
-        # Check per-hour limit
-        one_hour_ago = now - timedelta(hours=1)
-        recent_requests_1hour = len([ts for ts in requests if ts > one_hour_ago])
-        
-        if recent_requests_1hour >= self.REQUESTS_PER_HOUR:
-            logger.warning(f"Rate limit exceeded (1 hour): {session_id}")
-            return False, f"⚠️ Hourly limit reached. Please try again later. ({recent_requests_1hour}/{self.REQUESTS_PER_HOUR})"
-        
-        # Check per-day limit
-        if len(requests) >= self.REQUESTS_PER_DAY:
-            logger.warning(f"Rate limit exceeded (24 hours): {session_id}")
-            return False, f"⚠️ Daily limit reached. Come back tomorrow! ({len(requests)}/{self.REQUESTS_PER_DAY})"
-        
-        return True, ""
-    
-    def record_request(self):
-        """Record a successful request."""
-        session_id = self._get_session_id()
-        
-        if session_id not in st.session_state.rate_limit_data:
-            st.session_state.rate_limit_data[session_id] = []
-        
-        st.session_state.rate_limit_data[session_id].append(datetime.now())
-        logger.debug(f"Request recorded for {session_id}")
-    
-    def get_stats(self) -> Dict[str, int]:
-        """Get current rate limit stats for display."""
-        session_id = self._get_session_id()
-        self._clean_old_requests(session_id)
-        
-        requests = st.session_state.rate_limit_data.get(session_id, [])
-        now = datetime.now()
-        
-        one_min_ago = now - timedelta(minutes=1)
-        one_hour_ago = now - timedelta(hours=1)
-        
-        return {
-            "last_minute": len([ts for ts in requests if ts > one_min_ago]),
-            "last_hour": len([ts for ts in requests if ts > one_hour_ago]),
-            "last_day": len(requests),
-            "remaining_minute": self.REQUESTS_PER_MINUTE - len([ts for ts in requests if ts > one_min_ago]),
-            "remaining_hour": self.REQUESTS_PER_HOUR - len([ts for ts in requests if ts > one_hour_ago]),
-            "remaining_day": self.REQUESTS_PER_DAY - len(requests),
-        }
-
-
+# RateLimiter moved to services/rate_limiter.py
 # ============================================================================
 # CONVENIENCE FUNCTIONS
 # ============================================================================
@@ -207,12 +107,13 @@ def validate_and_rate_limit(text: str, max_length: int = 500) -> Tuple[bool, str
     
     # Then check rate limit
     limiter = get_rate_limiter()
-    is_allowed, rate_msg = limiter.check_rate_limit()
+    is_allowed = limiter.is_allowed(user_id)
+    rate_msg = "" if is_allowed else f"Rate limit exceeded for {user_id}"
     if not is_allowed:
         return False, rate_msg
     
     # Record successful request
-    limiter.record_request()
+    # Request already recorded by is_allowed()
     
     return True, ""
 
@@ -220,4 +121,8 @@ def validate_and_rate_limit(text: str, max_length: int = 500) -> Tuple[bool, str
 def get_security_stats() -> Dict[str, int]:
     """Get security stats for admin display."""
     limiter = get_rate_limiter()
-    return limiter.get_stats()
+    user_id = get_user_id()
+    return {
+        "remaining": limiter.get_remaining_requests(user_id),
+        "retry_after": limiter.get_retry_after(user_id)
+    }

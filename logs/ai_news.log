@@ -1,2 +1,9 @@
 2026-02-12 12:02:46 | ai_news | [32mINFO[0m | summarize_news:37 | Summarizing 15 news articles
 2026-02-12 12:02:50 | ai_news | [32mINFO[0m | summarize_news:157 | ✅ Generated 1170 chars news summary
+2026-02-16 20:38:03 | ai_news | [32mINFO[0m | summarize_news:37 | Summarizing 15 news articles
+2026-02-16 20:38:06 | ai_news | [33mWARNING[0m | summarize_news:161 | Attempt 1 failed: 503 UNAVAILABLE. This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.
+2026-02-16 20:38:10 | ai_news | [32mINFO[0m | summarize_news:157 | ✅ Generated 1269 chars news summary
+2026-02-17 17:10:02 | ai_news | [32mINFO[0m | summarize_news:37 | Summarizing 15 news articles
+2026-02-17 17:10:05 | ai_news | [32mINFO[0m | summarize_news:158 | ✅ Generated 873 chars news summary
+2026-02-17 17:23:18 | ai_news | [32mINFO[0m | summarize_news:37 | Summarizing 15 news articles
+2026-02-17 17:23:20 | ai_news | [32mINFO[0m | summarize_news:158 | ✅ Generated 1042 chars news summary

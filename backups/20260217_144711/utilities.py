@@ -19,43 +19,41 @@ logger = get_logger(__name__)
 # FALLBACK DATA (Manual updates or cached from last successful fetch)
 # ═══════════════════════════════════════════════════════════════════════════
 
-def get_fallback_power_cuts():
-    """Generate fallback data with current timestamp"""
-    return {
-        "timestamp": datetime.now().isoformat(),
-        "areas": [
-            {
-                "area": "Gachibowli",
-                "zone": "Cyberabad",
-                "type": "planned",
-                "start_time": "10:00 AM",
-                "end_time": "2:00 PM",
-                "date": "today",
-                "reason": "Maintenance work",
-                "affected_localities": ["Gachibowli Circle", "DLF Cyber City", "Wipro Circle"]
-            },
-            {
-                "area": "HITEC City",
-                "zone": "Cyberabad", 
-                "type": "planned",
-                "start_time": "11:00 AM",
-                "end_time": "3:00 PM",
-                "date": "today",
-                "reason": "Transformer upgrade",
-                "affected_localities": ["HITEC City Main Road", "Cyber Towers"]
-            },
-            {
-                "area": "Kukatpally",
-                "zone": "North",
-                "type": "unplanned",
-                "start_time": "8:00 AM",
-                "end_time": "Unknown",
-                "date": "today",
-                "reason": "Technical fault",
-                "affected_localities": ["KPHB Colony", "Kukatpally Housing Board"]
-            }
-        ]
-    }
+FALLBACK_POWER_CUTS = {
+    "timestamp": datetime.now().isoformat(),
+    "areas": [
+        {
+            "area": "Gachibowli",
+            "zone": "Cyberabad",
+            "type": "planned",
+            "start_time": "10:00 AM",
+            "end_time": "2:00 PM",
+            "date": "today",
+            "reason": "Maintenance work",
+            "affected_localities": ["Gachibowli Circle", "DLF Cyber City", "Wipro Circle"]
+        },
+        {
+            "area": "HITEC City",
+            "zone": "Cyberabad", 
+            "type": "planned",
+            "start_time": "11:00 AM",
+            "end_time": "3:00 PM",
+            "date": "today",
+            "reason": "Transformer upgrade",
+            "affected_localities": ["HITEC City Main Road", "Cyber Towers"]
+        },
+        {
+            "area": "Kukatpally",
+            "zone": "North",
+            "type": "unplanned",
+            "start_time": "8:00 AM",
+            "end_time": "Unknown",
+            "date": "today",
+            "reason": "Technical fault",
+            "affected_localities": ["KPHB Colony", "Kukatpally Housing Board"]
+        }
+    ]
+}
 
 FALLBACK_WATER_SUPPLY = {
     "timestamp": datetime.now().isoformat(),
@@ -115,7 +113,7 @@ def fetch_live_power_cuts() -> Dict:
         # Example: Check if we have cached data in session state
         if "power_cuts_cache" in st.session_state:
             cache_time = st.session_state.get("power_cuts_cache_time")
-            if cache_time and (datetime.now() - cache_time).total_seconds() < 3600:  # 1 hour cache
+            if cache_time and (datetime.now() - cache_time).seconds < 3600:  # 1 hour cache
                 return st.session_state["power_cuts_cache"]
         
         # TODO: Add actual API call here
@@ -123,11 +121,11 @@ def fetch_live_power_cuts() -> Dict:
         # data = response.json()
         
         # For now, return fallback
-        return get_fallback_power_cuts()
+        return FALLBACK_POWER_CUTS
         
     except Exception as e:
         logger.error(f"[utilities_alerts] Error fetching power cuts: {e}", exc_info=True)
-        return get_fallback_power_cuts()
+        return FALLBACK_POWER_CUTS
 
 
 def fetch_live_water_supply() -> Dict:
@@ -147,7 +145,7 @@ def fetch_live_water_supply() -> Dict:
         # Check cache
         if "water_supply_cache" in st.session_state:
             cache_time = st.session_state.get("water_supply_cache_time")
-            if cache_time and (datetime.now() - cache_time).total_seconds() < 3600:
+            if cache_time and (datetime.now() - cache_time).seconds < 3600:
                 return st.session_state["water_supply_cache"]
         
         # TODO: Add actual API call here

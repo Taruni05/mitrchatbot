@@ -200,7 +200,7 @@ def get_shopping():
 def get_itineraries():
     """Get pre-made itineraries."""
     tourism = get_section("tourism_and_landmarks")
-    return tourism.get("Itinearies", {})
+    return tourism.get("Itineraries", {})
 
 
 def get_festivals():

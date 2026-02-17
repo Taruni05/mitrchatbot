@@ -33,7 +33,6 @@ ALTERNATE_ROUTES = {
 }
 
 
-@st.cache_data(ttl=config.cache.TRAFFIC)
 def get_traffic_flow(lat, lon):
     """
     Fetch traffic flow data from TomTom API.

@@ -15,7 +15,7 @@ FALLBACK_PRICES = {
     "petrol": 102.63,
     "diesel": 88.84,
     "cng": 75.50,
-    "date": "2026-01-19",
+    "date": datetime.now().strftime("%Y-%m-%d"),
     "source": "cached",
 }
 

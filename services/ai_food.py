@@ -15,7 +15,7 @@ from services.config import config
 logger = setup_logger('ai_food', 'ai_food.log')
 
 # Initialize Gemini client with config
-client = genai.Client(api_key=config.api.get_next_gemini_key())
+# Client created per-request to enable key rotation
 
 # Load restaurant knowledge base
 RESTAURANTS = load_restaurants()
@@ -119,6 +119,7 @@ Generate your recommendation now:"""
         try:
             logger.debug(f"Gemini API attempt {attempt}/{config.api.GEMINI_MAX_RETRIES}")
             
+            client = genai.Client(api_key=config.api.get_next_gemini_key())
             response = client.models.generate_content(
                 model=config.api.GEMINI_MODEL,
                 contents=prompt,

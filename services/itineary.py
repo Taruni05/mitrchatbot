@@ -8,6 +8,10 @@ logger = get_logger(__name__)
 from pathlib import Path
 from services.kb_loader import get_itineraries
 
+
+# Initialize itineraries at module level
+ITINERARIES = {}
+
 def load_itinerary_data():
     return get_itineraries()
 

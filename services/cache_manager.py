@@ -196,19 +196,31 @@ class ResponseCache:
     Enhanced in-memory response cache with smart TTL and invalidation.
     """
     
+    # Expected keys with their default values
+    _STATS_DEFAULTS = {
+        'hits': 0,
+        'misses': 0,
+        'invalidations': 0,
+        'total_queries': 0
+    }
+
     def __init__(self):
         # Initialize cache in session state
         if 'response_cache' not in st.session_state:
             st.session_state.response_cache = {}
         
-        # Cache statistics
+        # Cache statistics — always ensure all keys exist
+        # (handles cases where session_state was partially reset)
+        self._ensure_cache_stats()
+
+    def _ensure_cache_stats(self):
+        """Guarantee cache_stats exists in session_state with all required keys."""
         if 'cache_stats' not in st.session_state:
-            st.session_state.cache_stats = {
-                'hits': 0,
-                'misses': 0,
-                'invalidations': 0,
-                'total_queries': 0
-            }
+            st.session_state["cache_stats"] = dict(self._STATS_DEFAULTS)
+        else:
+            # Patch any missing keys without resetting existing counts
+            for key, default in self._STATS_DEFAULTS.items():
+                st.session_state["cache_stats"].setdefault(key, default)
     
     def _calculate_age_metadata(self, timestamp: float) -> Dict:
         """Calculate age-related metadata for a cache entry."""
@@ -231,10 +243,11 @@ class ResponseCache:
         Returns:
             Cached response or None
         """
+        self._ensure_cache_stats()
         cache = st.session_state.response_cache
-        
+
         if cache_key not in cache:
-            st.session_state.cache_stats['misses'] += 1
+            st.session_state['cache_stats']['misses'] += 1
             logger.debug(f"Cache miss: {cache_key[:8]}")
             return None
         
@@ -248,8 +261,8 @@ class ResponseCache:
         # Check smart invalidation rules
         if CacheInvalidator.should_invalidate(cache_key, metadata):
             del cache[cache_key]
-            st.session_state.cache_stats['invalidations'] += 1
-            st.session_state.cache_stats['misses'] += 1
+            st.session_state['cache_stats']['invalidations'] += 1
+            st.session_state['cache_stats']['misses'] += 1
             logger.debug(f"Cache invalidated: {cache_key[:8]}")
             return None
         
@@ -259,12 +272,12 @@ class ResponseCache:
         # Check if expired
         if metadata["age_seconds"] > ttl:
             del cache[cache_key]
-            st.session_state.cache_stats['misses'] += 1
+            st.session_state['cache_stats']['misses'] += 1
             logger.debug(f"Cache expired: {cache_key[:8]} (age: {metadata['age_seconds']}s, ttl: {ttl}s)")
             return None
         
         # Cache hit!
-        st.session_state.cache_stats['hits'] += 1
+        st.session_state['cache_stats']['hits'] += 1
         logger.debug(f"✅ Cache hit: {cache_key[:8]} (age: {metadata['age_seconds']}s)")
         return entry['response']
     
@@ -357,7 +370,7 @@ class ResponseCache:
     
     def get_stats(self) -> Dict[str, Any]:
         """Get cache statistics."""
-        stats = st.session_state.cache_stats.copy()
+        stats = st.session_state.get("cache_stats", {}).copy()
         stats['total_queries'] = stats['hits'] + stats['misses']
         stats['hit_rate'] = (
             stats['hits'] / stats['total_queries'] * 100
@@ -403,10 +416,21 @@ class ResponseCache:
 _cache = None
 
 def get_cache() -> ResponseCache:
-    """Get or create the global cache instance."""
+    """Get or create the global cache instance.
+
+    Always re-validates session_state on every call so that a module-level
+    _cache that survived a Streamlit rerun never causes KeyError on missing
+    cache_stats keys.
+    """
     global _cache
     if _cache is None:
         _cache = ResponseCache()
+    else:
+        # Session state may have been reset while the module-level _cache
+        # object was kept alive — re-ensure everything is initialised.
+        _cache._ensure_cache_stats()
+        if 'response_cache' not in st.session_state:
+            st.session_state.response_cache = {}
     return _cache
 
 
